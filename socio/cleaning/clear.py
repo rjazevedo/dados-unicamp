@@ -1,5 +1,5 @@
 import cleaning_module.database_information
-import cleaning_module.cleaning_functions
+import cleaning.cleaning_functions
 import pandas as pd
 
 from utilities.io import read_socio

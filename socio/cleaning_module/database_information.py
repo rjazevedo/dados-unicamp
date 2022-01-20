@@ -1,3 +1,4 @@
+import cleaning.cleaning_functions
 import cleaning_module.verification_functions
 
 def get_dtype(columns_info, is_original=False):
@@ -33,22 +34,22 @@ def get_columns_info_socio():
         },
         'nome_socio': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_nome,
+            'cleaning_function': cleaning.cleaning_functions.clear_nome,
             'verification_function': None
         },
         'cnpj_cpf_do_socio': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_cnpj_cpf,
+            'cleaning_function': cleaning.cleaning_functions.clear_cnpj_cpf,
             'verification_function': cleaning_module.verification_functions.check_cnpj_cpf_do_socio
         },
         'codigo_qualificacao_socio': {
             'type': 'int64',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_codigo_qualificacao,
+            'cleaning_function': cleaning.cleaning_functions.clear_codigo_qualificacao,
             'verification_function': cleaning_module.verification_functions.check_codigo_qualificacao
         },
         'data_entrada_sociedade': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_data,
+            'cleaning_function': cleaning.cleaning_functions.clear_data,
             'verification_function': cleaning_module.verification_functions.check_data
         },
         'ano_entrada_sociedade': {
@@ -58,7 +59,7 @@ def get_columns_info_socio():
         },
         'cpf_representante_legal': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_cpf,
+            'cleaning_function': cleaning.cleaning_functions.clear_cpf,
             'verification_function': cleaning_module.verification_functions.check_cpf
         },
         'nome_representante_legal': {
@@ -69,7 +70,7 @@ def get_columns_info_socio():
         'codigo_qual_representante_legal': {
             'type': 'int64',
             'has_null_value': True,
-            'cleaning_function': cleaning_module.cleaning_functions.clear_codigo_qualificacao,
+            'cleaning_function': cleaning.cleaning_functions.clear_codigo_qualificacao,
             'verification_function': cleaning_module.verification_functions.check_codigo_qualificacao
         }
     }
@@ -103,39 +104,39 @@ def get_columns_info_empresa():
         },
         'data_situacao_cadastral': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_data,
+            'cleaning_function': cleaning.cleaning_functions.clear_data,
             'verification_function': cleaning_module.verification_functions.check_data
         },
         'motivo_situacao_cadastral': {
             'type': 'int64',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_motivo_situacao_cadastral,
+            'cleaning_function': cleaning.cleaning_functions.clear_motivo_situacao_cadastral,
             'verification_function': cleaning_module.verification_functions.check_motivo_situacao_cadastral
         },
         'codigo_natureza_juridica': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_codigo_natureza_juridica,
+            'cleaning_function': cleaning.cleaning_functions.clear_codigo_natureza_juridica,
             'verification_function': None,
             'codes_file': 'cleaning_module/codes/nat_juridica.csv'
         },
         'data_inicio_atividade': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_data,
+            'cleaning_function': cleaning.cleaning_functions.clear_data,
             'verification_function': cleaning_module.verification_functions.check_data
         },
         'cnae_fiscal': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_cnae_fiscal,
+            'cleaning_function': cleaning.cleaning_functions.clear_cnae_fiscal,
             'verification_function': None,
             'codes_file': 'cleaning_module/codes/cnae_fiscal.csv'
         },
         'cep': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_cep,
+            'cleaning_function': cleaning.cleaning_functions.clear_cep,
             'verification_function': cleaning_module.verification_functions.check_cep
         },
         'id_municipio_rf': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_id_municipio_rf,
+            'cleaning_function': cleaning.cleaning_functions.clear_id_municipio_rf,
             'verification_function': None,
             'codes_file': 'cleaning_module/codes/municipios_rf.csv'
         },
@@ -148,7 +149,7 @@ def get_columns_info_empresa():
         'qualificacao_do_responsavel': {
             'type': 'int64',
             'has_null_value': True,
-            'cleaning_function': cleaning_module.cleaning_functions.clear_codigo_qualificacao,
+            'cleaning_function': cleaning.cleaning_functions.clear_codigo_qualificacao,
             'verification_function': cleaning_module.verification_functions.check_codigo_qualificacao
         },
         'capital_social': {
@@ -171,12 +172,12 @@ def get_columns_info_empresa():
         },
         'data_opcao_pelo_simples': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_data,
+            'cleaning_function': cleaning.cleaning_functions.clear_data,
             'verification_function': cleaning_module.verification_functions.check_data
         },
         'data_exclusao_do_simples': {
             'type': 'object',
-            'cleaning_function': cleaning_module.cleaning_functions.clear_data,
+            'cleaning_function': cleaning.cleaning_functions.clear_data,
             'verification_function': cleaning_module.verification_functions.check_data
         },
         'opcao_pelo_mei': {
