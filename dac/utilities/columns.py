@@ -6,7 +6,7 @@ dados_cadastrais_cols = [
     'mun_atual', 'cep_atual', 'mun_resid', 'cep_resid']
 
 vida_academica_cols = [
-    'identif', 'curso_atual', 'curso_nivel', 'curso_nome', 'ano_ingresso_curso', 'periodo_ingresso', 
+    'identif', 'curso', 'curso_nivel', 'curso_nome', 'ano_ingresso_curso', 'periodo_ingresso', 
     'tipo_periodo_ingresso', 'cod_tipo_ingresso', 'tipo_ingresso', 'ano_saida', 
     'periodo_saida', 'tipo_periodo_saida', 'cod_motivo_saida', 'motivo_saida', 
     'cr', 'cr_padrao', 'cr_medio_turma', 'insc_vest', 'opcao_vest', 'chamada_vest', 'aa', 

@@ -2,7 +2,7 @@ import numpy as np
 from utilities.io import read_multiple_from_database
 from utilities.io import write_result
 from utilities.columns import historico_escolar_cols
-from utilities.format import remove_unicode
+from utilities.format import str_to_upper_ascii
 from utilities.format import padronize_dates
 
 
@@ -15,7 +15,7 @@ def generate_clean_data():
     
     
     padronize_dates(historico_escolar, ['dt_inicio','dt_fim'])
-    remove_unicode(historico_escolar, ['curricularidade'])
+    str_to_upper_ascii(historico_escolar, ['curricularidade'])
     historico_escolar.turma = historico_escolar.turma.str.strip()
 
     # Corrige registros que possuem datas ao invés de anos  

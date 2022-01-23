@@ -1,0 +1,5 @@
+# Change the file name to "configuration.yaml" and put the absolute path to each directory
+
+database: # /PATH_TO_REPOSITORY/input/
+results: # /PATH_TO_REPOSITORY/dac/results
+ids: # /PATH_TO_REPOSITORY/output/dac_comvest_ids.csv
