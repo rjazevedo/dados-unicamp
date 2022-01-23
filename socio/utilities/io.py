@@ -1,25 +1,38 @@
 import pandas as pd
 import yaml
 
-from cleaning_module.database_information import get_columns_info_socio
-from cleaning_module.database_information import get_columns_info_empresa
-from cleaning_module.database_information import get_dtype
+from utilities.dtype import get_dtype
+
+from database_information.socio import get_columns_info_socio
+from database_information.empresa import get_columns_info_empresa
+from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 stream = open('configuration.yaml')
 config = yaml.safe_load(stream)
 
-def read_socio():
+def read_ids():
+    file = config['databaseids']
+    dtype = {
+        'nome': 'object',
+        'cpf': 'object',
+        'id': 'int64'
+    }
+    df = pd.read_csv(file, dtype=dtype, sep=';')
+    return df
+
+#------------------------------------------------------------------------------------------------
+def read_socio_original():
     file = config['databasesocio']
     columns_info = get_columns_info_socio()
     return read_database(file, columns_info)
 
-def read_empresa():
+def read_empresa_original():
     file = config['databasecompany']
     columns_info = get_columns_info_empresa()
     df = read_database(file, columns_info)
     return df
 
-def read_cnae():
+def read_cnae_original():
     file = config['databasecnae']
     dtype = {
         0: 'object',
@@ -27,6 +40,24 @@ def read_cnae():
     }
     df = pd.read_csv(file, dtype=dtype, header=None)
     df = rename_columns_cnae(df)
+    return df
+
+#------------------------------------------------------------------------------------------------
+def read_socio_clean():
+    file = config['results'] + 'socio.csv'
+    columns_info = get_columns_info_socio()
+    return read_database(file, columns_info, is_original=False)
+
+def read_empresa_clean():
+    file = config['results'] + 'empresa.csv'
+    columns_info = get_columns_info_empresa()
+    df = read_database(file, columns_info, is_original=False)
+    return df
+
+def read_cnae_clean():
+    file = config['results'] + 'cnae_secundaria.csv'
+    columns_info = get_columns_info_cnae_secundaria()
+    df = read_database(file, columns_info, is_original=False)
     return df
 
 #------------------------------------------------------------------------------------------------
@@ -42,9 +73,13 @@ def write_cnae(df):
     file = config['results'] + 'cnae_secundaria.csv'
     write_database(df, file)
 
+def write_socio_sample(df):
+    file = config['results'] + 'socio_sample.csv'
+    write_database(df, file)
+
 #------------------------------------------------------------------------------------------------
-def read_database(file, columns_info):
-    dtype = get_dtype(columns_info, is_original=True)
+def read_database(file, columns_info, is_original=True):
+    dtype = get_dtype(columns_info, is_original=is_original)
     df = pd.read_csv(file, dtype=dtype)
     return df
 

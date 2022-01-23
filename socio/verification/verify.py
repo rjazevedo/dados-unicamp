@@ -1,42 +1,41 @@
-import cleaning_module.database_information
+import verification.verification_functions
 import pandas as pd
+
+from utilities.io import read_socio_clean
+from utilities.io import read_empresa_clean
+from utilities.io import read_cnae_clean
+
+from database_information.socio import get_columns_info_socio
+from database_information.empresa import get_columns_info_empresa
+from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 pd.set_option('display.max_columns', None)
 
 # Verify columns in each clean database
 # Input:
 #   path: path to directory where it was put the clean files
-def verify_cleaning(path):
-    verify_socio(path)
-    verify_empresa(path)
-    verify_cnae_secundaria(path)
+def verify_cleaning():
+    verify_socio()
+    verify_empresa()
+    verify_cnae_secundaria()
 
 #------------------------------------------------------------------------------------------------
-def verify_socio(path):
-    file = path + 'socio.csv'
-    columns_info = cleaning_module.database_information.get_columns_info_socio()
-    dtype = cleaning_module.database_information.get_dtype(columns_info)
-    df = pd.read_csv(file, dtype=dtype)
-
+def verify_socio():
+    df = read_socio_clean()
+    columns_info = get_columns_info_socio()
     verify_columns(df, columns_info)
     verify_nome_socio(df)
     verify_ano_entrada_sociedade(df)
 
-def verify_empresa(path):
-    file = path + 'empresa.csv'
-    columns_info = cleaning_module.database_information.get_columns_info_empresa()
-    dtype = cleaning_module.database_information.get_dtype(columns_info)
-    df = pd.read_csv(file, dtype=dtype)
-    
+def verify_empresa():
+    df = read_empresa_clean()
+    columns_info = get_columns_info_empresa()
     verify_columns(df, columns_info)
     verify_codes_columns(df, columns_info)
 
-def verify_cnae_secundaria(path):
-    file = path + 'cnae_secundaria.csv'
-    columns_info = cleaning_module.database_information.get_columns_info_cnae_secundaria()
-    dtype = cleaning_module.database_information.get_dtype(columns_info)
-    df = pd.read_csv(file, dtype=dtype)
-    
+def verify_cnae_secundaria():
+    df = read_cnae_clean()
+    columns_info = get_columns_info_cnae_secundaria()
     verify_columns(df, columns_info)
     verify_codes_columns(df, columns_info)
 
@@ -65,12 +64,12 @@ def print_result(df_failed):
 def verify_nome_socio(df):
     print('Verifying: nome_socio')
     df_aux = df.dropna(subset=['nome_socio'])
-    df_failed = df_aux[df_aux.apply(lambda x: cleaning_module.verification_functions.check_nome_socio(x['nome_socio'], x['identificador_de_socio']), axis=1)]
+    df_failed = df_aux[df_aux.apply(lambda x: verification.verification_functions.check_nome_socio(x['nome_socio'], x['identificador_de_socio']), axis=1)]
     print_result(df_failed)
 
 def verify_ano_entrada_sociedade(df):
     print('Verifying: ano_entrada_sociedade')
-    df_failed = df[df.apply(lambda x: cleaning_module.verification_functions.check_ano(x['ano_entrada_sociedade'], x['data_entrada_sociedade']), axis=1)]
+    df_failed = df[df.apply(lambda x: verification.verification_functions.check_ano(x['ano_entrada_sociedade'], x['data_entrada_sociedade']), axis=1)]
     print_result(df_failed)
 
 #------------------------------------------------------------------------------------------------
