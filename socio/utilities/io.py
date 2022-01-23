@@ -1,10 +1,11 @@
 import pandas as pd
 import yaml
 
-from cleaning_module.database_information import get_columns_info_socio
-from cleaning_module.database_information import get_columns_info_empresa
-from cleaning_module.database_information import get_dtype
-from cleaning_module.database_information import get_columns_info_cnae_secundaria
+from utilities.dtype import get_dtype
+
+from database_information.socio import get_columns_info_socio
+from database_information.empresa import get_columns_info_empresa
+from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 stream = open('configuration.yaml')
 config = yaml.safe_load(stream)

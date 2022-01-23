@@ -1,80 +1,6 @@
 import cleaning.cleaning_functions
 import verification.verification_functions
 
-def get_dtype(columns_info, is_original=False):
-    dtype = {}
-    for column in columns_info:
-        if is_original:
-            dtype[column] = get_type_column_original(column, columns_info)
-        else:
-            dtype[column] = get_type_column_clean(column, columns_info)
-    return dtype
-
-def get_type_column_original(column, columns_info):
-    if 'has_null_value' in columns_info[column]:
-        return 'object'
-    else:
-       return columns_info[column]['type']
-
-def get_type_column_clean(column, columns_info):
-    return columns_info[column]['type']
-
-#------------------------------------------------------------------------------------------------
-def get_columns_info_socio():
-    return {
-        'cnpj': {
-            'type': 'object',
-            'cleaning_function': None,
-            'verification_function': verification.verification_functions.check_cnpj
-        },
-        'identificador_de_socio': {
-            'type': 'int64',
-            'cleaning_function': None,
-            'verification_function': verification.verification_functions.check_identificador_de_socio
-        },
-        'nome_socio': {
-            'type': 'object',
-            'cleaning_function': cleaning.cleaning_functions.clear_nome,
-            'verification_function': None
-        },
-        'cnpj_cpf_do_socio': {
-            'type': 'object',
-            'cleaning_function': cleaning.cleaning_functions.clear_cnpj_cpf,
-            'verification_function': verification.verification_functions.check_cnpj_cpf_do_socio
-        },
-        'codigo_qualificacao_socio': {
-            'type': 'int64',
-            'cleaning_function': cleaning.cleaning_functions.clear_codigo_qualificacao,
-            'verification_function': verification.verification_functions.check_codigo_qualificacao
-        },
-        'data_entrada_sociedade': {
-            'type': 'object',
-            'cleaning_function': cleaning.cleaning_functions.clear_data,
-            'verification_function': verification.verification_functions.check_data
-        },
-        'ano_entrada_sociedade': {
-            'type': 'int64',
-            'cleaning_function': None,
-            'verification_function': None
-        },
-        'cpf_representante_legal': {
-            'type': 'object',
-            'cleaning_function': cleaning.cleaning_functions.clear_cpf,
-            'verification_function': verification.verification_functions.check_cpf
-        },
-        'nome_representante_legal': {
-            'type': 'object',
-            'cleaning_function': None,
-            'verification_function': verification.verification_functions.check_name
-        },
-        'codigo_qual_representante_legal': {
-            'type': 'int64',
-            'has_null_value': True,
-            'cleaning_function': cleaning.cleaning_functions.clear_codigo_qualificacao,
-            'verification_function': verification.verification_functions.check_codigo_qualificacao
-        }
-    }
-
 def get_columns_info_empresa():
     return {
         'cnpj': {
@@ -191,19 +117,4 @@ def get_columns_info_empresa():
             'cleaning_function': None,
             'verification_function': verification.verification_functions.check_sigla_uf
         },
-    }
-
-def get_columns_info_cnae_secundaria():
-    return {
-        'cnpj': {
-            'type': 'object',
-            'cleaning_function': None,
-            'verification_function': verification.verification_functions.check_cnpj
-        },
-        'cnae': {
-            'type': 'object',
-            'cleaning_function': None,
-            'verification_function': None,
-            'codes_file': 'verification/codes/cnae.csv'
-        }
     }

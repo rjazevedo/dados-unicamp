@@ -1,6 +1,7 @@
-import cleaning_module.database_information
-import cleaning.cleaning_functions
 import pandas as pd
+
+from database_information.socio import get_columns_info_socio
+from database_information.empresa import get_columns_info_empresa
 
 from utilities.io import read_socio_original
 from utilities.io import read_empresa_original
@@ -18,7 +19,7 @@ pd.set_option('display.max_columns', None)
 #   path_output: path where the output will be stored
 def clear_socio():
     df = read_socio_original()
-    columns_info = cleaning_module.database_information.get_columns_info_socio()
+    columns_info = get_columns_info_socio()
     df = clear_columns(df, columns_info)
     write_socio(df)
 
@@ -28,7 +29,7 @@ def clear_socio():
 #   path_output: path where the output will be stored
 def clear_empresa():
     df = read_empresa_original()
-    columns_info = cleaning_module.database_information.get_columns_info_empresa()
+    columns_info = get_columns_info_empresa()
     df = clear_columns(df, columns_info)
     write_empresa(df)
 

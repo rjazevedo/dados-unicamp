@@ -1,10 +1,13 @@
-import cleaning_module.database_information
 import verification.verification_functions
 import pandas as pd
 
 from utilities.io import read_socio_clean
 from utilities.io import read_empresa_clean
 from utilities.io import read_cnae_clean
+
+from database_information.socio import get_columns_info_socio
+from database_information.empresa import get_columns_info_empresa
+from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 pd.set_option('display.max_columns', None)
 
@@ -19,20 +22,20 @@ def verify_cleaning():
 #------------------------------------------------------------------------------------------------
 def verify_socio():
     df = read_socio_clean()
-    columns_info = cleaning_module.database_information.get_columns_info_socio()
+    columns_info = get_columns_info_socio()
     verify_columns(df, columns_info)
     verify_nome_socio(df)
     verify_ano_entrada_sociedade(df)
 
 def verify_empresa():
     df = read_empresa_clean()
-    columns_info = cleaning_module.database_information.get_columns_info_empresa()
+    columns_info = get_columns_info_empresa()
     verify_columns(df, columns_info)
     verify_codes_columns(df, columns_info)
 
 def verify_cnae_secundaria():
     df = read_cnae_clean()
-    columns_info = cleaning_module.database_information.get_columns_info_cnae_secundaria()
+    columns_info = get_columns_info_cnae_secundaria()
     verify_columns(df, columns_info)
     verify_codes_columns(df, columns_info)
 
