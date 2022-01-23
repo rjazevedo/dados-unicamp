@@ -10,6 +10,17 @@ from database_information.cnae_secundaria import get_columns_info_cnae_secundari
 stream = open('configuration.yaml')
 config = yaml.safe_load(stream)
 
+def read_ids():
+    file = config['databaseids']
+    dtype = {
+        'nome': 'object',
+        'cpf': 'object',
+        'id': 'int64'
+    }
+    df = pd.read_csv(file, dtype=dtype, sep=';')
+    return df
+
+#------------------------------------------------------------------------------------------------
 def read_socio_original():
     file = config['databasesocio']
     columns_info = get_columns_info_socio()
@@ -60,6 +71,10 @@ def write_empresa(df):
 
 def write_cnae(df):
     file = config['results'] + 'cnae_secundaria.csv'
+    write_database(df, file)
+
+def write_socio_sample(df):
+    file = config['results'] + 'socio_sample.csv'
     write_database(df, file)
 
 #------------------------------------------------------------------------------------------------
