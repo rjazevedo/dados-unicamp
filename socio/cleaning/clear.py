@@ -2,9 +2,9 @@ import cleaning_module.database_information
 import cleaning.cleaning_functions
 import pandas as pd
 
-from utilities.io import read_socio
-from utilities.io import read_empresa
-from utilities.io import read_cnae
+from utilities.io import read_socio_original
+from utilities.io import read_empresa_original
+from utilities.io import read_cnae_original
 
 from utilities.io import write_socio
 from utilities.io import write_empresa
@@ -17,7 +17,7 @@ pd.set_option('display.max_columns', None)
 #   file: csv file with socio data
 #   path_output: path where the output will be stored
 def clear_socio():
-    df = read_socio()
+    df = read_socio_original()
     columns_info = cleaning_module.database_information.get_columns_info_socio()
     df = clear_columns(df, columns_info)
     write_socio(df)
@@ -27,8 +27,8 @@ def clear_socio():
 #   file: csv file with empresa data
 #   path_output: path where the output will be stored
 def clear_empresa():
-    df = read_empresa()
-    columns_info = cleaning_module.database_information.get_columns_info_socio()
+    df = read_empresa_original()
+    columns_info = cleaning_module.database_information.get_columns_info_empresa()
     df = clear_columns(df, columns_info)
     write_empresa(df)
 
@@ -37,7 +37,7 @@ def clear_empresa():
 #   file: csv file with empresa data
 #   path_output: path where the output will be stored
 def clear_cnae_secundaria():
-    df = read_cnae()
+    df = read_cnae_original()
     write_cnae(df)
 
 #------------------------------------------------------------------------------------------------
