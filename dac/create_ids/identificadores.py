@@ -1,6 +1,7 @@
 from utilities.io import read_result
 from utilities.io import write_result
 from utilities.io import get_identificadores
+
 def generate_ids():
     ids = get_identificadores()
     vida_academica = read_result('vida_academica.csv', dtype=str).loc[:, ['identif', 'insc_vest', 'curso', 'ano_ingresso_curso', 'cod_tipo_ingresso']]
