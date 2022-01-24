@@ -17,7 +17,7 @@ def read_ids():
         'cpf': 'object',
         'id': 'int64'
     }
-    df = pd.read_csv(file, dtype=dtype, sep=';')
+    df = pd.read_csv(file, dtype=dtype, sep=';', low_memory=False)
     return df
 
 #------------------------------------------------------------------------------------------------
