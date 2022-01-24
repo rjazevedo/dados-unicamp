@@ -1,13 +1,13 @@
 import pandas as pd
 import yaml
 
-from utilities.dtype import get_dtype
+from socio.utilities.dtype import get_dtype
 
-from database_information.socio import get_columns_info_socio
-from database_information.empresa import get_columns_info_empresa
-from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
+from socio.database_information.socio import get_columns_info_socio
+from socio.database_information.empresa import get_columns_info_empresa
+from socio.database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
-stream = open('configuration.yaml')
+stream = open('socio/configuration.yaml')
 config = yaml.safe_load(stream)
 
 def read_ids():
@@ -74,7 +74,7 @@ def write_cnae(df):
     write_database(df, file)
 
 def write_socio_sample(df):
-    file = config['results'] + 'socio_sample.csv'
+    file = config['results'] + 'socio_amostra.csv'
     write_database(df, file)
 
 #------------------------------------------------------------------------------------------------

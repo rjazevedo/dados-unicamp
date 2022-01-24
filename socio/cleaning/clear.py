@@ -1,15 +1,15 @@
 import pandas as pd
 
-from database_information.socio import get_columns_info_socio
-from database_information.empresa import get_columns_info_empresa
+from socio.database_information.socio import get_columns_info_socio
+from socio.database_information.empresa import get_columns_info_empresa
 
-from utilities.io import read_socio_original
-from utilities.io import read_empresa_original
-from utilities.io import read_cnae_original
+from socio.utilities.io import read_socio_original
+from socio.utilities.io import read_empresa_original
+from socio.utilities.io import read_cnae_original
 
-from utilities.io import write_socio
-from utilities.io import write_empresa
-from utilities.io import write_cnae
+from socio.utilities.io import write_socio
+from socio.utilities.io import write_empresa
+from socio.utilities.io import write_cnae
 
 pd.set_option('display.max_columns', None)
 

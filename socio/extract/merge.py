@@ -1,13 +1,13 @@
 import pandas as pd
 
-from utilities.io import read_socio_clean
-from utilities.io import read_ids
-from utilities.io import write_socio_sample
+from socio.utilities.io import read_socio_clean
+from socio.utilities.io import read_ids
+from socio.utilities.io import write_socio_sample
 
-from extract.standardization_functions import get_upper
-from extract.standardization_functions import get_first_name
-from extract.standardization_functions import get_reduced_cpf
-from extract.standardization_functions import get_similarity
+from socio.extract.standardization_functions import get_upper
+from socio.extract.standardization_functions import get_first_name
+from socio.extract.standardization_functions import get_reduced_cpf
+from socio.extract.standardization_functions import get_similarity
 
 def merge_socio_dac_comvest():
     df_socio = read_socio_clean()

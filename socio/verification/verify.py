@@ -1,25 +1,18 @@
-import verification.verification_functions
 import pandas as pd
 
-from utilities.io import read_socio_clean
-from utilities.io import read_empresa_clean
-from utilities.io import read_cnae_clean
+from socio.verification.verification_functions import check_nome_socio
+from socio.verification.verification_functions import check_ano
 
-from database_information.socio import get_columns_info_socio
-from database_information.empresa import get_columns_info_empresa
-from database_information.cnae_secundaria import get_columns_info_cnae_secundaria
+from socio.utilities.io import read_socio_clean
+from socio.utilities.io import read_empresa_clean
+from socio.utilities.io import read_cnae_clean
+
+from socio.database_information.socio import get_columns_info_socio
+from socio.database_information.empresa import get_columns_info_empresa
+from socio.database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 pd.set_option('display.max_columns', None)
 
-# Verify columns in each clean database
-# Input:
-#   path: path to directory where it was put the clean files
-def verify_cleaning():
-    verify_socio()
-    verify_empresa()
-    verify_cnae_secundaria()
-
-#------------------------------------------------------------------------------------------------
 def verify_socio():
     df = read_socio_clean()
     columns_info = get_columns_info_socio()
@@ -64,12 +57,12 @@ def print_result(df_failed):
 def verify_nome_socio(df):
     print('Verifying: nome_socio')
     df_aux = df.dropna(subset=['nome_socio'])
-    df_failed = df_aux[df_aux.apply(lambda x: verification.verification_functions.check_nome_socio(x['nome_socio'], x['identificador_de_socio']), axis=1)]
+    df_failed = df_aux[df_aux.apply(lambda x: check_nome_socio(x['nome_socio'], x['identificador_de_socio']), axis=1)]
     print_result(df_failed)
 
 def verify_ano_entrada_sociedade(df):
     print('Verifying: ano_entrada_sociedade')
-    df_failed = df[df.apply(lambda x: verification.verification_functions.check_ano(x['ano_entrada_sociedade'], x['data_entrada_sociedade']), axis=1)]
+    df_failed = df[df.apply(lambda x: check_ano(x['ano_entrada_sociedade'], x['data_entrada_sociedade']), axis=1)]
     print_result(df_failed)
 
 #------------------------------------------------------------------------------------------------
