@@ -1,7 +1,6 @@
 from utilities.io import read_result
 from utilities.io import write_result
 from utilities.io import get_identificadores
-import numpy as np
 
 def generate_ids():
     ids = get_identificadores()
