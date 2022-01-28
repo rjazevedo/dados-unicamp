@@ -1,4 +1,4 @@
-from extract_enrolled import extrair_matriculados
+from comvest.extract_enrolled import extrair_matriculados
 
 def main():
     extrair_matriculados.extraction()

@@ -1,4 +1,4 @@
-from clear_notas import limpeza_notas
+from comvest.clear_notas import limpeza_notas
 
 def main():
     limpeza_notas.extraction()

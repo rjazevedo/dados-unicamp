@@ -1,4 +1,4 @@
-from extract_cities import extrair_cidades
+from comvest.extract_cities import extrair_cidades
 
 def main():
     extrair_cidades.extraction()

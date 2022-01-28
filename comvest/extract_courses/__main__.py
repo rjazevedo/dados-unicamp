@@ -1,4 +1,4 @@
-from extract_courses import extrair_cursos
+from comvest.extract_courses import extrair_cursos
 
 def main():
     extrair_cursos.extraction()
