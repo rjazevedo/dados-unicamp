@@ -1,5 +1,9 @@
 import pandas
-import rais.clean_module.clean_columns
+
+from rais.extract.cleaning_functions import clear_cpf_column
+from rais.extract.cleaning_functions import clear_pispasep_column
+from rais.extract.cleaning_functions import clear_name_column
+from rais.extract.cleaning_functions import clear_birthdate_column
 
 from rais.utilities.file import create_folder_tmp
 from rais.utilities.file import create_folder_year
@@ -38,8 +42,8 @@ def filter_columns(df, year):
 
 # Clean columns with identification data
 def clear_identification(df):
-    rais.clean_module.clean.clean_cpf_column(df)
-    rais.clean_module.clean.clean_pispasep_column(df)
-    rais.clean_module.clean.clean_name_column(df)
-    rais.clean_module.clean.clean_birthdate_column(df)
+    clear_cpf_column(df)
+    clear_pispasep_column(df)
+    clear_name_column(df)
+    clear_birthdate_column(df)
     return df

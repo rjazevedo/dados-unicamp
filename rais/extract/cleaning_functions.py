@@ -3,16 +3,16 @@ import numpy as np
 import re
 
 #------------------------------------------------------------------------------------------------
-def clean_cpf_column(df):
+def clear_cpf_column(df):
     df['cpf_r'] = df.apply(lambda x: get_cpf(x['cpf_r']), axis=1)
 
-def clean_pispasep_column(df):
+def clear_pispasep_column(df):
     df['pispasep'] = df.apply(lambda x: get_pispasep(x['pispasep']), axis=1)
 
-def clean_name_column(df):
+def clear_name_column(df):
     df['nome_r'] = df.apply(lambda x: get_name(x['nome_r']), axis=1)
 
-def clean_birthdate_column(df):
+def clear_birthdate_column(df):
     df['dta_nasc_r'] = df.apply(lambda x: get_birthdate(x['dta_nasc_r']), axis=1)
 
 #------------------------------------------------------------------------------------------------

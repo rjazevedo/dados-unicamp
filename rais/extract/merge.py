@@ -7,15 +7,6 @@ from rais.utilities.write import write_rais_merge
 from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_tmp_files
 
-from rais.clean_module.recover_cpf_rais import recover_cpf_all_years
-
-#------------------------------------------------------------------------------------------------
-# Merge dac/comvest union with all rais files to create a database in rais only with people of interest
-def merge_rais_dac_comvest():
-    merge_all_years()
-    recover_cpf_all_years()
-
-#------------------------------------------------------------------------------------------------
 # Merge all the years from rais with uniao_dac_comvest and save in file rais.csv
 def merge_all_years():
     df_dac_comvest = read_ids()

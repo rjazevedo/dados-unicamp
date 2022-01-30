@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
 
-import rais.clean_module.df_operations
-
+from rais.utilities.df_operations import subtract
+from rais.utilities.df_operations import remove_duplicated_rows
 from rais.utilities.read import read_dac_comvest_valid
 from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_dac_comvest_recovered
@@ -22,19 +22,12 @@ MIN_HIGH_SIMILARITY = 0.8
 #------------------------------------------------------------------------------------------------
 # Uses initial union dac/comvest to recover missing cpfs in rais and generate a new file with cpfs recovered
 def recover_cpf_dac_comvest():
-    print("Reading dac database")
     df_dac_comvest = read_dac_comvest_valid()
-    print("Getting missing cpfs")
     df_cpf_missing = get_cpf_missing_dac_comvest(df_dac_comvest)
-    print("Recovering by exact match")
     df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing)
-    print("Updating cpf missing")
     df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
-    print("Recovering by probabilistic match")
     df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(df_cpf_missing)
-    print("Updating cpf recovered")
     df_final = join_cpf_recovered(df_dac_comvest, df_cpf_recovered_exact_match, df_cpf_recovered_probabilistic_match)
-    print("Writing output")
     write_dac_comvest_recovered(df_final)
 
 #------------------------------------------------------------------------------------------------
@@ -55,7 +48,7 @@ def recover_cpf_exact_match(df):
 # Return df with missing cpfs after first recover
 def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
     columns = ['insc_vest', 'ano_ingresso_curso']
-    updated_cpf_missing = rais.clean_module.df_operations.subtract(df_cpf_missing, df_cpf_recovered, columns)
+    updated_cpf_missing = subtract(df_cpf_missing, df_cpf_recovered, columns)
     return updated_cpf_missing
 
 # Return df with matches made with first name, birthdate equal and high similarity between names
@@ -193,7 +186,7 @@ def fix_duplicated_rows_exact_match(df):
     get_origem_cpf_column_exact_match(df)
     df = get_dac_information_exact_match(df)
     columns = ['insc_vest', 'ano_ingresso_curso']
-    df = rais.clean_module.df_operations.remove_duplicated_rows(df, columns)
+    df = remove_duplicated_rows(df, columns)
     return df
 
 # Remove duplicated lines according to priority
@@ -202,7 +195,7 @@ def fix_duplicated_rows_probabilistic_match(df):
     df = order_by_similarity(df)
     df = get_dac_information_probabilistic_match(df)
     columns = ['insc_vest', 'ano_ingresso_curso']
-    df = rais.clean_module.df_operations.remove_duplicated_rows(df, columns)
+    df = remove_duplicated_rows(df, columns)
     return df
 
 #------------------------------------------------------------------------------------------------

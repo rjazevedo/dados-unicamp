@@ -1,9 +1,9 @@
 import pandas as pd
 import yaml
 
-from rais.clean_module.dtypes import get_dtype_rais_original
-from rais.clean_module.dtypes import get_dtype_dac_comvest
-from rais.clean_module.dtypes import get_dtype_rais_clean
+from rais.utilities.dtypes import get_dtype_rais_original
+from rais.utilities.dtypes import get_dtype_dac_comvest
+from rais.utilities.dtypes import get_dtype_rais_clean
 from rais.utilities.file import get_file_name
 from rais.utilities.file import get_extension
 

@@ -4,8 +4,8 @@ import pandas as pd
 from rais.utilities.read import read_rais_sample
 from rais.utilities.read import read_database
 
-from rais.clean_module.verification_functions import check_deslig
-from rais.clean_module.verification_functions import check_cnpj_raiz
+from rais.verification.verification_functions import check_deslig
+from rais.verification.verification_functions import check_cnpj_raiz
 
 # Verify all columns in rais.csv
 def verify_output():
