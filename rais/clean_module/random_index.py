@@ -1,13 +1,12 @@
 import pandas as pd
-import numpy as np
+import numpy
 import re
-import clean_module.file
-import clean_module.dtypes
 
-def generate_index(path):
-    file = path + 'dac_comvest_recovered.csv'
-    dtype = clean_module.dtypes.get_dtype_dac_comvest()
-    df = clean_module.file.read_csv(file, dtype)
+from rais.utilities.read import read_dac_comvest_recovered
+from rais.utilities.write import write_dac_comvest_ids
+
+def generate_index():
+    df = read_dac_comvest_recovered()
 
     df['doc'] = df.apply(lambda x: clear_document(x['doc']), axis=1)
     df_cpf_present = get_index_by_cpf(df)
@@ -18,10 +17,7 @@ def generate_index(path):
     offset(df_cpf_missing, df_cpf_present['id'].max() + 1)
     result = pd.concat([df_cpf_present, df_cpf_missing])
 
-    print(result.head(100))
-
-    file_out = path + 'dac_comvest_ids.csv'
-    clean_module.file.to_csv(result, file_out)
+    write_dac_comvest_ids(result)
 
 def get_index_by_cpf(df):
     df_cpf_present = df[df['cpf'] != '-']

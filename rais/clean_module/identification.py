@@ -1,44 +1,45 @@
-import pandas as pd
-import clean_module.file
-import clean_module.dtypes
-import clean_module.clean_columns
+import pandas
+import rais.clean_module.clean_columns
+
+from rais.utilities.file import create_folder_tmp
+from rais.utilities.file import create_folder_year
+from rais.utilities.file import create_folder_inside_year
+from rais.utilities.file import get_all_original_files_year
+
+from rais.utilities.read import read_rais_original
+from rais.utilities.write import write_rais_identification
 
 # Clean all csv files from all years. Each year must must have a folder named "original_data"
-def get_identification_from_all_years(path):
+def get_identification_from_all_years():
+    create_folder_tmp()
     for year in range(2002, 2019):
-        get_identification_from_year(year, path)
+        create_folder_year(year)
+        get_identification_from_year(year)
 
 # Clean all csv files from specified year, that must be in folder "original_data"
-def get_identification_from_year(year, path):
-    path_year = clean_module.file.get_year_path(year, path)
-    clean_module.file.create_folder(path_year, 'identification_data')
-
-    path_files = path_year + 'original_data/'
-    extension = clean_module.dtypes.get_extension(year)
-    files = clean_module.file.get_all_files(path_files, extension)
-
+def get_identification_from_year(year):
+    create_folder_inside_year(year, 'identification_data')
+    files = get_all_original_files_year(year)
     for file in files:
         get_identification_from_file(file, year)
 
 # Clean csv file and save in folder "identification_data"
 def get_identification_from_file(file, year):
-    dtype = clean_module.dtypes.get_dtype_rais_original(year)
-    df = clean_module.file.read_csv(file, dtype)
+    df = read_rais_original(file, year)
+    df = filter_columns(df, year)
+    df.insert(0, 'ano_base', year, True)
+    df = clear_identification(df)
+    write_rais_identification(df, year, file)
 
+def filter_columns(df, year):
     columns = ['nome_r', 'cpf_r', 'dta_nasc_r', 'pispasep', 'mun_estbl']
-    df = clean_module.clean_columns.rename_columns(df, year, columns)
-    df_filtered = df.loc[:, columns]
-    df_filtered.insert(0, 'ano_base', year, True)
-    df_filtered = clean_identification(df_filtered)
-
-    file_out = clean_module.file.change_file_format(file, 'pkl')
-    file_out = clean_module.file.change_folder_name(file_out, 'identification_data')
-    df_filtered.to_pickle(file_out)
+    df = rais.clean_module.clean_columns.rename_columns(df, year, columns)
+    return df.loc[:, columns]
 
 # Clean columns with identification data
-def clean_identification(df):
-    clean_module.clean.clean_cpf_column(df)
-    clean_module.clean.clean_pispasep_column(df)
-    clean_module.clean.clean_name_column(df)
-    df = clean_module.clean.clean_birthdate_column(df)
+def clear_identification(df):
+    rais.clean_module.clean.clean_cpf_column(df)
+    rais.clean_module.clean.clean_pispasep_column(df)
+    rais.clean_module.clean.clean_name_column(df)
+    rais.clean_module.clean.clean_birthdate_column(df)
     return df

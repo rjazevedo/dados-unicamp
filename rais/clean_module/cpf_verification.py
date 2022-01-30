@@ -1,48 +1,44 @@
-import clean_module.file
-import clean_module.dtypes
 import pandas as pd
 from difflib import SequenceMatcher
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
+from rais.utilities.read import read_dac_comvest
+from rais.utilities.read import read_rais_identification
+from rais.utilities.write import write_dac_comvest_valid
+from rais.utilities.file import create_folder_inside_year
+from rais.utilities.file import get_all_tmp_files
 
-def remove_invalid_cpf(path, file):
-    dtype = clean_module.dtypes.get_dtype_dac_comvest()
-    df = pd.read_csv(file, sep=',', encoding='latin', dtype=dtype)
-    df_dac_comvest = read_file_dac_comvest(df)
+def remove_invalid_cpf():
+    df_dac_comvest = read_dac_comvest()
+    df_dac_comvest_merge = prepare_dac_comvest(df_dac_comvest)
 
-    df_result = merge_all_years(df_dac_comvest, path)
+    df_result = merge_by_cpf(df_dac_comvest_merge)
     df_result = get_invalid_cpf(df_result)
-    df_result = change_invalid_cpf(df, df_result)
+    df_result = change_invalid_cpf(df_dac_comvest, df_result)
 
-    file_out = path + 'dac_comvest_valid.csv'
-    clean_module.file.to_csv(df_result, file_out)
+    write_dac_comvest_valid(df_result)
 
-def read_file_dac_comvest(df):
+def prepare_dac_comvest(df):
     df = df[df['cpf'] != '-']
     df.drop_duplicates(subset=['cpf'], inplace=True)
     df.rename(columns={'cpf': 'cpf_r'}, inplace=True)
     return df
 
-def merge_all_years(df_dac_comvest, path):
+def merge_by_cpf(df_dac_comvest):
     dfs = []
     for year in range(2002, 2019):
-        path_year = clean_module.file.get_year_path(year, path)
-        clean_module.file.create_folder(path_year, 'rais_dac_comvest')
-        df = merge_year(df_dac_comvest, path_year)
+        create_folder_inside_year(year, 'rais_dac_comvest')
+        df = merge_year(df_dac_comvest, year)
         dfs.append(df)
     df_result = pd.concat(dfs, sort=False)
     return df_result
 
 # Merge rais from year with df_dac_comvest and save in files in rais_dac_comvest directory
-def merge_year(df_dac_comvest, path):
-    path_folder = path + 'identification_data/'
-    files = clean_module.file.get_all_files(path_folder, 'pkl')
-
+def merge_year(df_dac_comvest, year):
+    files = get_all_tmp_files(year, 'identification_data', 'pkl')
     dfs = []
     for file_rais in files:
         print(file_rais)
-        df_rais = clean_module.merge.read_file_rais(file_rais)
+        df_rais = read_rais_identification(file_rais)
         df = merge_dfs(df_rais, df_dac_comvest)
         dfs.append(df)
 

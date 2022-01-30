@@ -2,9 +2,12 @@ import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
 
-import clean_module.df_operations
-import clean_module.dtypes
-import clean_module.file
+import rais.clean_module.df_operations
+
+from rais.utilities.read import read_dac_comvest_valid
+from rais.utilities.read import read_rais_identification
+from rais.utilities.write import write_dac_comvest_recovered
+from rais.utilities.file import get_all_tmp_files
 
 #------------------------------------------------------------------------------------------------
 
@@ -18,19 +21,21 @@ MIN_HIGH_SIMILARITY = 0.8
 
 #------------------------------------------------------------------------------------------------
 # Uses initial union dac/comvest to recover missing cpfs in rais and generate a new file with cpfs recovered
-def recover_cpf_dac_comvest(path):
-    file = path + 'dac_comvest_valid.csv'
-    dtype = clean_module.dtypes.get_dtype_dac_comvest()
-    df_dac_comvest = clean_module.file.read_csv(file, dtype)
-
+def recover_cpf_dac_comvest():
+    print("Reading dac database")
+    df_dac_comvest = read_dac_comvest_valid()
+    print("Getting missing cpfs")
     df_cpf_missing = get_cpf_missing_dac_comvest(df_dac_comvest)
-    df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing, path)
+    print("Recovering by exact match")
+    df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing)
+    print("Updating cpf missing")
     df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
-    df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(df_cpf_missing, path)
+    print("Recovering by probabilistic match")
+    df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(df_cpf_missing)
+    print("Updating cpf recovered")
     df_final = join_cpf_recovered(df_dac_comvest, df_cpf_recovered_exact_match, df_cpf_recovered_probabilistic_match)
-
-    file_out = path + 'dac_comvest_recovered.csv'
-    clean_module.file.to_csv(df_final, file_out)
+    print("Writing output")
+    write_dac_comvest_recovered(df_final)
 
 #------------------------------------------------------------------------------------------------
 # Return df with only the lines with cpf missing or cpf from parents
@@ -40,9 +45,9 @@ def get_cpf_missing_dac_comvest(df):
     return cpf_missing
 
 # Return df with matches made with name and birthdate equal
-def recover_cpf_exact_match(df, path):
+def recover_cpf_exact_match(df):
     prepare_df_dac_comvest_exact_match(df)
-    df_recovered = merge_with_rais(df, path, False)
+    df_recovered = merge_with_rais(df, False)
     df_recovered = remove_invalid_cpf(df_recovered)
     df_recovered = fix_duplicated_rows_exact_match(df_recovered)
     return df_recovered
@@ -50,13 +55,13 @@ def recover_cpf_exact_match(df, path):
 # Return df with missing cpfs after first recover
 def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
     columns = ['insc_vest', 'ano_ingresso_curso']
-    updated_cpf_missing = clean_module.df_operations.subtract(df_cpf_missing, df_cpf_recovered, columns)
+    updated_cpf_missing = rais.clean_module.df_operations.subtract(df_cpf_missing, df_cpf_recovered, columns)
     return updated_cpf_missing
 
 # Return df with matches made with first name, birthdate equal and high similarity between names
-def recover_cpf_probabilistic_match(df, path):
+def recover_cpf_probabilistic_match(df):
     prepare_df_dac_comvest_probabilistic_match(df)
-    df_merged = merge_with_rais(df, path, True)
+    df_merged = merge_with_rais(df, True)
     df_recovered = remove_invalid_cpf(df_merged)
     df_recovered = fix_duplicated_rows_probabilistic_match(df_recovered)
     return df_recovered
@@ -98,25 +103,23 @@ def get_first_name(name):
 
 #------------------------------------------------------------------------------------------------
 # Merge dataframe with all files from rais to recover missing cpfs
-def merge_with_rais(df_dac_comvest, path, is_probabilistic):
+def merge_with_rais(df_dac_comvest, is_probabilistic):
     dfs = []
     for year in range(2002, 2019):
-        path_year = clean_module.file.get_year_path(year, path)
-        df_recovered = merge_with_rais_year(df_dac_comvest, path_year, is_probabilistic)
+        df_recovered = merge_with_rais_year(df_dac_comvest, year, is_probabilistic)
         dfs.append(df_recovered)
 
-    df = pd.concat(dfs)
+    df = pd.concat(dfs, sort=True)
     df = df.drop_duplicates()
     return df
 
 # Merge dataframe with all files from some year to recover missing cpfs
-def merge_with_rais_year(df_dac_comvest, path, is_probabilistic):
-    path_files = path + 'identification_data/'
-    files_rais = clean_module.file.get_all_files(path_files, 'pkl')
+def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
+    files_rais = get_all_tmp_files(year, 'identification_data', 'pkl')
 
     dfs = []
     for file in files_rais:
-        df_rais = pd.read_pickle(file)
+        df_rais = read_rais_identification(file)
         del df_rais['pispasep']
         if is_probabilistic:
             df_recovered = find_cpf_probabilistic_match(df_dac_comvest, df_rais)
@@ -190,7 +193,7 @@ def fix_duplicated_rows_exact_match(df):
     get_origem_cpf_column_exact_match(df)
     df = get_dac_information_exact_match(df)
     columns = ['insc_vest', 'ano_ingresso_curso']
-    df = clean_module.df_operations.remove_duplicated_rows(df, columns)
+    df = rais.clean_module.df_operations.remove_duplicated_rows(df, columns)
     return df
 
 # Remove duplicated lines according to priority
@@ -199,7 +202,7 @@ def fix_duplicated_rows_probabilistic_match(df):
     df = order_by_similarity(df)
     df = get_dac_information_probabilistic_match(df)
     columns = ['insc_vest', 'ano_ingresso_curso']
-    df = clean_module.df_operations.remove_duplicated_rows(df, columns)
+    df = rais.clean_module.df_operations.remove_duplicated_rows(df, columns)
     return df
 
 #------------------------------------------------------------------------------------------------

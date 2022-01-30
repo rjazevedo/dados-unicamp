@@ -1,7 +1,6 @@
-import pandas as pd
+import pandas
 import numpy as np
 import re
-import clean_module.dtypes
 
 #------------------------------------------------------------------------------------------------
 def clean_cpf_column(df):
