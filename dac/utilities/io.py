@@ -6,10 +6,13 @@ config = yaml.safe_load(stream)
 
 DATABASE_PATH = config['database']
 RESULT_PATH = config['results']
-IDS_PATH = config['ids']
+EXTERNAL_OUTPUT = config['external']
 
 def read_from_database(FILE_NAME, converters=None):
     return pd.read_excel(DATABASE_PATH + FILE_NAME, converters=converters)
+
+def read_from_external(FILE_NAME, converters=None):
+    return pd.read_excel(EXTERNAL_OUTPUT + FILE_NAME, converters=converters)
 
 def read_multiple_from_database(FILE_NAMES, converters=None):
     return pd.concat([read_from_database(f, converters) for f in FILE_NAMES])
@@ -22,7 +25,3 @@ def read_from(FILENAME, dtype=None, sep=','):
 
 def write_result(df, FILE_NAME):
     df.to_csv(RESULT_PATH + FILE_NAME, index=False)
-
-
-def get_identificadores():
-    return pd.read_csv(IDS_PATH, sep=';', dtype=str)
