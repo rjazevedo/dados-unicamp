@@ -2,4 +2,4 @@
 
 database: # /PATH_TO_REPOSITORY/input/
 results: # /PATH_TO_REPOSITORY/dac/results
-ids: # /PATH_TO_REPOSITORY/output/dac_comvest_ids.csv
+external: # /PATH_TO_REPOSITORY/output/

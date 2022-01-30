@@ -5,6 +5,7 @@
 *.pkl
 *.TXT
 *.txt
+.vscode/*
 dac/configuration.yaml
 # Byte-compiled / optimized / DLL files
 __pycache__/
