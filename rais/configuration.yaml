@@ -1,7 +1,4 @@
-# Put your DATABASE PATH here
-# Insira aqui o caminho para os arquivos originais, e o caminho para o diretório já existente onde serão criados os arquivos limpos
-# Obs: De preferência, crie um diretório separado para os arquivos limpos, pois pode haver conflito de nomes
-# Execute este script a partir do diretório em que o mesmo se encontra, pois caso contrário as funções de verificação falharão
-path_input_data: '/home/larissa/dados-unicamp/input/rais/'
-path_output_data: '/home/larissa/dados-unicamp/output/rais/'
-uniao_dac_comvest: '/home/larissa/dados-unicamp/input/rais/uniao_dac_comvest.csv'
+# Put the path to directory with input data, the path to directory where the clean files will be created and the path to uniao_dac_comvest database
+path_input_data:   # /PATH_TO_REPOSITORY/input/rais/'
+path_output_data:  # /PATH_TO_REPOSITORY/output/rais/'
+uniao_dac_comvest: # /PATH_TO_REPOSITORY/input/rais/uniao_dac_comvest.csv'
