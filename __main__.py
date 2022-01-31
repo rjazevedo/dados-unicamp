@@ -1,6 +1,7 @@
 from dac.extract_database import dac_database
 from dac.create_ids import identificadores
 
+from comvest.assign_ids import comvest_ids
 import comvest.extract.__main__ as comvest_database
 
 import rais.pre_processing.__main__ as pre_process_rais
@@ -21,7 +22,8 @@ def main():
     extract_socio.extract_ids()
     rais_database.clear_databse()
 
-    
+    comvest_ids.assign_ids()
+
     identificadores.generate_dac_ids()
     identificadores.replicate_ids_dac()
     
