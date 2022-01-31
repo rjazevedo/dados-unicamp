@@ -1,7 +1,6 @@
-# Put your DATABASE PATH here
-databasesocio:
-databasecompany:
-databasecnae:
-
-results:
-ids:
+# Put the path to each original file and the path to the directory where the clean files will be created
+database_socio:   # /PATH_TO_REPOSITORY/input/socio/NAME_OF_SOCIO_FILE
+database_company: # /PATH_TO_REPOSITORY/input/socio/NAME_OF_EMPRESA_FILE
+database_cnae:    # /PATH_TO_REPOSITORY/input/socio/NAME_OF_CNAE_SECUNDARIA_FILE
+database_ids:     # /PATH_TO_REPOSITORY/output/rais/dac_comvest_ids.csv
+path_output:      # /PATH_TO_REPOSITORY/output/socio/

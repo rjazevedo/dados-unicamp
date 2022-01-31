@@ -11,7 +11,7 @@ stream = open('socio/configuration.yaml')
 config = yaml.safe_load(stream)
 
 def read_ids():
-    file = config['databaseids']
+    file = config['database_ids']
     dtype = {
         'nome': 'object',
         'cpf': 'object',
@@ -22,18 +22,18 @@ def read_ids():
 
 #------------------------------------------------------------------------------------------------
 def read_socio_original():
-    file = config['databasesocio']
+    file = config['database_socio']
     columns_info = get_columns_info_socio()
     return read_database(file, columns_info)
 
 def read_empresa_original():
-    file = config['databasecompany']
+    file = config['database_company']
     columns_info = get_columns_info_empresa()
-    df = read_database(file, columns_info)
+    df = read_database(file, columns_info, low_memory=False)
     return df
 
 def read_cnae_original():
-    file = config['databasecnae']
+    file = config['database_cnae']
     dtype = {
         0: 'object',
         1: 'object'
@@ -44,43 +44,43 @@ def read_cnae_original():
 
 #------------------------------------------------------------------------------------------------
 def read_socio_clean():
-    file = config['results'] + 'socio.csv'
+    file = config['path_output'] + 'socio.csv'
     columns_info = get_columns_info_socio()
     return read_database(file, columns_info, is_original=False)
 
 def read_empresa_clean():
-    file = config['results'] + 'empresa.csv'
+    file = config['path_output'] + 'empresa.csv'
     columns_info = get_columns_info_empresa()
     df = read_database(file, columns_info, is_original=False)
     return df
 
 def read_cnae_clean():
-    file = config['results'] + 'cnae_secundaria.csv'
+    file = config['path_output'] + 'cnae_secundaria.csv'
     columns_info = get_columns_info_cnae_secundaria()
     df = read_database(file, columns_info, is_original=False)
     return df
 
 #------------------------------------------------------------------------------------------------
 def write_socio(df):
-    file = config['results'] + 'socio.csv'
+    file = config['path_output'] + 'socio.csv'
     write_database(df, file)
 
 def write_empresa(df):
-    file = config['results'] + 'empresa.csv'
+    file = config['path_output'] + 'empresa.csv'
     write_database(df, file)
 
 def write_cnae(df):
-    file = config['results'] + 'cnae_secundaria.csv'
+    file = config['path_output'] + 'cnae_secundaria.csv'
     write_database(df, file)
 
 def write_socio_sample(df):
-    file = config['results'] + 'socio_amostra.csv'
+    file = config['path_output'] + 'socio_amostra.csv'
     write_database(df, file)
 
 #------------------------------------------------------------------------------------------------
-def read_database(file, columns_info, is_original=True):
+def read_database(file, columns_info, is_original=True, low_memory=True):
     dtype = get_dtype(columns_info, is_original=is_original)
-    df = pd.read_csv(file, dtype=dtype)
+    df = pd.read_csv(file, dtype=dtype, low_memory=low_memory)
     return df
 
 def rename_columns_cnae(df):
