@@ -1,7 +1,8 @@
-from identificadores import identificadores
+from create_ids import identificadores
 
 def main():
-    identificadores.generate_ids()
+    identificadores.generate_dac_ids()
+    identificadores.replicate_ids_dac()
 
 if __name__ == '__main__':
     main()
