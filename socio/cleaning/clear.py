@@ -11,33 +11,25 @@ from socio.utilities.io import write_socio
 from socio.utilities.io import write_empresa
 from socio.utilities.io import write_cnae
 
-pd.set_option('display.max_columns', None)
+from socio.utilities.logging import log_cleaning_database
+from socio.utilities.logging import log_cleaning_column
 
-# Clear socio database
-# Input:
-#   file: csv file with socio data
-#   path_output: path where the output will be stored
 def clear_socio():
+    log_cleaning_database('Socio')
     df = read_socio_original()
     columns_info = get_columns_info_socio()
     df = clear_columns(df, columns_info)
     write_socio(df)
 
-# Clear empresa database
-# Input:
-#   file: csv file with empresa data
-#   path_output: path where the output will be stored
 def clear_empresa():
+    log_cleaning_database('Empresa')
     df = read_empresa_original()
     columns_info = get_columns_info_empresa()
     df = clear_columns(df, columns_info)
     write_empresa(df)
 
-# Clear cnae_secundaria database
-# Input:
-#   file: csv file with empresa data
-#   path_output: path where the output will be stored
 def clear_cnae_secundaria():
+    log_cleaning_database('CNAE')
     df = read_cnae_original()
     write_cnae(df)
 
@@ -46,7 +38,7 @@ def clear_columns(df, columns_info):
     df = filter_columns(df, columns_info)
     change_column_types(df, columns_info)
     for column in columns_info:
-        print('Cleaning:', column)
+        log_cleaning_column(column)
         clear_column(df, column, columns_info)
     return df
 

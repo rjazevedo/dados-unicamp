@@ -9,7 +9,10 @@ from socio.extract.standardization_functions import get_first_name
 from socio.extract.standardization_functions import get_reduced_cpf
 from socio.extract.standardization_functions import get_similarity
 
+from socio.utilities.logging import log_extracting_ids
+
 def merge_socio_dac_comvest():
+    log_extracting_ids()
     df_socio = read_socio_clean()
     prepare_socio(df_socio)
     df_dac_comvest = read_ids()
