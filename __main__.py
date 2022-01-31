@@ -20,8 +20,10 @@ def main():
 
     extract_socio.extract_ids()
     rais_database.clear_databse()
-    # TODO: create EXTRACT_RAIS and REPLICATE_IDS func
-    identificadores.generate_ids()
+
+    
+    identificadores.generate_dac_ids()
+    identificadores.replicate_ids_dac()
     
 # TODO: implement verbose option 
 if __name__ == '__main__':

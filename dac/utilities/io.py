@@ -11,8 +11,11 @@ EXTERNAL_OUTPUT = config['external']
 def read_from_database(FILE_NAME, converters=None):
     return pd.read_excel(DATABASE_PATH + FILE_NAME, converters=converters)
 
-def read_from_external(FILE_NAME, converters=None):
-    return pd.read_excel(EXTERNAL_OUTPUT + FILE_NAME, converters=converters)
+def read_from_external(FILE_NAME, dtype=None, sep=','):
+    return pd.read_csv(EXTERNAL_OUTPUT + FILE_NAME, dtype=dtype, sep=sep)
+
+def write_output(df, FILE_NAME):
+    df.to_csv(EXTERNAL_OUTPUT + FILE_NAME, index=False)
 
 def read_multiple_from_database(FILE_NAMES, converters=None):
     return pd.concat([read_from_database(f, converters) for f in FILE_NAMES])
