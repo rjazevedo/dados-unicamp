@@ -7,12 +7,15 @@ from rais.utilities.write import write_rais_merge
 from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_tmp_files
 
+from rais.utilities.logging import log_merge_rais_dac_comvest
+
 # Merge all the years from rais with uniao_dac_comvest and save in file rais.csv
 def merge_all_years():
     df_dac_comvest = read_ids()
     df_dac_comvest = prepare_dac_comvest(df_dac_comvest)
 
     for year in range(2002, 2019):
+        log_merge_rais_dac_comvest(year)
         create_folder_inside_year(year, 'rais_dac_comvest')
         merge_year(df_dac_comvest, year)
 

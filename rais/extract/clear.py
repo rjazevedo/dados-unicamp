@@ -20,8 +20,12 @@ from rais.utilities.read import read_rais_clean
 from rais.utilities.write import write_rais_clean
 from rais.utilities.write import write_rais_sample
 
+from rais.utilities.logging import log_cleaning_year
+from rais.utilities.logging import log_cleaning_file
+
 def clear_all_years():
     for year in range(2002, 2019):
+        log_cleaning_year(year)
         clear_year(year)
     join_all_years()
 
@@ -32,7 +36,7 @@ def clear_year(year):
         clear_file(file, year)
 
 def clear_file(file, year):
-    print('Cleaning', file)
+    log_cleaning_file(file)
     df_clean = read_rais_merge(file)
     df_original = read_rais_original_by_merge(file, year)
     df_final = get_columns(df_clean, df_original, year, file)

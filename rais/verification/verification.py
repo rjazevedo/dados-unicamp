@@ -1,14 +1,19 @@
-import rais.clean_module.rais_information
+import rais.utilities.rais_information
 import pandas as pd
 
 from rais.utilities.read import read_rais_sample
 from rais.utilities.read import read_database
+
+from rais.utilities.logging import log_verifying_database
+from rais.utilities.logging import log_verifying_column
+from rais.utilities.logging import log_show_result
 
 from rais.verification.verification_functions import check_deslig
 from rais.verification.verification_functions import check_cnpj_raiz
 
 # Verify all columns in rais.csv
 def verify_output():
+    log_verifying_database()
     df = read_rais_sample()
     verify_columns(df)
 
@@ -23,28 +28,22 @@ def verify_columns(df):
 
 # Verify column in df and print if it has an invalid value
 def verify_column(column, df):
-    print('Verifying', column)
+    log_verifying_column(column)
     columns_info = rais.clean_module.rais_information.get_columns_info_rais()
     function = columns_info[column]['check_function']
     missed = df[df.apply(lambda x: not function(x[column]), axis=1)]
-    if not missed.empty:
-        values = missed.loc[:,[column]]
-        print(values.head())
+    log_show_result(missed, [column])
 
 #------------------------------------------------------------------------------------------------
 # Verify cnpj_raiz in df and print if it has an invalid value
 def verify_cnpj_raiz(df):
     missed = df[df.apply(lambda x: not check_cnpj_raiz(x['cnpj'], x['cnpj_raiz']), axis=1)]
-    if not missed.empty:
-        values = missed.loc[:,['cnpj_raiz', 'cnpj']]
-        print(values.head())
+    log_show_result(missed, ['cnpj_raiz', 'cnpj'])
 
 # Verify deslig_info in df and print if it has an invalid value
 def verify_deslig_info(df):
     missed = df[df.apply(lambda x: not check_deslig(x['deslig_motivo'], x['deslig_mes'], x['deslig_dia']), axis=1)]
-    if not missed.empty:
-        values = missed.loc[:,['deslig_motivo', 'deslig_mes', 'deslig_dia']]
-        print(values.head())
+    log_show_result(missed, ['deslig_motivo', 'deslig_mes', 'deslig_dia'])
 
 #------------------------------------------------------------------------------------------------
 # Set global variables with all available codes to columns mun, cnae, cbo and nat_juridica
