@@ -11,6 +11,9 @@ from rais.utilities.logging import log_show_result
 from rais.verification.verification_functions import check_deslig
 from rais.verification.verification_functions import check_cnpj_raiz
 
+# TODO: Esse script precisa ser atualizado pra funcionar!!!!!
+# Dá uma olhada no verification do módulo socio, que é uma versão mais atual que eu fiz, e creio que ela pode servir aqui também
+
 # Verify all columns in rais.csv
 def verify_output():
     log_verifying_database()
