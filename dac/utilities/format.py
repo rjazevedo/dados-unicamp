@@ -9,14 +9,14 @@ def str_to_upper_ascii(df, unicode_columns):
     for c in unicode_columns:
         df[c] = normalizar(df[c].values.astype(str))
 
-def padronize_sex(df):
-    df.sexo = df.sexo.map ({
+def padronize_sex(df, name_column):
+    df[name_column] = df[name_column].map ({
         'MASCULINO' : 1, 
         'FEMININO' : 2
         }).fillna(0).astype(int)
 
-def padronize_race(df):
-    df.raca = df.raca.map({
+def padronize_race(df, name_column):
+    df[name_column] = df[name_column].map({
         0 : 0, # NAO DECLARADO
         1 : 4, # AMARELA 
         2 : 1, # BRANCA
@@ -25,8 +25,8 @@ def padronize_race(df):
         5 : 3  # PARDA
         }).fillna(0).astype(int)
 
-def padronize_marstat(df):
-    df.est_civil = df.est_civil.map({
+def padronize_marstat(df, name_column):
+    df[name_column] = df[name_column].map({
         "SOLTEIRO" : 1,
         "CASADO" : 2,
         "VIUVO" : 3,
