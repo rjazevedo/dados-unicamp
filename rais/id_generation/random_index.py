@@ -4,8 +4,10 @@ import re
 
 from rais.utilities.read import read_dac_comvest_recovered
 from rais.utilities.write import write_dac_comvest_ids
+from rais.utilities.logging import log_create_index
 
 def generate_index():
+    log_create_index()
     df = read_dac_comvest_recovered()
 
     df['doc'] = df.apply(lambda x: clear_document(x['doc']), axis=1)
