@@ -1,7 +1,7 @@
-import glob
 import re
 import pandas as pd
 from unidecode import unidecode
+from comvest.utilities.io import files, read_from_db, write_result
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -32,9 +32,9 @@ def data_nasc(row, df):
     res = dia + mes + ano
 
   elif all(x in df.columns for x in ('DIA','MES','ANO')):
-    dia = row['DIA'].zfill(2)
-    mes = row['MES'].zfill(2)
-    ano = row['ANO']
+    dia = str(row['DIA']).zfill(2)
+    mes = str(row['MES']).zfill(2)
+    ano = str(row['ANO'])
 
     if len(ano) < 4:
       ano = '19' + ano
@@ -63,7 +63,7 @@ def tratar_inscricao(df):
 def tratar_CPF(df):
   # Checa se existe a coluna de CPF
   if 'CPF' in df.columns:
-    df['CPF'] = df['CPF'].map(lambda cpf: cpf if len(cpf) == 11 else cpf.zfill(11))
+    df['CPF'] = df['CPF'].map(lambda cpf: str(cpf).zfill(11))
   else:
     df.insert(loc=1, column='CPF', value='-')
 
@@ -104,6 +104,7 @@ def tratar_nacionalidade(df):
   for col in df.columns:
     if col in {'NACIONALID','NACION','NACIONALIDADE'}:
       df.rename({col: 'NACIONALIDADE'}, axis=1, inplace=True)
+      df['NACIONALIDADE'] = pd.to_numeric(df['NACIONALIDADE'], errors='coerce', downcast='integer').astype('Int64')
 
       return df
 
@@ -133,7 +134,8 @@ def tratar_cep(df):
     if col in {'CEP','CEPEND','CEP_END','CEP3'}:
       df.rename({col: 'CEP_RESID'}, axis=1, inplace=True)
 
-      df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: re.sub(r'[^0-9]','',str(cep)))
+      fill = df['CEP_RESID'].map(lambda x: len(re.sub(r'[^0-9]','',str(x)))).max()
+      df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: re.sub(r'[^0-9]','',str(cep)).zfill(fill))
       # df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: '{:<08s}'.format(cep) if cep != '' else cep)
 
       return df
@@ -168,13 +170,13 @@ def tratar_opvest(df,date,path):
   for col in df.columns:
     if any(opc in col for opc in {'OPCAO1','OP1','OPCAO1OR'}):
       df.rename({col: 'OPCAO1'}, axis=1, inplace=True)
-      df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce')
+      df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer')
     if any(opc in col for opc in {'OPCAO2','OP2','OPCAO2OR'}):
       df.rename({col: 'OPCAO2'}, axis=1, inplace=True)
-      df['OPCAO2'] = pd.to_numeric(df['OPCAO2'], errors='coerce')
+      df['OPCAO2'] = pd.to_numeric(df['OPCAO2'], errors='coerce', downcast='integer')
     if any(opc in col for opc in {'OPCAO3','OP3'}):
       df.rename({col: 'OPCAO3'}, axis=1, inplace=True)
-      df['OPCAO3'] = pd.to_numeric(df['OPCAO3'], errors='coerce')
+      df['OPCAO3'] = pd.to_numeric(df['OPCAO3'], errors='coerce', downcast='integer')
     
   # Opcao 1 = 22 (Musica) - deve-se remapear para o codigo referente a enfase, obtida no perfil
   if (date == 2001) or (date == 2002) or (date == 2003):
@@ -184,6 +186,7 @@ def tratar_opvest(df,date,path):
 
     df = df.merge(emphasis, how='inner', left_on=['INSC'], right_on=['insc_cand'])
     df.rename({'opcao1':'OPCAO1'}, axis=1, inplace=True)
+    df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer')
 
   return df
 
@@ -223,7 +226,7 @@ def tratar_tipo_escola(df):
   # Checa coluna do tipo da escola do ensino médio do candidato
   for col in df.columns:
     if col in {'TIPOESC','TIPO_ESC','TIPO_ESCOL','TIPO_ESCOLA'}:
-      df['TIPO_ESCOLA_EM'] = df.apply(lambda row: int(str(row[col]).split('.')[0]) if (str(row[col]).split('.')[0].isdigit() and 1 <= float(row[col]) <= 2) else '', axis=1)
+      df['TIPO_ESCOLA_EM'] = pd.to_numeric(df[col], errors='coerce', downcast='integer').astype('Int64')
 
       return df
 
@@ -234,7 +237,7 @@ def tratar_ano_conclu(df):
   for col in df.columns:
     if col in {'ANO_CONCLU','ANOCONC','ANO_CONC','ANO_CONCLUSAO'}:
       df.rename({col: 'ANO_CONCLU_EM'}, axis=1, inplace=True)
-      df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].map(lambda ano: ano if len(str(ano)) == 4 else ('19' + str(ano)))
+      df['ANO_CONCLU_EM'] = pd.to_numeric(df['ANO_CONCLU_EM'], errors='coerce', downcast='integer').astype('Int64')
 
       return df
 
@@ -280,23 +283,17 @@ def tratar_dados(df,date,path,ingresso=1):
   return df
 
 
-# Gets all the file names and makes a dictionary with 
-# file path as key and the respective date of the file as its value
-files_path = glob.glob("input/comvest/*")
-files = { path: int(re.sub('[^0-9]','',path)) for path in files_path }
-
-
 def extraction():
   dados_comvest = []
 
   for path, date in files.items():
-    df = pd.read_excel(path, sheet_name='dados', dtype=str)
+    df = read_from_db(path, sheet_name='dados')
 
     df = tratar_dados(df,date,path)
 
     if date >= 2019:
-      vi_dados = pd.read_excel(path, sheet_name='vi_dados', dtype=str)
-      vo_dados = pd.read_excel(path, sheet_name='vo_dados', dtype=str)
+      vi_dados = read_from_db(path, sheet_name='vi_dados')
+      vo_dados = read_from_db(path, sheet_name='vo_dados')
 
       vi_dados = tratar_dados(vi_dados, date, path, ingresso=2)                  # 2 - Vestibular Indigena
       vo_dados = tratar_dados(vo_dados, date, path, ingresso=3)                  # 3 - Vagas Olimpicas
@@ -304,7 +301,7 @@ def extraction():
       df = pd.concat([df, vi_dados, vo_dados])
 
       if date != 2021:
-        ve_dados = pd.read_excel(path, sheet_name='ve_dados', dtype=str)
+        ve_dados = read_from_db(path, sheet_name='ve_dados')
 
         ve_dados = tratar_dados(ve_dados, date, path, ingresso=4)                # 4 - ENEM-Unicamp
 
@@ -318,5 +315,5 @@ def extraction():
   dados_comvest.sort_values(by='ano_vest', ascending=False, inplace=True)
   dados_comvest = dados_comvest[dados_comvest['nome_c'].notnull()]
 
-  file_name = 'dados_comvest'
-  dados_comvest.to_csv("output/{}.csv".format(file_name), index=False)
+  FILE_NAME = 'dados_comvest.csv'
+  write_result(dados_comvest, FILE_NAME)

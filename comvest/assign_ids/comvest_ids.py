@@ -1,13 +1,14 @@
 import pandas as pd
+from comvest.utilities.io import read_output, write_output
 
 
 def assign_ids():
-    comvest = pd.read_csv('output/comvest_amostra.csv', dtype=str)
+    comvest = read_output('comvest_amostra.csv')
 
-    ids = pd.read_csv('dac_comvest_ids.csv', dtype=str, sep=';').loc[:, ['id','insc_vest','ano_ingresso_curso']]
+    ids = read_output('dac_comvest_ids.csv', sep=';').loc[:, ['id','insc_vest','ano_ingresso_curso']]
     ids.columns = ['id', 'insc_vest', 'ano_vest']
 
 
     comvest_with_ids = pd.merge(comvest, ids, on=['insc_vest','ano_vest'], how='left')
 
-    comvest_with_ids.to_csv('output/comvest_amostra.csv', index=False)
+    write_output(comvest_with_ids, 'comvest_amostra.csv')

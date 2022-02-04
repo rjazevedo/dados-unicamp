@@ -1,9 +1,8 @@
-import glob
 import logging
-import re
 import pandas as pd
 from unidecode import unidecode
 import numpy as np
+from comvest.utilities.io import files, read_from_db, read_result, write_result
 from comvest.clear_perfil import normalizar_respostas
 from comvest.clear_perfil import limpeza_questoes
 
@@ -58,14 +57,9 @@ def cleandata(df, questoes, date):
   return df
 
 
-# Gets all the file names and makes a dictionary with 
-# file path as key and the respective date of the file as its value
-files_path = glob.glob("input/comvest/*")
-files = { path: int(re.sub('[^0-9]','',path)) for path in files_path }
-
 # Leitura das cidades e cursos p posterior validação
-df_cidades = pd.read_csv('output/cidades_comvest.csv')
-df_cursos = pd.read_csv('output/cursos_comvest.csv')
+df_cidades = read_result('cidades_comvest.csv')
+df_cursos = read_result('cursos_comvest.csv')
 
 def extraction():
   perfil_comvest = []
@@ -76,7 +70,8 @@ def extraction():
   ]
 
   for path, date in files.items():
-    df = pd.read_excel(path, sheet_name='perfil')
+    df = read_from_db(path, sheet_name='perfil')
+
     # Mudar print para logs
     print('File was read from {}'.format(path))
 
@@ -170,7 +165,7 @@ def extraction():
     ])
 
     # Mudar print para logs
-    print('{} was transformed'.format(path.split('/')[2].split('.')[0]))
+    print('{} was transformed'.format(path.split('/')[-1].split('.')[0]))
 
     perfil_comvest.append(df)
 
@@ -178,5 +173,5 @@ def extraction():
   perfil_comvest = pd.concat(perfil_comvest)
   perfil_comvest.sort_values(by='ano_vest', ascending=False, inplace=True)
 
-  file_name = 'perfil_comvest'
-  perfil_comvest.to_csv("output/{}.csv".format(file_name), index=False)
+  FILE_NAME = 'perfil_comvest.csv'
+  write_result(perfil_comvest, FILE_NAME)

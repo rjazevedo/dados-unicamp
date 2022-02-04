@@ -1,4 +1,4 @@
-import pandas as pd
+from comvest.utilities.io import read_from_db
 
 
 def filtrar_perguntas(desc):
@@ -125,7 +125,7 @@ def filtrar_perguntas(desc):
   return 'TODO'
 
 def get_questions(path):
-  df = pd.read_excel(path, sheet_name='questoes')
+  df = read_from_db(path, sheet_name='questoes')
 
   # Filtra as linhas do questionário com a descrição da pergunta
   df_questoes = df[df['resposta'] == 99]

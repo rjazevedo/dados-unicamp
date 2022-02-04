@@ -1,11 +1,12 @@
 from functools import reduce
+from comvest.utilities.io import read_result, write_output
 import pandas as pd
 
 def merge(dropcolumns=['nome_c','doc_c','cpf','dta_nasc_c','nome_pai_c','nome_mae_c']):
-    dados = pd.read_csv('output/dados_comvest.csv', dtype=str)
-    perfil = pd.read_csv('output/perfil_comvest.csv', dtype=str)
-    notas = pd.read_csv('output/notas_comvest.csv', dtype=str)
-    matriculados = pd.read_csv('output/matriculados_comvest.csv', dtype=str)
+    dados = read_result('dados_comvest.csv')
+    perfil = read_result('perfil_comvest.csv')
+    notas = read_result('notas_comvest.csv')
+    matriculados = read_result('matriculados_comvest.csv')
 
     dfs = [dados, perfil, matriculados, notas]
 
@@ -14,4 +15,5 @@ def merge(dropcolumns=['nome_c','doc_c','cpf','dta_nasc_c','nome_pai_c','nome_ma
     # Retira variáveis que não serão disponibilizadas na base final
     base_comvest.drop(columns=dropcolumns, inplace=True)
 
-    base_comvest.to_csv('output/comvest_amostra.csv', index=False)
+    FILE_NAME = 'comvest_amostra.csv'
+    write_output(base_comvest, FILE_NAME)

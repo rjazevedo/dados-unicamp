@@ -1,37 +1,36 @@
-import glob
-import re
 import pandas as pd
+from comvest.utilities.io import files, read_from_db, write_result
 
 
 def leitura_notas(path, date):
-	notas_f1 = pd.read_excel(path, sheet_name='notasf1')
+	notas_f1 = read_from_db(path, sheet_name='notasf1')
 
 	try:
-		notas_f2 = pd.read_excel(path, sheet_name='notasfin')
+		notas_f2 = read_from_db(path, sheet_name='notasfin')
 	except ValueError:
 		try:
-			notas_f2 = pd.read_excel(path, sheet_name='notasfinal')
+			notas_f2 = read_from_db(path, sheet_name='notasfinal')
 		except ValueError:
-			notas_f2 = pd.read_excel(path, sheet_name='notasf2')
+			notas_f2 = read_from_db(path, sheet_name='notasf2')
 
 	# 2010 e 2011 nao tem dados sobre o ENEM
 	# ENEM passa a ser usado como complemento no vestibular Comvest a partir de 2000
 	if date not in {2010, 2011} and (2000 <= date <= 2018):
-		notas_enem = pd.read_excel(path, sheet_name='enem{}'.format(date))
+		notas_enem = read_from_db(path, sheet_name='enem{}'.format(date))
 		notas_enem.columns = ['insc','nota_enem']
 	elif 2019 <= date <= 2020:
-		notas_enem = pd.read_excel(path, sheet_name='ve_notas')
+		notas_enem = read_from_db(path, sheet_name='ve_notas')
 	else:
 		notas_enem = pd.DataFrame(columns=['insc','nota_enem'])
 
 
 	try:
-		notas_vi = pd.read_excel(path, sheet_name='vi_notas')
+		notas_vi = read_from_db(path, sheet_name='vi_notas')
 	except ValueError:
 		notas_vi = None
 
 	try:
-		notas_vo = pd.read_excel(path, sheet_name='vo_notas')
+		notas_vo = read_from_db(path, sheet_name='vo_notas')
 	except ValueError:
 		notas_vo = None
 
@@ -137,11 +136,6 @@ def tratar_notas_vo(notas_vo, date):
 	return notas_vo
 
 
-# Gets all the file names and makes a dictionary with 
-# file path as key and the respective date of the file as its value
-files_path = glob.glob("input/comvest/*")
-files = { path: int(re.sub('[^0-9]','',path)) for path in files_path }
-
 def extraction():
 	notas_comvest = []
 
@@ -167,12 +161,11 @@ def extraction():
 		notas_final.dropna(subset=['insc_vest'], inplace=True)
 
 		notas_comvest.append(notas_final)
-		print('falta: ', 35 - len(notas_comvest))
 
 
 	# Exportar CSV
 	notas_comvest = pd.concat(notas_comvest)
 	notas_comvest.sort_values(by='ano_vest', ascending=False, inplace=True)
 
-	file_name = 'notas_comvest'
-	notas_comvest.to_csv("output/{}.csv".format(file_name), index=False)
+	FILE_NAME = 'notas_comvest.csv'
+	write_result(notas_comvest, FILE_NAME)
