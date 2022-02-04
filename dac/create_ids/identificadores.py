@@ -18,7 +18,7 @@ def replicate_ids_dac():
 
     ids = read_result('identifs.csv')
 
-    dados_cadastrais = ids.merge(dados_cadastrais).drop('identif', axis=1)
+    dados_cadastrais = ids.merge(dados_cadastrais).drop(['identif', 'cpf', 'doc', 'nome'], axis=1)
     vida_academica = ids.merge(vida_academica).drop('identif', axis=1)
     historico_escolar = ids.merge(historico_escolar).drop('identif', axis=1)
     resumo_por_periodo = ids.merge(resumo_por_periodo).drop('identif', axis=1)

@@ -13,10 +13,13 @@ from rais.utilities.file import get_all_original_files_year
 from rais.utilities.read import read_rais_original
 from rais.utilities.write import write_rais_identification
 
+from rais.utilities.logging import log_pre_process
+
 # Clean all csv files from all years. Each year must must have a folder named "original_data"
 def get_identification_from_all_years():
     create_folder_tmp()
     for year in range(2002, 2019):
+        log_pre_process(year)
         create_folder_year(year)
         get_identification_from_year(year)
 

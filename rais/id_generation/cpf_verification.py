@@ -7,14 +7,15 @@ from rais.utilities.write import write_dac_comvest_valid
 from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_tmp_files
 
+from rais.utilities.logging import log_remove_invalid_cpf
+
 def remove_invalid_cpf():
+    log_remove_invalid_cpf()
     df_dac_comvest = read_dac_comvest()
     df_dac_comvest_merge = prepare_dac_comvest(df_dac_comvest)
-
     df_result = merge_by_cpf(df_dac_comvest_merge)
     df_result = get_invalid_cpf(df_result)
     df_result = change_invalid_cpf(df_dac_comvest, df_result)
-
     write_dac_comvest_valid(df_result)
 
 def prepare_dac_comvest(df):
@@ -26,18 +27,16 @@ def prepare_dac_comvest(df):
 def merge_by_cpf(df_dac_comvest):
     dfs = []
     for year in range(2002, 2019):
-        create_folder_inside_year(year, 'rais_dac_comvest')
         df = merge_year(df_dac_comvest, year)
         dfs.append(df)
     df_result = pd.concat(dfs, sort=False)
     return df_result
 
-# Merge rais from year with df_dac_comvest and save in files in rais_dac_comvest directory
+# Merge rais from year with df_dac_comvest
 def merge_year(df_dac_comvest, year):
     files = get_all_tmp_files(year, 'identification_data', 'pkl')
     dfs = []
     for file_rais in files:
-        print(file_rais)
         df_rais = read_rais_identification(file_rais)
         df = merge_dfs(df_rais, df_dac_comvest)
         dfs.append(df)

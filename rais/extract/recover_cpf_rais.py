@@ -5,12 +5,14 @@ from rais.utilities.read import read_rais_merge
 from rais.utilities.read import read_rais_merge_by_identification
 from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_rais_merge
+from rais.utilities.logging import log_recover_cpf_rais
 
 def recover_cpf_all_years():
     df = join_all_years()
     df_pis_cpf = get_pis_cpf(df)
 
     for year in range(2002, 2019):
+        log_recover_cpf_rais(year)
         recover_cpf_year(df_pis_cpf, year)
 
 #------------------------------------------------------------------------------------------------
@@ -45,7 +47,6 @@ def get_pis_cpf(df):
 def recover_cpf_year(df_pis_cpf, year):
     files = get_all_tmp_files(year, 'identification_data', 'pkl')
     for file in files:
-        print("Recovering:", file)
         recover_cpf_file(df_pis_cpf, file, year)
 
 def recover_cpf_file(df_pis_cpf, file, year):

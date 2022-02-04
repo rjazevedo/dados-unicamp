@@ -9,6 +9,11 @@ from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_dac_comvest_recovered
 from rais.utilities.file import get_all_tmp_files
 
+from rais.utilities.logging import log_recover_cpf_exact_match
+from rais.utilities.logging import log_recover_cpf_probabilistic_match
+from rais.utilities.logging import log_recover_from_year
+from rais.utilities.logging import log_filter_results
+
 #------------------------------------------------------------------------------------------------
 
 UNICO = 3
@@ -24,9 +29,15 @@ MIN_HIGH_SIMILARITY = 0.8
 def recover_cpf_dac_comvest():
     df_dac_comvest = read_dac_comvest_valid()
     df_cpf_missing = get_cpf_missing_dac_comvest(df_dac_comvest)
+
+    log_recover_cpf_exact_match()
     df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing)
+
     df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
+
+    log_recover_cpf_probabilistic_match()
     df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(df_cpf_missing)
+
     df_final = join_cpf_recovered(df_dac_comvest, df_cpf_recovered_exact_match, df_cpf_recovered_probabilistic_match)
     write_dac_comvest_recovered(df_final)
 
@@ -41,6 +52,7 @@ def get_cpf_missing_dac_comvest(df):
 def recover_cpf_exact_match(df):
     prepare_df_dac_comvest_exact_match(df)
     df_recovered = merge_with_rais(df, False)
+    log_filter_results()
     df_recovered = remove_invalid_cpf(df_recovered)
     df_recovered = fix_duplicated_rows_exact_match(df_recovered)
     return df_recovered
@@ -55,6 +67,7 @@ def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
 def recover_cpf_probabilistic_match(df):
     prepare_df_dac_comvest_probabilistic_match(df)
     df_merged = merge_with_rais(df, True)
+    log_filter_results()
     df_recovered = remove_invalid_cpf(df_merged)
     df_recovered = fix_duplicated_rows_probabilistic_match(df_recovered)
     return df_recovered
@@ -99,6 +112,7 @@ def get_first_name(name):
 def merge_with_rais(df_dac_comvest, is_probabilistic):
     dfs = []
     for year in range(2002, 2019):
+        log_recover_from_year(year)
         df_recovered = merge_with_rais_year(df_dac_comvest, year, is_probabilistic)
         dfs.append(df_recovered)
 
