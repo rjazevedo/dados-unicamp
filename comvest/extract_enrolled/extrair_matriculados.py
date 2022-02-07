@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, read_result, write_result
 
@@ -24,7 +25,11 @@ def validacao_curso(df, date):
 
 
 # Leitura dos cursos p posterior validação
-df_cursos = read_result('cursos_comvest.csv')
+try:
+  df_cursos = read_result('cursos_comvest.csv')
+except:
+  logging.warning('Couldn\'t find "cursos_comvest.csv"')
+
 
 def extraction():
   matriculados_frames = []

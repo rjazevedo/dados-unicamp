@@ -58,8 +58,16 @@ def cleandata(df, questoes, date):
 
 
 # Leitura das cidades e cursos p posterior validação
-df_cidades = read_result('cidades_comvest.csv')
-df_cursos = read_result('cursos_comvest.csv')
+try:
+  df_cidades = read_result('cidades_comvest.csv')
+except:
+  logging.warning('Couldn\'t find "cidades_comvest.csv"')
+
+try:
+  df_cursos = read_result('cursos_comvest.csv')
+except:
+  logging.warning('Couldn\'t find "cursos_comvest.csv"')
+
 
 def extraction():
   perfil_comvest = []
