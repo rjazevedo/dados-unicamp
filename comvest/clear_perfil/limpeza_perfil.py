@@ -3,6 +3,7 @@ import pandas as pd
 from unidecode import unidecode
 import numpy as np
 from comvest.utilities.io import files, read_from_db, read_result, write_result
+from comvest.utilities.logging import progresslog, resultlog
 from comvest.clear_perfil import normalizar_respostas
 from comvest.clear_perfil import limpeza_questoes
 
@@ -79,9 +80,7 @@ def extraction():
 
   for path, date in files.items():
     df = read_from_db(path, sheet_name='perfil')
-
-    # Mudar print para logs
-    print('File was read from {}'.format(path))
+    progresslog('perfil', date)
 
     # Obtém dicionário com as perguntas do questionario devidamente renomeadas
     df_questoes, _ = limpeza_questoes.get_questions(path)
@@ -183,3 +182,4 @@ def extraction():
 
   FILE_NAME = 'perfil_comvest.csv'
   write_result(perfil_comvest, FILE_NAME)
+  resultlog(FILE_NAME)

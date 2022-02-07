@@ -1,5 +1,6 @@
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, write_result
+from comvest.utilities.logging import progresslog, resultlog
 
 
 def cleandata(df,date,keepcolumns=['ano_vest','cod_curso','desc_curso','he','mod_isencao']):
@@ -21,6 +22,7 @@ def extraction():
 
 	for path, date in files.items():
 		courses = read_from_db(path, sheet_name='cursos')
+		progresslog('cursos', date)
 
 		courses = cleandata(courses, date)
 		courses_frames.append(courses)
@@ -31,3 +33,4 @@ def extraction():
 
 	FILE_NAME = 'cursos_comvest.csv'
 	write_result(all_courses, FILE_NAME)
+	resultlog(FILE_NAME)

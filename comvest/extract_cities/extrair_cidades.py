@@ -1,5 +1,6 @@
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, write_result
+from comvest.utilities.logging import progresslog, resultlog
 from unidecode import unidecode
 
 
@@ -29,6 +30,7 @@ def extraction():
 
   for path, date in files.items():
     cities = read_from_db(path, sheet_name='cidades')
+    progresslog('cidades', date)
 
     # Cidades do Vestibular Indígena (aplicado a partir de 2019)
     if date >= 2019:
@@ -44,3 +46,4 @@ def extraction():
 
   FILE_NAME = 'cidades_comvest.csv'
   write_result(all_cities, FILE_NAME)
+  resultlog(FILE_NAME)

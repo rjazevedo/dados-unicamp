@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, read_result, write_result
+from comvest.utilities.logging import progresslog, resultlog
 
 
 def cleandata(df, date):
@@ -36,6 +37,7 @@ def extraction():
 
   for path, date in files.items():
     matriculados = read_from_db(path, sheet_name='matriculados')
+    progresslog('matriculados', date)
 
     matriculados = cleandata(matriculados, date)
     matriculados = validacao_curso(matriculados, date)
@@ -48,3 +50,4 @@ def extraction():
 
   FILE_NAME = 'matriculados_comvest.csv'
   write_result(all_matriculados, FILE_NAME)
+  resultlog(FILE_NAME)

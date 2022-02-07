@@ -1,5 +1,6 @@
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, write_result
+from comvest.utilities.logging import progresslog, resultlog
 
 
 def leitura_notas(path, date):
@@ -141,6 +142,7 @@ def extraction():
 
 	for path, date in files.items():
 		notas_f1, notas_f2, notas_enem, notas_vi, notas_vo = leitura_notas(path,date)
+		progresslog('notas', date)
 
 		notas_f1 = tratar_notas_f1(notas_f1, date)
 		notas_f2 = tratar_notas_f2(notas_f2, date)
@@ -169,3 +171,4 @@ def extraction():
 
 	FILE_NAME = 'notas_comvest.csv'
 	write_result(notas_comvest, FILE_NAME)
+	resultlog(FILE_NAME)

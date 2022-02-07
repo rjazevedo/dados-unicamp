@@ -2,6 +2,7 @@ import re
 import pandas as pd
 from unidecode import unidecode
 from comvest.utilities.io import files, read_from_db, write_result
+from comvest.utilities.logging import progresslog, resultlog
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -288,6 +289,7 @@ def extraction():
 
   for path, date in files.items():
     df = read_from_db(path, sheet_name='dados')
+    progresslog('dados', date)
 
     df = tratar_dados(df,date,path)
 
@@ -317,3 +319,4 @@ def extraction():
 
   FILE_NAME = 'dados_comvest.csv'
   write_result(dados_comvest, FILE_NAME)
+  resultlog(FILE_NAME)
