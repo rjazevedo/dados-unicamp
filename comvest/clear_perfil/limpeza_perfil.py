@@ -39,15 +39,17 @@ def cleandata(df, questoes, date):
   df = df.rename(questoes, axis=1)
   df = df.rename({'insc_cand':'insc_vest','curpas':'curso_aprovado','aprovf2':'aprov_f1','local_residencia':'local_resid'}, axis=1)
 
+  df['insc_vest'] = pd.to_numeric(df['insc_vest'], errors='coerce', downcast='integer').astype('Int64')
   df['ano_vest'] = date
 
   # 75 => Medicina Famerp; 81 => Enfermagem Famerp
   df['instituicao'] = df.apply(lambda row: 2 if row['opcao1'] in [75,81] else 1, axis=1)
 
-  df['aprov_f1'] = df['aprov_f1'].map({'S':1, 'N':0, 1:1, 0:0})
+  df['aprov_f1'] = df['aprov_f1'].map({'S':1, 'N':0, 1:1, 0:0}).fillna(0).astype('Int64')
 
   try:
     df.insert(loc=df.columns.get_loc('local_resid')+1, column='reg_campinas', value='')
+    df['local_resid'] = pd.to_numeric(df['local_resid'], errors='coerce', downcast='integer').astype('Int64')
   except:
       # logging.debug('File read from {} doesn\'t have a \'local_resid\' column'.format(path))
       print('Comvest {} file doesn\'t have a \'local_resid\' column'.format(date))
@@ -79,7 +81,7 @@ def extraction():
   ]
 
   for path, date in files.items():
-    df = read_from_db(path, sheet_name='perfil')
+    df = read_from_db(path, sheet_name='perfil', dtype=object)
     progresslog('perfil', date)
 
     # Obtém dicionário com as perguntas do questionario devidamente renomeadas

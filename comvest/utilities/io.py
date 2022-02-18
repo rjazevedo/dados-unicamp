@@ -15,14 +15,14 @@ EXTERNAL_OUTPUT = config['external']
 files_path = glob.glob(DATABASE_PATH + '*')
 files = { path: int(re.sub('[^0-9]','',path)) for path in files_path }
 
-def read_from_db(PATH, sheet_name):
-    return pd.read_excel(PATH, sheet_name=sheet_name)
+def read_from_db(PATH, sheet_name, dtype=None):
+    return pd.read_excel(PATH, sheet_name=sheet_name, dtype=dtype)
 
-def read_result(FILE_NAME):
-    return pd.read_csv(RESULT_PATH + FILE_NAME)
+def read_result(FILE_NAME, dtype=None):
+    return pd.read_csv(RESULT_PATH + FILE_NAME, dtype=dtype)
 
-def read_output(FILE_NAME, dtype=None, sep=','):
-    return pd.read_csv(EXTERNAL_OUTPUT + FILE_NAME, dtype=dtype, sep=sep)
+def read_output(FILE_NAME, dtype=None, sep=',', na_values=None):
+    return pd.read_csv(EXTERNAL_OUTPUT + FILE_NAME, dtype=dtype, sep=sep, na_values=na_values)
 
 def write_result(df, FILE_NAME):
     df.to_csv(RESULT_PATH + FILE_NAME, index=False)

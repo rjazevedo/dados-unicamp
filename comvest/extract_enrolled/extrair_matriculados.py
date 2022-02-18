@@ -9,6 +9,7 @@ def cleandata(df, date):
   df.drop('nome', axis=1, errors='ignore', inplace=True)
   df = df.iloc[:,0:3]
   df.columns = ['ano_vest','insc_vest','curso_matric']
+  df['insc_vest'] = pd.to_numeric(df['insc_vest'], errors='coerce', downcast='integer').astype('Int64')
   df.dropna(inplace=True)
 
   return df

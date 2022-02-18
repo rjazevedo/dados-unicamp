@@ -16,7 +16,7 @@ def data_nasc(row, df):
     else:
       data = row['DTNASC']
 
-    data = str(data)
+    data = str(data).split('.')[0]
 
     if data == 'nan': return ('-')
 
@@ -51,13 +51,15 @@ def data_nasc(row, df):
 def tratar_inscricao(df):
   # Checa Número de Inscrição de acordo com as diferentes variações no nome da coluna e retira o '\.0' da string
   if 'INSC' in df.columns:
-    df['INSC'] = df['INSC'].astype(str).replace('\.0', '', regex=True)
+    df['INSC'] = df['INSC'].astype("string").replace('\.0', '', regex=True)
   elif 'INSC_CAND' in df.columns:
-    df['INSC'] = df['INSC_CAND'].astype(str).replace('\.0', '', regex=True)
+    df['INSC'] = df['INSC_CAND'].astype("string").replace('\.0', '', regex=True)
   elif 'INSC_cand' in df.columns:
-    df['INSC'] = df['INSC_cand'].astype(str).replace('\.0', '', regex=True)
+    df['INSC'] = df['INSC_cand'].astype("string").replace('\.0', '', regex=True)
   elif 'INSCRICAO' in df.columns:
-    df['INSC'] = df['INSCRICAO'].astype(str).replace('\.0', '', regex=True)
+    df['INSC'] = df['INSCRICAO'].astype("string").replace('\.0', '', regex=True)
+  
+  df['INSC'] = pd.to_numeric(df['INSC'], errors='coerce', downcast='integer').astype('Int64')
   
   return df
 
@@ -141,6 +143,9 @@ def tratar_cep(df):
 
       return df
 
+  if 'CEP_RESID' not in df.columns:
+    df['CEP_RESID'] = '-'
+
   return df
 
 def tratar_mun_resid(df):
@@ -171,23 +176,26 @@ def tratar_opvest(df,date,path):
   for col in df.columns:
     if any(opc in col for opc in {'OPCAO1','OP1','OPCAO1OR'}):
       df.rename({col: 'OPCAO1'}, axis=1, inplace=True)
-      df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer')
+      df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer').astype('Int64')
     if any(opc in col for opc in {'OPCAO2','OP2','OPCAO2OR'}):
       df.rename({col: 'OPCAO2'}, axis=1, inplace=True)
-      df['OPCAO2'] = pd.to_numeric(df['OPCAO2'], errors='coerce', downcast='integer')
+      df['OPCAO2'] = pd.to_numeric(df['OPCAO2'], errors='coerce', downcast='integer').astype('Int64')
+      df['OPCAO2'].replace(to_replace=0, value=pd.NA, inplace=True)
     if any(opc in col for opc in {'OPCAO3','OP3'}):
       df.rename({col: 'OPCAO3'}, axis=1, inplace=True)
-      df['OPCAO3'] = pd.to_numeric(df['OPCAO3'], errors='coerce', downcast='integer')
+      df['OPCAO3'] = pd.to_numeric(df['OPCAO3'], errors='coerce', downcast='integer').astype('Int64')
+      df['OPCAO3'].replace(to_replace=0, value=pd.NA, inplace=True)
     
   # Opcao 1 = 22 (Musica) - deve-se remapear para o codigo referente a enfase, obtida no perfil
   if (date == 2001) or (date == 2002) or (date == 2003):
     emphasis = pd.read_excel(path, sheet_name='perfil', usecols=['insc_cand','opcao1'], dtype=str)
-  
-    df.drop(columns='OPCAO1', errors='ignore', inplace=True)
+    emphasis['insc_cand'] = pd.to_numeric(emphasis['insc_cand'], errors='coerce', downcast='integer').astype('Int64')
+
+    df.drop(columns='OPCAO1', inplace=True)
 
     df = df.merge(emphasis, how='inner', left_on=['INSC'], right_on=['insc_cand'])
     df.rename({'opcao1':'OPCAO1'}, axis=1, inplace=True)
-    df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer')
+    df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer').astype('Int64')
 
   return df
 
@@ -238,6 +246,8 @@ def tratar_ano_conclu(df):
   for col in df.columns:
     if col in {'ANO_CONCLU','ANOCONC','ANO_CONC','ANO_CONCLUSAO'}:
       df.rename({col: 'ANO_CONCLU_EM'}, axis=1, inplace=True)
+      df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].fillna(value='')
+      df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].map(lambda ano: '19'+str(ano) if len(str(ano)) == 2 else ano)
       df['ANO_CONCLU_EM'] = pd.to_numeric(df['ANO_CONCLU_EM'], errors='coerce', downcast='integer').astype('Int64')
 
       return df
@@ -288,7 +298,7 @@ def extraction():
   dados_comvest = []
 
   for path, date in files.items():
-    df = read_from_db(path, sheet_name='dados')
+    df = read_from_db(path, sheet_name='dados', dtype=str)
     progresslog('dados', date)
 
     df = tratar_dados(df,date,path)

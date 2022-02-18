@@ -160,6 +160,7 @@ def extraction():
 
 		# Renomeia a variável da inscrição para insc_vest para posteriormente fazer o merge com os outros DFs.
 		notas_final.rename({'insc':'insc_vest'}, axis=1, inplace=True)
+		notas_final['insc_vest'] = pd.to_numeric(notas_final['insc_vest'], errors='coerce', downcast='integer').astype('Int64')
 		notas_final.dropna(subset=['insc_vest'], inplace=True)
 
 		notas_comvest.append(notas_final)
