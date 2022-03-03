@@ -1,9 +1,9 @@
 #TODO: merge com vida academica leva em conta o ano de ingresso e identificação /s curso
-from utilities.io import read_from_database
-from utilities.io import write_result
-from utilities.columns import resumo_por_periodo_cols
-from utilities.format import padronize_dates
-from utilities.format import str_to_upper_ascii
+from dac.utilities.io import read_from_database
+from dac.utilities.io import write_result
+from dac.utilities.columns import resumo_por_periodo_cols
+from dac.utilities.format import padronize_dates
+from dac.utilities.format import str_to_upper_ascii
 
 DATABASE_FILE = 'ResumoPorPeriodo.xlsx'
 RESULT_FILE = 'resumo_por_periodo.csv'

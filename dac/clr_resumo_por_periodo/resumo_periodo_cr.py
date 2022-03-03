@@ -1,6 +1,6 @@
-from utilities.io import read_result
-from utilities.io import write_result
-from utilities.format import calc_cr_periodo
+from dac.utilities.io import read_result
+from dac.utilities.io import write_result
+from dac.utilities.format import calc_cr_periodo
 RESUMO_FILE = 'resumo_por_periodo.csv'
 HIST_FILE = 'historico_creditos.csv'
 RESULT_FILE = 'resumo_periodo_cr.csv'

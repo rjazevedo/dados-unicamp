@@ -1,7 +1,7 @@
 import pandas as pd
 import yaml
 
-stream = open('configuration.yaml')
+stream = open('dac/configuration.yaml')
 config = yaml.safe_load(stream)
 
 DATABASE_PATH = config['database']

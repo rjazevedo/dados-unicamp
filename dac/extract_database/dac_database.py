@@ -1,8 +1,8 @@
-from clr_vida_academica import vida_academica
-from clr_dados_cadastrais import dados_cadastrais
-from clr_historico_escolar import historico_escolar
-from clr_resumo_por_periodo import resumo_por_periodo
-from clr_resumo_por_periodo import resumo_periodo_cr
+from dac.clr_vida_academica import vida_academica
+from dac.clr_dados_cadastrais import dados_cadastrais
+from dac.clr_historico_escolar import historico_escolar
+from dac.clr_resumo_por_periodo import resumo_por_periodo
+from dac.clr_resumo_por_periodo import resumo_periodo_cr
 
 def extract():
     vida_academica.generate_clean_data()

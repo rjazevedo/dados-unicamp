@@ -1,7 +1,7 @@
-from utilities.io import read_from_database
-from utilities.io import write_result
-from utilities.columns import vida_academica_cols
-from utilities.format import str_to_upper_ascii
+from dac.utilities.io import read_from_database
+from dac.utilities.io import write_result
+from dac.utilities.columns import vida_academica_cols
+from dac.utilities.format import str_to_upper_ascii
 
 FILE_NAME = 'VidaAcademicaCurso.xlsx'
 RESULT_NAME = 'vida_academica.csv'

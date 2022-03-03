@@ -1,4 +1,4 @@
-from extract_database import dac_database
+from dac.extract_database import dac_database
 
 def main():
 	dac_database.extract()

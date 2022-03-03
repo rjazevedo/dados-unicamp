@@ -1,5 +1,5 @@
 from pandas.io.parsers import read_csv
-from utilities.io import read_result, write_result
+from dac.utilities.io import read_result, write_result
 
 def extract(base_path, keys):
     indices = read_result('indices.csv', dtype=str)

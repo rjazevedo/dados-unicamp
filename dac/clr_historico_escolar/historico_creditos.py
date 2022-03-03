@@ -1,6 +1,6 @@
 import numpy as np
-from utilities.io import read_result
-from utilities.io import write_result
+from dac.utilities.io import read_result
+from dac.utilities.io import write_result
 
 HISTORICO_RESULT = 'historico_escolar_aluno.csv'
 CREDITOS_RESULT = 'creditos.csv'

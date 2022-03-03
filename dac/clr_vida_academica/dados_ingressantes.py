@@ -1,4 +1,4 @@
-from utilities.io import read_result, write_result
+from dac.utilities.io import read_result, write_result
 
 def generate():
     dados_cadastrais = read_result('dados_cadastrais.csv').loc[:, ['identif', 'cpf', 'nome', 'dta_nasc', 'doc']]

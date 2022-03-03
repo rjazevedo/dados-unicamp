@@ -1,4 +1,4 @@
-from extract import extract_from_base
+from dac.extract import extract_from_base
 
 def main():
     base_file = '/home/processados/base_comvest-2001_2018.csv' 

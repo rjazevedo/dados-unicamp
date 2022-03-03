@@ -11,7 +11,8 @@ def assign_ids():
     ids['insc_vest'] = ids['insc_vest'].fillna(0)
 
 
-    comvest_with_ids = pd.merge(comvest, ids, on=['insc_vest','ano_vest'], how='left')
+    comvest_with_ids = pd.merge(ids, comvest, on=['insc_vest','ano_vest'])
     comvest_with_ids.drop_duplicates(subset=['insc_vest','ano_vest'], inplace=True)
+    comvest_with_ids.drop(columns=['insc_vest'], inplace=True)
 
     write_output(comvest_with_ids, 'comvest_amostra.csv')

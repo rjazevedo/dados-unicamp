@@ -1,7 +1,7 @@
-from utilities.io import read_result
-from utilities.io import write_result
-from utilities.io import read_from_external
-from utilities.io import write_output
+from dac.utilities.io import read_result
+from dac.utilities.io import write_result
+from dac.utilities.io import read_from_external
+from dac.utilities.io import write_output
 
 def generate_dac_ids():
     ids = read_from_external('dac_comvest_ids.csv', sep=';', dtype=str)
@@ -18,10 +18,10 @@ def replicate_ids_dac():
 
     ids = read_result('identifs.csv')
 
-    dados_cadastrais = ids.merge(dados_cadastrais).drop(['identif', 'cpf', 'doc', 'nome'], axis=1)
-    vida_academica = ids.merge(vida_academica).drop('identif', axis=1)
-    historico_escolar = ids.merge(historico_escolar).drop('identif', axis=1)
-    resumo_por_periodo = ids.merge(resumo_por_periodo).drop('identif', axis=1)
+    dados_cadastrais = ids.merge(dados_cadastrais).drop(['insc_vest','identif', 'cpf', 'doc', 'nome'], axis=1, errors='ignore')
+    vida_academica = ids.merge(vida_academica).drop(['insc_vest','identif'], axis=1, errors='ignore')
+    historico_escolar = ids.merge(historico_escolar).drop(['insc_vest','identif'], axis=1, errors='ignore')
+    resumo_por_periodo = ids.merge(resumo_por_periodo).drop(['insc_vest','identif'], axis=1, errors='ignore')
 
     write_output(dados_cadastrais, 'dados_cadastrais.csv')
     write_output(vida_academica, 'vida_academica.csv')

@@ -1,4 +1,4 @@
-from clr_dados_cadastrais import dados_cadastrais
+from dac.clr_dados_cadastrais import dados_cadastrais
 
 def main():
     dados_cadastrais.generate_clean_data()

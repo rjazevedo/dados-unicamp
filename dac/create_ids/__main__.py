@@ -1,4 +1,4 @@
-from create_ids import identificadores
+from dac.create_ids import identificadores
 
 def main():
     identificadores.generate_dac_ids()

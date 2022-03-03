@@ -28,8 +28,9 @@ def validacao_cidade(df, date):
 def validacao_curso(df, date):
   cursos = df_cursos.loc[df_cursos['ano_vest'] == date]['cod_curso'].tolist()
 
-  validar_curso = np.vectorize(lambda cod: str(cod) if cod in cursos else '')
-  df['curso_aprovado'] = validar_curso(df['curso_aprovado'])
+  # Codigos que nao constam na lista de cursos serao remapeados para missing
+  df['curso_aprovado'].fillna(-1, inplace=True)
+  df['curso_aprovado'] = df['curso_aprovado'].map(lambda cod: int(cod) if int(cod) in cursos else '')
   df['curso_aprovado'] = pd.to_numeric(df['curso_aprovado'], errors='coerce').astype('Int64')
 
   return df
@@ -67,9 +68,9 @@ except:
   logging.warning('Couldn\'t find "cidades_comvest.csv"')
 
 try:
-  df_cursos = read_result('cursos_comvest.csv')
+  df_cursos = read_result('cursos.csv')
 except:
-  logging.warning('Couldn\'t find "cursos_comvest.csv"')
+  logging.warning('Couldn\'t find "cursos.csv"')
 
 
 def extraction():

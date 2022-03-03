@@ -1,9 +1,9 @@
 import numpy as np
-from utilities.io import read_multiple_from_database
-from utilities.io import write_result
-from utilities.columns import historico_escolar_cols
-from utilities.format import str_to_upper_ascii
-from utilities.format import padronize_dates
+from dac.utilities.io import read_multiple_from_database
+from dac.utilities.io import write_result
+from dac.utilities.columns import historico_escolar_cols
+from dac.utilities.format import str_to_upper_ascii
+from dac.utilities.format import padronize_dates
 
 
 DATABASE_FILES = ['HistoricoEscolar.xlsx', 'HistoricoEscolar1.xlsx', 'HistoricoEscolar2.xlsx', 'HistoricoEscolar.xlsx']

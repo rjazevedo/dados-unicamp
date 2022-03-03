@@ -1,13 +1,13 @@
-from utilities.io import read_from_database
-from utilities.io import write_result
-from utilities.columns import dados_cadastrais_cols
-from utilities.format import str_to_upper_ascii
-from utilities.format import padronize_sex
-from utilities.format import padronize_race
-from utilities.format import padronize_dates
-from utilities.format import padronize_marstat
-from utilities.format import fill_doc
-from utilities.format import dates_to_year
+from dac.utilities.io import read_from_database
+from dac.utilities.io import write_result
+from dac.utilities.columns import dados_cadastrais_cols
+from dac.utilities.format import str_to_upper_ascii
+from dac.utilities.format import padronize_sex
+from dac.utilities.format import padronize_race
+from dac.utilities.format import padronize_dates
+from dac.utilities.format import padronize_marstat
+from dac.utilities.format import fill_doc
+from dac.utilities.format import dates_to_year
 
 drop_cols = ['nome_mae', 'nome_pai', 'idade_atual', 
         'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_esmissao_doc', 'doc_tratado']

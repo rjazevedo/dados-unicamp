@@ -19,7 +19,8 @@ def validacao_curso(df, date):
   cursos = df_cursos.loc[df_cursos['ano_vest'] == date]['cod_curso'].tolist()
   
   # Codigos que nao constam na lista de cursos serao remapeados para missing
-  df['curso_matric'] = df['curso_matric'].map(lambda cod: cod if cod in cursos else '')
+  df['curso_matric'].fillna(-1, inplace=True)
+  df['curso_matric'] = df['curso_matric'].map(lambda cod: int(cod) if int(cod) in cursos else '')
   df['curso_matric'] = pd.to_numeric(df['curso_matric'], errors='coerce').astype('Int64')
   df.dropna(subset=['curso_matric'], inplace=True)
   
