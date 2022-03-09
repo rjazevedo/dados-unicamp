@@ -37,6 +37,11 @@ def generate_clean_data():
     padronize_dates(dados_cadastrais, ['dta_nasc'])
     dates_to_year(dados_cadastrais, 'ano_conclu_em')
     dados_cadastrais.tipo_esc_form_em = dados_cadastrais.tipo_esc_form_em.str[7:]
+    dados_cadastrais.insert(
+            loc=dados_cadastrais.columns.get_loc('dta_nasc')+1, 
+            column='ano_nasc_d', 
+            value=dados_cadastrais['dta_nasc'].map(lambda date: date[-4:])
+            )
     
 
     write_result(dados_cadastrais, RESULT_NAME)

@@ -38,7 +38,7 @@ def validacao_curso(df, date):
 def cleandata(df, questoes, date):
   # Renomeia colunas de acordo com o mapeamento das questões
   df = df.rename(questoes, axis=1)
-  df = df.rename({'insc_cand':'insc_vest','curpas':'curso_aprovado','aprovf2':'aprov_f1','local_residencia':'local_resid'}, axis=1)
+  df = df.rename({'sexo':'sexo_c','est_civil':'est_civil_c','insc_cand':'insc_vest','curpas':'curso_aprovado','aprovf2':'aprov_f1','local_residencia':'local_resid'}, axis=1)
 
   df['insc_vest'] = pd.to_numeric(df['insc_vest'], errors='coerce', downcast='integer').astype('Int64')
   df['ano_vest'] = date
@@ -106,8 +106,8 @@ def extraction():
       'insc_vest',
       'cid_inscricao',
       'instituicao',
-      'sexo',
-      'est_civil',
+      'sexo_c',
+      'est_civil_c',
       'local_resid',
       'isento',
       'paais',

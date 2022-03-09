@@ -1,10 +1,21 @@
+import logging
 import re
 import pandas as pd
 from unidecode import unidecode
-from comvest.utilities.io import files, read_from_db, write_result
+from comvest.utilities.io import files, read_from_db, write_result, read_result
 from comvest.utilities.logging import progresslog, resultlog
 pd.options.mode.chained_assignment = None  # default='warn'
 
+
+def validacao_curso(df, col, date):
+  cursos = df_cursos.loc[df_cursos['ano_vest'] == date]['cod_curso'].tolist()
+  
+  # Codigos que nao constam na lista de cursos serao remapeados para missing
+  df[col].fillna(-1, inplace=True)
+  df[col] = df[col].map(lambda cod: int(cod) if int(cod) in cursos else '')
+  df[col] = pd.to_numeric(df[col], errors='coerce').astype('Int64')
+  
+  return df
 
 # Função para concatenar dia, mês e ano
 def data_nasc(row, df):
@@ -176,15 +187,15 @@ def tratar_opvest(df,date,path):
   for col in df.columns:
     if any(opc in col for opc in {'OPCAO1','OP1','OPCAO1OR'}):
       df.rename({col: 'OPCAO1'}, axis=1, inplace=True)
-      df['OPCAO1'] = pd.to_numeric(df['OPCAO1'], errors='coerce', downcast='integer').astype('Int64')
+      df = validacao_curso(df, 'OPCAO1', date)
     if any(opc in col for opc in {'OPCAO2','OP2','OPCAO2OR'}):
       df.rename({col: 'OPCAO2'}, axis=1, inplace=True)
-      df['OPCAO2'] = pd.to_numeric(df['OPCAO2'], errors='coerce', downcast='integer').astype('Int64')
-      df['OPCAO2'].replace(to_replace=0, value=pd.NA, inplace=True)
+      df = validacao_curso(df, 'OPCAO2', date)
+      # df['OPCAO2'].replace(to_replace=0, value=pd.NA, inplace=True)
     if any(opc in col for opc in {'OPCAO3','OP3'}):
       df.rename({col: 'OPCAO3'}, axis=1, inplace=True)
-      df['OPCAO3'] = pd.to_numeric(df['OPCAO3'], errors='coerce', downcast='integer').astype('Int64')
-      df['OPCAO3'].replace(to_replace=0, value=pd.NA, inplace=True)
+      df = validacao_curso(df, 'OPCAO3', date)
+      # df['OPCAO3'].replace(to_replace=0, value=pd.NA, inplace=True)
     
   # Opcao 1 = 22 (Musica) - deve-se remapear para o codigo referente a enfase, obtida no perfil
   if (date == 2001) or (date == 2002) or (date == 2003):
@@ -289,9 +300,16 @@ def tratar_dados(df,date,path,ingresso=1):
 
   # Rearranja colunas e as renomeia apropriadamente
   df = df.reindex(columns=['ANO','TIPO_INGRESSO_COMVEST','NOME','CPF','DOC','DATA_NASC','ANO_NASC','NOME_PAI','NOME_MAE','INSC','OPCAO1','OPCAO2','OPCAO3','NACIONALIDADE','PAIS_NASC','MUN_NASC','UF_NASC','CEP_RESID','MUN_RESID','UF_RESID','ESCOLA_EM','MUN_ESC_EM','UF_ESCOLA_EM','TIPO_ESCOLA_EM','ANO_CONCLU_EM'])
-  df.columns = ['ano_vest','tipo_ingresso_comvest','nome_c','cpf','doc_c','dta_nasc_c','ano_nasc_c','nome_pai_c','nome_mae_c','insc_vest','opc1','opc2','opc3','nacionalidade','pais_nasc','mun_nasc_c','uf_nasc_c','cep_resid_c','mun_resid_c','uf_resid','esc_em','mun_esc_em','uf_esc_em','nat_esc_em','ano_conclu_em_c']
+  df.columns = ['ano_vest','tipo_ingresso_comvest','nome_c','cpf','doc_c','dta_nasc_c','ano_nasc_c','nome_pai_c','nome_mae_c','insc_vest','opc1','opc2','opc3','nacionalidade_c','pais_nasc_c','mun_nasc_c','uf_nasc_c','cep_resid_c','mun_resid_c','uf_resid','esc_em_c','mun_esc_em_c','uf_esc_em','nat_esc_em_c','ano_conclu_em_c']
 
   return df
+
+
+# Leitura dos cursos p posterior validação
+try:
+  df_cursos = read_result('cursos.csv')
+except:
+  logging.warning('Couldn\'t find "cursos.csv"')
 
 
 def extraction():

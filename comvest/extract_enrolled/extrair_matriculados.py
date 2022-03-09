@@ -29,9 +29,9 @@ def validacao_curso(df, date):
 
 # Leitura dos cursos p posterior validação
 try:
-  df_cursos = read_result('cursos_comvest.csv')
+  df_cursos = read_result('cursos.csv')
 except:
-  logging.warning('Couldn\'t find "cursos_comvest.csv"')
+  logging.warning('Couldn\'t find "cursos.csv"')
 
 
 def extraction():

@@ -64,5 +64,5 @@ def calc_cr_periodo(df, column):
     return cr_periodo
 
 def dates_to_year(df, column):
-    reset_dates = np.vectorize(lambda s : ('' if s =='NaT' else s).zfill(4  ))
+    reset_dates = np.vectorize(lambda s : (s if str(s).isdigit() else '').zfill(4))
     df[column] = reset_dates(pd.to_datetime(df[column]).dt.strftime("%Y"))
