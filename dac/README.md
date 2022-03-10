@@ -18,7 +18,7 @@ Para executar primeiramente coloque os arquivos .xlsx da base de dados no diret�
 
 Para executar a limpeza completa da base execute:
 ```
-python3 -m extract_database
+python3 -m dac.extract_database
 ```
 
 Similarmente para executar a limpeza de um módulo específico
