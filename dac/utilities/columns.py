@@ -3,7 +3,7 @@ dados_cadastrais_cols = [
     'sexo_d', 'est_civil_d', 'raca_d', 'raca_descricao', 
     'cep_nasc', 'mun_nasc', 'uf_nasc', 'cod_pais_nascimento', 'pais_nascimento', 'nacionalidade', 'cod_pais_nacionalidade', 'pais_nacionalidade', 'naturalizado',
     'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em', 'uf_esc_form_em', 'mun_esc_form_em', 'sigla_pais_esc_form_em', 'pais_esc_form_em', 
-    'mun_atual', 'cep_atual', 'mun_resid', 'cep_resid']
+    'mun_atual', 'cep_atual', 'mun_resid', 'cep_resid_d']
 
 vida_academica_cols = [
     'identif', 'curso', 'curso_nivel', 'curso_nome', 'ano_ingresso_curso', 'periodo_ingresso', 

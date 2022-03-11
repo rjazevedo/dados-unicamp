@@ -8,6 +8,7 @@ from dac.utilities.format import padronize_dates
 from dac.utilities.format import padronize_marstat
 from dac.utilities.format import fill_doc
 from dac.utilities.format import dates_to_year
+from dac.utilities.format import padronize_miss
 
 drop_cols = ['nome_mae', 'nome_pai', 'idade_atual', 
         'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_esmissao_doc', 'doc_tratado']
@@ -36,13 +37,21 @@ def generate_clean_data():
     padronize_marstat(dados_cadastrais, 'est_civil_d')
     padronize_dates(dados_cadastrais, ['dta_nasc'])
     dates_to_year(dados_cadastrais, 'ano_conclu_em')
+
     dados_cadastrais.tipo_esc_form_em = dados_cadastrais.tipo_esc_form_em.str[7:]
     dados_cadastrais.insert(
             loc=dados_cadastrais.columns.get_loc('dta_nasc')+1, 
             column='ano_nasc_d', 
             value=dados_cadastrais['dta_nasc'].map(lambda date: date[-4:])
             )
-    
 
+    padronize_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em','cep_atual','cep_resid_d'])    
     write_result(dados_cadastrais, RESULT_NAME)
     return dados_cadastrais
+
+
+def testar(testa):
+    if '-' in testa:
+        print('com -')
+    elif '' in testa:
+        print('com miss')

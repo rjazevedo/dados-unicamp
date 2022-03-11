@@ -66,4 +66,7 @@ def calc_cr_periodo(df, column):
 def dates_to_year(df, column):
     reset_dates = np.vectorize(lambda s : (s if str(s).isdigit() else '').zfill(4))
     df[column] = reset_dates(pd.to_datetime(df[column]).dt.strftime("%Y"))
-    df[column].replace(0, pd.NA, inplace=True)
+
+def padronize_miss(df, name_columns):
+    for column in name_columns:
+        df[column].replace('-', ' ', inplace=True)
