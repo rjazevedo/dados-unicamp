@@ -52,8 +52,8 @@ def cleandata(df, questoes, date):
     df.insert(loc=df.columns.get_loc('local_resid')+1, column='reg_campinas', value='')
     df['local_resid'] = pd.to_numeric(df['local_resid'], errors='coerce', downcast='integer').astype('Int64')
   except:
-      # logging.debug('File read from {} doesn\'t have a \'local_resid\' column'.format(path))
-      print('Comvest {} file doesn\'t have a \'local_resid\' column'.format(date))
+    # logging.debug('File read from {} doesn\'t have a \'local_resid\' column'.format(path))
+    print('Comvest {} file doesn\'t have a \'local_resid\' column'.format(date))
 
   df = validacao_cidade(df,date)
   df = validacao_curso(df,date)
@@ -109,6 +109,7 @@ def extraction():
       'sexo_c',
       'est_civil_c',
       'local_resid',
+      'reg_campinas',
       'isento',
       'paais',
       'raca',

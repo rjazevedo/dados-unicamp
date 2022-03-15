@@ -1,3 +1,5 @@
+import pandas as pd
+
 def paais(df,ano):
 	if 2005 <= ano <= 2018:
 		df['paais'] = df['paais'].map({0:0, 1:1, 2:1})
@@ -15,6 +17,7 @@ def isento(df,ano):
 def reg_campinas(df,ano):
 	if ano >= 2004:
 		df['reg_campinas'] = df.apply(lambda row: 1 if row['local_resid'] == 2 else '', axis=1)
+		df['reg_campinas'] = pd.to_numeric(df['reg_campinas'], errors='coerce').astype('Int64')
 
 	return df
 
@@ -71,17 +74,28 @@ def cursinho(df,ano):
 	if 2013 <= ano <= 2021:
 		df['cursinho'] = df['cursinho'].map({0:0, 1:2, 2:1, 3:1, 4:1, 5:1})
 
+	df['cursinho'] = df['cursinho'].map(lambda x: x if x in {0, 1, 2} else pd.NA)
+
 	return df
 
 def cursinho_motivo(df,ano):
 	if 1987 <= ano <= 1998:
 		df['cursinho_motivo'] = df['cursinho_motivo'].map({0:0,1:1,2:2,3:3,4:6,5:4,6:5,7:6})
 
+	df['cursinho_motivo'] = df['cursinho_motivo'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA)
+
+	return df
+
+def cursinho_tempo(df,ano):
+	df['cursinho_tempo'] = df['cursinho_tempo'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA)
+
 	return df
 
 def univ_outra(df,ano):
 	if 2013 <= ano <= 2021:
 		df['univ_outra'] = df['univ_outra'].map({0:0, 1:2, 2:1, 3:1, 4:1, 5:1, 6:1})
+
+	df['univ_outra'] = df['univ_outra'].map(lambda x: x if x in {0, 1, 2} else pd.NA)
 
 	return df
 
@@ -124,6 +138,11 @@ def trabalha(df,ano):
 		df['trabalha'] = df['trabalha'].map({0:0, 1:1, 2:3, 3:4, 4:2})
 	elif 2000 <= ano <= 2012:
 		df['trabalha'] = df['trabalha'].map({0:0, 1:1, 2:2, 3:3, 4:3, 5:4})
+
+	return df
+
+def contribui_renda_fam(df,ano):
+	df['contribui_renda_fam'] = df['contribui_renda_fam'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA)
 
 	return df
 
@@ -265,6 +284,7 @@ def normalizar(df, ano):
 	df = periodo_em(df, ano)
 	df = cursinho(df, ano)
 	df = cursinho_motivo(df, ano)
+	df = cursinho_tempo(df, ano)
 	df = univ_outra(df, ano)
 	df = opcao1_motivo(df, ano)
 	df = unicamp_motivo(df, ano)
@@ -274,6 +294,7 @@ def normalizar(df, ano):
 	df = ocupacao_pais(df, ano)
 
 	df = trabalha(df, ano)
+	df = contribui_renda_fam(df, ano)
 	df = renda_sm(df, ano)
 	df = renda_contrib_qtas(df, ano)
 

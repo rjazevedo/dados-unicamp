@@ -1,4 +1,5 @@
 import pandas as pd
+import logging
 from comvest.utilities.io import files, read_from_db, write_result
 from comvest.utilities.logging import progresslog, resultlog
 
@@ -71,8 +72,12 @@ def tratar_notas_f1(notas_f1, date):
 
 
 def tratar_notas_f2(notas_f2, date):
-	notas_f2.rename({'notpad_he':'notpad_aptidao','napt':'not_apt','apaptidao':'aprov_apt','aptidao':'not_apt','fase1':'nf_f1','nfase1':'nf_f1','notpadf1':'notpad_f1','fase1op2':'not_f1_opc2','notpadf1op2':'notpad_f1_opc2','red':'not_red','notpadred':'notpad_red','inter':'not_inter','notpad8':'notpad_inter','sit':'pres_f2_d4','ing':'not_est','est':'not_est','notpad_ing':'notpad_est','notpad1':'notpad_por','por':'not_por','npor':'not_por','notpad6':'notpad_bio','bio':'not_bio','nbio':'not_bio','notpad7':'notpad_qui','qui':'not_qui','nqui':'not_qui','notpad4':'notpad_his','his':'not_his','nhis':'not_his','notpad5':'notpad_fis','fis':'not_fis','nfis':'not_fis','notpad3':'notpad_geo','geo':'not_geo','ngeo':'not_geo','notpad2':'notpad_mat','mat':'not_mat','nmat':'not_mat','cha':'not_cha','cn':'not_cn','plin':'pest','nlin':'not_est','clas1':'clas_opc1','clas2':'clas_opc2','clas3':'clas_opc3','clacur1':'clas_opc1','clacur2':'clas_opc2','clacur3':'clas_opc3','nf2_opcao1':'nf_f2_opc1','nf2_opcao2':'nf_f2_opc2','npfinal1':'npo1','npfinal2':'npo2','npfinal3':'npo3','npfinal':'np_unica'}, axis=1, inplace=True)
+	notas_f2.rename({'notpad_he':'notpad_aptidao','napt':'not_apt','apaptidao':'aprov_apt','aptidao':'not_apt','fase1':'nf_f1','nfase1':'nf_f1','notpadf1':'notpad_f1','fase1op2':'not_f1_opc2','notpadf1op2':'notpad_f1_opc2','red':'not_red','notpadred':'notpad_red','inter':'not_inter','notpad8':'notpad_inter','sit':'pres_f2_d4','ing':'not_est','est':'not_est','notpad_ing':'notpad_est','notpad1':'notpad_por','por':'not_por_f2','npor':'not_por_f2','notpad6':'notpad_bio','bio':'not_bio','nbio':'not_bio','notpad7':'notpad_qui','qui':'not_qui','nqui':'not_qui','notpad4':'notpad_his','his':'not_his','nhis':'not_his','notpad5':'notpad_fis','fis':'not_fis','nfis':'not_fis','notpad3':'notpad_geo','geo':'not_geo','ngeo':'not_geo','notpad2':'notpad_mat','mat':'not_mat','nmat':'not_mat','cha':'not_cha','cn':'not_cn','plin':'pest','nlin':'not_est','clas1':'clas_opc1','clas2':'clas_opc2','clas3':'clas_opc3','clacur1':'clas_opc1','clacur2':'clas_opc2','clacur3':'clas_opc3','nf2_opcao1':'nf_f2_opc1','nf2_opcao2':'nf_f2_opc2','npfinal1':'npo1','npfinal2':'npo2','npfinal3':'npo3','npfinal':'np_unica'}, axis=1, inplace=True)
 
+	try:
+		notas_f2['pres_f2_d4'] = notas_f2['pres_f2_d4'].map({'A':'A','P':'P','E':''})
+	except:
+		logging.debug('Comvest {} file doesn\'t have a \'pres_f2_d4\' column'.format(date))
 
 	if 'np_unica' in notas_f2.columns:
 		if 1000 < notas_f2['np_unica'].max() <= 10000:
@@ -88,19 +93,17 @@ def tratar_notas_f2(notas_f2, date):
 	if notas_f2['insc'].dtype == object:
 		notas_f2['insc'] = notas_f2['insc'].str.replace(r'\D','',regex=True).astype(int)
 
-	notas_f2 = notas_f2.reindex(columns=['insc','nf_f1','notpad_f1','not_f1_opc2','notpad_f1_opc2','aprov_apt','not_apt','notpad_aptidao','pqui','not_qui','notpad_qui','pgeo','not_geo','notpad_geo','pfis','not_fis','notpad_fis','pbio','not_bio','notpad_bio','pmat','not_mat','notpad_mat','phis','not_his','notpad_his','ppor','not_por','notpad_por','pest','not_est','notpad_est','not_cha','notpad_cha','not_cn','notpad_cn','not_inter','notpad_inter','not_red','notpad_red','npo1','npo2','npo3','np_unica','area','grupo1','grupo2','grupo3','clas_opc1','clas_opc2','clas_opc3','clacar','nf_f2_opc1','nf_f2_opc2','pres_f2_d4'])
+	notas_f2 = notas_f2.reindex(columns=['insc','nf_f1','notpad_f1','not_f1_opc2','notpad_f1_opc2','aprov_apt','not_apt','notpad_aptidao','pqui','not_qui','notpad_qui','pgeo','not_geo','notpad_geo','pfis','not_fis','notpad_fis','pbio','not_bio','notpad_bio','pmat','not_mat','notpad_mat','phis','not_his','notpad_his','ppor','not_por_f2','notpad_por','pest','not_est','notpad_est','not_cha','notpad_cha','not_cn','notpad_cn','not_inter','notpad_inter','not_red','notpad_red','npo1','npo2','npo3','np_unica','area','grupo1','grupo2','grupo3','clas_opc1','clas_opc2','clas_opc3','clacar','nf_f2_opc1','nf_f2_opc2','pres_f2_d4'])
 	return notas_f2
 
 
 def tratar_notas_enem(notas_enem,inscritos,date):
 	column_names = ['insc','nota_enem','notpad_lc_ve','notpad_mat_ve','notpad_cn_ve','notpad_ch_ve','notpad_red_ve','not_red_ve','notpad_he_ve','not_he_ve','npo1_ve','npo2_ve','grupo1_ve','grupo2_ve','clas_opc1_ve','clas_opc2_ve']
 
-	if 'nota_enem' not in notas_enem.columns or date < 2000:
+	if notas_enem.empty:
 		notas_enem['insc'] = inscritos
-		notas_enem['nota_enem'] = ''
-		return notas_enem.reindex(columns=column_names)
 	
-	notas_enem.rename({'lc':'notpad_lc_ve','mt':'notpad_mat_ve','cn':'notpad_cn_ve','ch':'notpad_ch_ve','red':'notpad_red_ve','redb':'not_red_ve','he':'notpad_he_ve','heb':'not_he_ve','npo1':'npo1_ve','npo2':'npo2_ve','grupo1':'grupo1_ve','grupo2':'grupo2_ve','clas1':'clas_opc1_ve','clas2':'clas_opc2_ve'}, axis=1, inplace=True)
+	notas_enem.rename({'lc':'notpad_lc_ve','mt':'notpad_mat_ve','cn':'notpad_cn_ve','ch':'notpad_ch_ve','red':'notpad_red_ve','redb':'not_red_ve','he':'notpad_he_ve','heb':'not_he_ve','npo1':'npo1_ve','npo2':'npo2_ve','grupo1':'grupo1_ve','grupo2':'grupo2_ve','clas1':'clas_opc1_ve','clas2':'clas_opc2_ve'}, axis=1, inplace=True, errors='ignore')
 	notas_enem = notas_enem.reindex(columns=column_names)
 
 	return notas_enem
@@ -116,8 +119,7 @@ def tratar_notas_vi(notas_vi, date):
 	try:
 		notas_vi['sit'] = notas_vi['sit'].map(lambda pres: pres if pres == 'A' else 'P')
 	except:
-		# logging.debug('Comvest {} file doesn\'t have a \'cid_inscricao\' column'.format(date))
-		print('Comvest {} file doesn\'t have a \'sit\' column for the Indigenous exam'.format(date))
+		logging.debug('Comvest {} file doesn\'t have a \'cid_inscricao\' column'.format(date))
 	
 	notas_vi.rename({'questoes':'questoes_vi','questoespontos':'pontuacao_vi','redacao':'not_red_vi','musica':'not_musica_vi','nf1':'nf_opc1_vi','nf2':'nf_opc2_vi','grupo1':'grupo1_vi','grupo2':'grupo2_vi','clas1':'clas_opc1_vi','clas2':'clas_opc2_vi','sit':'presente_vi'}, axis=1, inplace=True)
 	notas_vi = notas_vi.reindex(columns=column_names)
@@ -151,9 +153,9 @@ def extraction():
 		notas_vo = tratar_notas_vo(notas_vo, date)
 
 		notas_vc = notas_f1.merge(notas_f2, how='left', on='insc', suffixes=('_f1','_f2'))
-		notas_vc_enem = notas_vc.merge(notas_enem, how='left', on='insc')
-		notas_vc_enem_vi = notas_vc_enem.merge(notas_vi, how='left', on='insc')
-		notas_final = notas_vc_enem_vi.merge(notas_vo, how='left', on='insc')
+		notas_vc_enem = notas_vc.merge(notas_enem, how='outer', on='insc')
+		notas_vc_enem_vi = notas_vc_enem.merge(notas_vi, how='outer', on='insc')
+		notas_final = notas_vc_enem_vi.merge(notas_vo, how='outer', on='insc')
 
 		# Insere data (ano) no dataframe final
 		notas_final.insert(loc=0, column='ano_vest', value=date)

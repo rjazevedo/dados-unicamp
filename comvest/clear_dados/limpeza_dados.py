@@ -191,11 +191,9 @@ def tratar_opvest(df,date,path):
     if any(opc in col for opc in {'OPCAO2','OP2','OPCAO2OR'}):
       df.rename({col: 'OPCAO2'}, axis=1, inplace=True)
       df = validacao_curso(df, 'OPCAO2', date)
-      # df['OPCAO2'].replace(to_replace=0, value=pd.NA, inplace=True)
     if any(opc in col for opc in {'OPCAO3','OP3'}):
       df.rename({col: 'OPCAO3'}, axis=1, inplace=True)
       df = validacao_curso(df, 'OPCAO3', date)
-      # df['OPCAO3'].replace(to_replace=0, value=pd.NA, inplace=True)
     
   # Opcao 1 = 22 (Musica) - deve-se remapear para o codigo referente a enfase, obtida no perfil
   if (date == 2001) or (date == 2002) or (date == 2003):
