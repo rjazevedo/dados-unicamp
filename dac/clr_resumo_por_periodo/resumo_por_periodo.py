@@ -21,7 +21,6 @@ def generate_clean_data():
 
     padronize_dates(resumo_por_periodo, ['data_inicio', 'data_fim'])
     str_to_upper_ascii(resumo_por_periodo, ['situacao'])
-
     write_result(resumo_por_periodo, RESULT_FILE)
     return resumo_por_periodo
 
