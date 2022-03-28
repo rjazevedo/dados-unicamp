@@ -29,7 +29,7 @@ def data_nasc(row, df):
 
     data = str(data).split('.')[0]
 
-    if data == 'nan': return ('-')
+    if data == 'nan': return ('')
 
     if len(data) <= 6:
       data = data[:-2] + '19' + data[-2:]
@@ -55,7 +55,7 @@ def data_nasc(row, df):
   
   else:
     # Documento sem coluna(s) com data de nascimento
-    res = '-'
+    res = ''
 
   return res
 
@@ -84,10 +84,10 @@ def tratar_CPF(df):
   return df
 
 def tratar_doc(df):
-  if 'RG' in df.columns:
-    df.rename({'RG': 'DOC'}, axis=1, inplace=True)
-  elif 'DOC3' in df.columns:
-    df.rename({'DOC3': 'DOC'}, axis=1, inplace=True)
+  if any(col in df.columns for col in {'RG','DOC3'}):
+    df.rename({'RG':'DOC','DOC3':'DOC'}, axis=1, inplace=True)
+  
+    df['DOC'] = df['DOC'].str.replace(' ','')
 
   return df
 
@@ -116,9 +116,10 @@ def tratar_nome_mae(df):
 
 def tratar_nacionalidade(df):
   for col in df.columns:
-    if col in {'NACIONALID','NACION','NACIONALIDADE'}:
+    if col in {'NACIO','NACION','NACIONALID','NACIONALIDADE'}:
       df.rename({col: 'NACIONALIDADE'}, axis=1, inplace=True)
       df['NACIONALIDADE'] = pd.to_numeric(df['NACIONALIDADE'], errors='coerce', downcast='integer').astype('Int64')
+      df['NACIONALIDADE'].replace(0, pd.NA, inplace=True)
 
       return df
 
@@ -128,7 +129,7 @@ def tratar_mun_nasc(df):
   for col in df.columns:
     if col in {'MUNICIPIO_NASC','MU_NASC','MUNIC_NASC','CIDNASC','CIDNAS'}:
       df.rename({col: 'MUN_NASC'}, axis=1, inplace=True)
-      df['MUN_NASC'] = df['MUN_NASC'].map(lambda mun: unidecode(str(mun)).upper())
+      df['MUN_NASC'] = df['MUN_NASC'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
 
       return df
 
@@ -138,6 +139,7 @@ def tratar_uf_nasc(df):
   for col in df.columns:
     if col in {'UFNASC','EST_NASC','UFNAS'}:
       df.rename({col: 'UF_NASC'}, axis=1, inplace=True)
+      df['UF_NASC'] = df['UF_NASC'].map(lambda uf: unidecode(str(uf)).upper() if str(uf) != '-' else '')
 
       return df
 
@@ -148,14 +150,15 @@ def tratar_cep(df):
     if col in {'CEP','CEPEND','CEP_END','CEP3'}:
       df.rename({col: 'CEP_RESID'}, axis=1, inplace=True)
 
-      fill = df['CEP_RESID'].map(lambda x: len(re.sub(r'[^0-9]','',str(x)))).max()
-      df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: re.sub(r'[^0-9]','',str(cep)).zfill(fill))
-      # df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: '{:<08s}'.format(cep) if cep != '' else cep)
+      fill = df['CEP_RESID'].map(lambda cep: len(re.sub('\D','',str(cep)))).max()
+      fill = 8 if fill > 8 else fill
+
+      df['CEP_RESID'] = df['CEP_RESID'].map(lambda cep: re.sub('\D','',str(cep)).zfill(fill))
 
       return df
 
   if 'CEP_RESID' not in df.columns:
-    df['CEP_RESID'] = '-'
+    df['CEP_RESID'] = ''
 
   return df
 
@@ -213,7 +216,7 @@ def tratar_escola(df):
   for col in df.columns:
     if col in {'NOMEESC','NOME_ESC','ESCOLAEM','ESCOLA','ESC2'}:
       df.rename({col: 'ESCOLA_EM'}, axis=1, inplace=True)
-      df['ESCOLA_EM'] = df['ESCOLA_EM'].map(lambda esc: unidecode(str(esc)).upper())
+      df['ESCOLA_EM'] = df['ESCOLA_EM'].map(lambda esc: unidecode(str(esc)).upper() if str(esc) != '-' else '')
 
       return df
 
@@ -224,7 +227,7 @@ def tratar_mun_escola(df):
   for col in df.columns:
     if col in {'MUESC','MUN_ESC','MUN_ESCOLA','MUNESC','MUNICIPIO_ESCOLA','CIDESC'}:
       df.rename({col: 'MUN_ESC_EM'}, axis=1, inplace=True)
-      df['MUN_ESC_EM'] = df['MUN_ESC_EM'].map(lambda mun: unidecode(str(mun)).upper())
+      df['MUN_ESC_EM'] = df['MUN_ESC_EM'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
 
       return df
   
@@ -250,7 +253,13 @@ def tratar_tipo_escola(df):
 
   return df
 
-def tratar_ano_conclu(df):
+def validar_ano(val, date):
+  if pd.isna(val):
+    return pd.NA
+  else:
+    return val if date-80 <= val <= date else pd.NA
+
+def tratar_ano_conclu(df, date):
   # Checa coluna do ano de conclusão do ensino médio do candidato
   for col in df.columns:
     if col in {'ANO_CONCLU','ANOCONC','ANO_CONC','ANO_CONCLUSAO'}:
@@ -258,6 +267,9 @@ def tratar_ano_conclu(df):
       df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].fillna(value='')
       df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].map(lambda ano: '19'+str(ano) if len(str(ano)) == 2 else ano)
       df['ANO_CONCLU_EM'] = pd.to_numeric(df['ANO_CONCLU_EM'], errors='coerce', downcast='integer').astype('Int64')
+
+      # usar date - 80 <= val
+      df['ANO_CONCLU_EM'] = df['ANO_CONCLU_EM'].apply(validar_ano, args=(date,))
 
       return df
 
@@ -267,7 +279,9 @@ def tratar_dados(df,date,path,ingresso=1):
 
   # Junção da data de nascimento em 1 única coluna
   df['DATA_NASC'] = df.apply(data_nasc, axis=1, args=(df,))
-  df['ANO_NASC'] = df.apply(lambda row: row['DATA_NASC'][-4:] if row['DATA_NASC'] != '-' else row['DATA_NASC'], axis=1)
+  df['ANO_NASC'] = df['DATA_NASC'].map(lambda data: data[-4:] if data != '' else data)
+  df['ANO_NASC'] = pd.to_numeric(df['ANO_NASC'], errors='coerce', downcast='integer').astype('Int64')
+  df['ANO_NASC'] = df['ANO_NASC'].apply(validar_ano, args=(date,))
 
   # Inserir ano da base no dataframe final
   df.loc[:, 'ANO'] = date
@@ -293,12 +307,12 @@ def tratar_dados(df,date,path,ingresso=1):
   df = tratar_mun_escola(df)
   df = tratar_uf_escola(df)
   df = tratar_tipo_escola(df)
-  df = tratar_ano_conclu(df)
+  df = tratar_ano_conclu(df, date)
 
 
   # Rearranja colunas e as renomeia apropriadamente
   df = df.reindex(columns=['ANO','TIPO_INGRESSO_COMVEST','NOME','CPF','DOC','DATA_NASC','ANO_NASC','NOME_PAI','NOME_MAE','INSC','OPCAO1','OPCAO2','OPCAO3','NACIONALIDADE','PAIS_NASC','MUN_NASC','UF_NASC','CEP_RESID','MUN_RESID','UF_RESID','ESCOLA_EM','MUN_ESC_EM','UF_ESCOLA_EM','TIPO_ESCOLA_EM','ANO_CONCLU_EM'])
-  df.columns = ['ano_vest','tipo_ingresso_comvest','nome_c','cpf','doc_c','dta_nasc_c','ano_nasc_c','nome_pai_c','nome_mae_c','insc_vest','opc1','opc2','opc3','nacionalidade_c','pais_nasc_c','mun_nasc_c','uf_nasc_c','cep_resid_c','mun_resid_c','uf_resid','esc_em_c','mun_esc_em_c','uf_esc_em','nat_esc_em_c','ano_conclu_em_c']
+  df.columns = ['ano_vest','tipo_ingresso_comvest','nome_c','cpf','doc_c','dta_nasc_c','ano_nasc_c','nome_pai_c','nome_mae_c','insc_vest','opc1','opc2','opc3','nacionalidade_c','pais_nac_c','mun_nasc_c','uf_nasc_c','cep_resid_c','mun_resid_c','uf_resid','esc_em_c','mun_esc_em_c','uf_esc_em','nat_esc_em_c','ano_conclu_em_c']
 
   return df
 

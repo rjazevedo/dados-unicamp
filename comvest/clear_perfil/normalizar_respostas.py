@@ -133,6 +133,19 @@ def ocupacao_pais(df,ano):
 
 	return df
 
+def trabalha_pai(df,ano):
+	if 1987 <= ano <= 2000:
+		df['trabalha_pai'] = df['trabalha_pai'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA)
+
+	return df
+
+
+def trabalha_mae(df,ano):
+	if 1987 <= ano <= 2000:
+		df['trabalha_mae'] = df['trabalha_mae'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA)
+
+	return df
+
 def trabalha(df,ano):
 	if 1987 <= ano <= 1999:
 		df['trabalha'] = df['trabalha'].map({0:0, 1:1, 2:3, 3:4, 4:2})
@@ -201,6 +214,12 @@ def internet(df,ano):
 	if ano == 2011 or ano == 2012:
 		df['internet'] = df['internet'].map({0:0, 1:1, 2:1, 3:2})
 	
+	return df
+
+def jornal_le(df,ano):
+	if 1987 <= ano <= 2019:
+		df['jornal_le'] = df['jornal_le'].map(lambda x: x if x in {0, 1, 2, 3, 4} else pd.NA)
+
 	return df
 
 def cozinha_qtas(df,ano):
@@ -292,6 +311,8 @@ def normalizar(df, ano):
 
 	df = educacao_pais(df, ano)
 	df = ocupacao_pais(df, ano)
+	df = trabalha_pai(df, ano)
+	df = trabalha_mae(df, ano)
 
 	df = trabalha(df, ano)
 	df = contribui_renda_fam(df, ano)
@@ -303,6 +324,7 @@ def normalizar(df, ano):
 	df = maq_roupa(df, ano)
 	df = maq_louca(df, ano)
 	df = internet(df, ano)
+	df = jornal_le(df, ano)
 	df = cozinha_qtas(df, ano)
 	df = sala_qtas(df, ano)
 	df = quarto_qts(df, ano)

@@ -47,13 +47,13 @@ def leitura_notas(path, date):
 
 def tratar_notas_f1(notas_f1, date):
 	for col in notas_f1.columns:
-		if col in {'red'}:
-			notas_f1['redacao'] = notas_f1['red']
-		elif col in {'nf','nf1','fase1'}:
+		if col in {'red','red0c0o'}:
+			notas_f1['redacao'] = notas_f1[col]
+		elif col in {'nf','nf1','fase1','f0se1'}:
 			notas_f1.rename({col: 'nf_f1'}, axis=1, inplace=True)
 		elif col in {'npf1','notpadf1'}:
 			notas_f1.rename({col: 'notpad_f1'}, axis=1, inplace=True)
-		elif col in {'sit','presf1'}:
+		elif col in {'sit','presf1','1resf1'}:
 			notas_f1.rename({col: 'presente_f1'}, axis=1, inplace=True)
       # 0 = Ausente; 1 = Presente
 			notas_f1['presente_f1'] = notas_f1['presente_f1'].map({0:'A', 1:'P', 'P':'P', 'A':'A'})
@@ -66,7 +66,7 @@ def tratar_notas_f1(notas_f1, date):
 		redacao = notas_f1['texto1'] + notas_f1['texto2']
 		notas_f1['redacao'] = redacao.round(2)
 
-	notas_f1.rename({'his':'not_his','fis':'not_fis','qui':'not_qui','bio':'not_bio','mat':'not_mat','geo':'not_geo','redacao':'not_red','apt_musica':'not_apt_mus','npm':'notpad_apt_mus'}, axis=1, inplace=True)
+	notas_f1.rename({'qustoes':'questoes','his':'not_his','fis':'not_fis','qui':'not_qui','bio':'not_bio','mat':'not_mat','geo':'not_geo','redacao':'not_red','apt_musica':'not_apt_mus','npm':'notpad_apt_mus'}, axis=1, inplace=True)
 	notas_f1 = notas_f1.reindex(columns=['insc','questoes','not_qui','not_geo','not_fis','not_bio','not_mat','not_his','not_red','not_apt_mus','notpad_apt_mus','nf_f1','notpad_f1','presente_f1'])
 	return notas_f1
 
@@ -78,6 +78,22 @@ def tratar_notas_f2(notas_f2, date):
 		notas_f2['pres_f2_d4'] = notas_f2['pres_f2_d4'].map({'A':'A','P':'P','E':''})
 	except:
 		logging.debug('Comvest {} file doesn\'t have a \'pres_f2_d4\' column'.format(date))
+
+	try:
+		notas_f2['clas_opc1'] = notas_f2['clas_opc1'].replace(0, pd.NA).astype('Int64')
+	except:
+		logging.debug('Comvest {} file doesn\'t have a \'clas_opc1\' column'.format(date))
+
+	try:
+		notas_f2['clas_opc2'] = notas_f2['clas_opc2'].replace(0, pd.NA).astype('Int64')
+	except:
+		logging.debug('Comvest {} file doesn\'t have a \'clas_opc2\' column'.format(date))
+
+	try:
+		notas_f2['clas_opc3'] = notas_f2['clas_opc3'].replace(0, pd.NA).astype('Int64')
+	except:
+		logging.debug('Comvest {} file doesn\'t have a \'clas_opc3\' column'.format(date))
+
 
 	if 'np_unica' in notas_f2.columns:
 		if 1000 < notas_f2['np_unica'].max() <= 10000:
