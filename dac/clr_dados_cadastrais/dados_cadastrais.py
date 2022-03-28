@@ -46,8 +46,8 @@ def generate_clean_data():
             value=dados_cadastrais['dta_nasc'].map(lambda date: date[-4:])
             )
             
-    padronize_string_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d'])
-    padronize_int_miss(dados_cadastrais, ['ano_conclu_em'])
+    padronize_string_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d'], '-')
+    padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
 
     write_result(dados_cadastrais, RESULT_NAME)
     return dados_cadastrais

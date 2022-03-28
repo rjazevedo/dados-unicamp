@@ -23,3 +23,11 @@ resumo_por_periodo_cols = ['identif', 'curso_atual', 'curso_nivel', 'cod_espec_h
             'cr_periodo', 'cp_periodo', 'disc_cursadas', 'disc_aprovadas', 'repr_nota', 'repr_freq', 'aproveitamentos', 
             'aprov_proficiencia', 'disc_aproveitadas', 'desistencias', 'creditos_periodo', 'bolsa_moradia', 'bolsa_auxilio', 'bolsa_transporte', 
             'bolsa_alimentacao', 'bolsa_pesquisa', 'bolsas_outras', 'estag_obrig',	'estagio_opcion']
+
+# TODO: Devo padronizar mesmo as colunas não utilizadas ?
+cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
+            'tp_integralizacao_max', 'ano_ingresso']
+
+vida_academica_habilitacao_cols = ['identif', 'ano_ingresso', 'periodo_ingresso', 'tipo_periodo_ingresso', 'ano_saida', 'periodo_saida', 'tipo_periodo_saida' ,
+            'cod_motivo_saida', 'motivo_saida', 'curso', 'nivel_curso', 'codigo_habilitacao', 'nome_habilitacao', 'prioridade_habilitacao', 'situacao_habilitacao',
+            'cp', 'cpf', 'cp_esperado', 'ano_limite_integralizacao', 'periodo_limite_integralizacao', 'data_conclusao'] 

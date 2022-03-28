@@ -68,10 +68,10 @@ def dates_to_year(df, column):
     reset_dates = np.vectorize(lambda s : (s if str(s).isdigit() else '').zfill(4))
     df[column] = reset_dates(pd.to_datetime(df[column]).dt.strftime("%Y"))
 
-def padronize_string_miss(df, name_columns):
+def padronize_string_miss(df, name_columns, values_to_change):
     for column in name_columns:
-        df[column] = df[column].astype(str).replace('-', '', regex=True).astype("string")
+        df[column] = df[column].astype(str).replace(values_to_change, '', regex=True).astype("string")
 
-def padronize_int_miss(df, name_columns):
+def padronize_int_miss(df, name_columns, values_to_change):
     for column in name_columns:
-        df[column] = df[column].astype(int).replace(0, pd.NA).astype('Int64')
+        df[column] = df[column].astype(int).replace(values_to_change, pd.NA).astype('Int64')

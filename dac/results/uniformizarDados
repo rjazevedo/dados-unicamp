@@ -1,4 +1,3 @@
-O que eu fiz foi dar um unique() em cada uma dessas colunas
 
 cod_pais_nascimento = ['BR' 'IG' 'MO' 'IT' 'SE' 'JP' 'CL' 'NL' 'CN' 'RA' 'BG' 'US' 'DA' 'FR'
  'BE' 'PE' 'PT' 'AR' 'CA' 'UY' 'RU' 'CH' 'IQ' 'IL' 'KR' 'YU' 'ES' 'CV'
