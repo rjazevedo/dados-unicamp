@@ -24,7 +24,6 @@ resumo_por_periodo_cols = ['identif', 'curso_atual', 'curso_nivel', 'cod_espec_h
             'aprov_proficiencia', 'disc_aproveitadas', 'desistencias', 'creditos_periodo', 'bolsa_moradia', 'bolsa_auxilio', 'bolsa_transporte', 
             'bolsa_alimentacao', 'bolsa_pesquisa', 'bolsas_outras', 'estag_obrig',	'estagio_opcion']
 
-# TODO: Devo padronizar mesmo as colunas não utilizadas ?
 cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
             'tp_integralizacao_max', 'ano_ingresso']
 

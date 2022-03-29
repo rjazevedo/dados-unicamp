@@ -15,6 +15,7 @@ def generate_clean_data():
     cursos_habilitacoes.drop(drop_cols, axis=1, inplace=True)
 
     padronize_string_miss(cursos_habilitacoes, ['codigo_habilitacao'], ' ')
-    padronize_int_miss(cursos_habilitacoes, ['ano_ingresso', 'curso', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
-            'tp_integralizacao_max'], 0)
+    padronize_int_miss(cursos_habilitacoes, ['ano_ingresso', 'curso', 'total_creditos_curso_hab'], 0)
+
+
     return cursos_habilitacoes
