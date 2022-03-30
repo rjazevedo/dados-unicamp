@@ -51,6 +51,7 @@ def padronize_dates(df, date_columns):
     reset_dates = np.vectorize(lambda s : ('' if s =='NaT' else s).zfill(8))
     for c in date_columns:
         df[c] = reset_dates(pd.to_datetime(df[c]).dt.strftime("%d%m%Y"))
+        df[c] = df[c].astype("string")
 
 def calc_cr_periodo(df, column):
     df['nota_credito'] =  df['nota'] * df['creditos']
@@ -66,3 +67,13 @@ def calc_cr_periodo(df, column):
 def dates_to_year(df, column):
     reset_dates = np.vectorize(lambda s : (s if str(s).isdigit() else '').zfill(4))
     df[column] = reset_dates(pd.to_datetime(df[column]).dt.strftime("%Y"))
+
+def padronize_string_miss(df, name_columns, values_to_change):
+    for column in name_columns:
+        df[column] = df[column].fillna('')
+        df[column] = df[column].astype(str).replace(values_to_change, '', regex=True).astype("string")
+
+def padronize_int_miss(df, name_columns, values_to_change):
+    for column in name_columns:
+        df[column] = df[column].fillna(0)
+        df[column] = df[column].astype(int).replace(values_to_change, pd.NA).astype('Int64')
