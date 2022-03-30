@@ -16,6 +16,7 @@ def replicate_ids_dac():
     vida_academica_habilitacao = read_result('vida_academica_habilitacao.csv')
     historico_escolar = read_result('historico_escolar_aluno.csv')
     resumo_por_periodo = read_result('resumo_periodo_cr.csv')
+    vida_academica_habilitacao = read_result('vida_academica_habilitacao.csv')
 
     ids = read_result('identifs.csv')
 
@@ -24,6 +25,7 @@ def replicate_ids_dac():
     vida_academica_habilitacao = ids.merge(vida_academica_habilitacao).drop(['identif'], axis=1, errors='ignore')
     historico_escolar = ids.merge(historico_escolar).drop(['insc_vest','identif'], axis=1, errors='ignore')
     resumo_por_periodo = ids.merge(resumo_por_periodo).drop(['insc_vest','identif'], axis=1, errors='ignore')
+    vida_academica_habilitacao = ids.merge(vida_academica_habilitacao).drop(['identif'], axis=1, errors='ignore')
 
     write_output(dados_cadastrais, 'dados_cadastrais.csv')
     write_output(vida_academica, 'vida_academica.csv')

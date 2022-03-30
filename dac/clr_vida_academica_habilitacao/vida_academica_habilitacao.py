@@ -14,14 +14,13 @@ RESULT_NAME = 'vida_academica_habilitacao.csv'
 def generate():
     vida_academica_habilitacao = read_from_database(FILE_NAME)
     vida_academica_habilitacao.columns = vida_academica_habilitacao_cols
-
+    
     dates_to_year(vida_academica_habilitacao, 'data_conclusao')
     padronize_int_miss(vida_academica_habilitacao, ['ano_saida', 'periodo_limite_integralizacao'], 0)
 
-    # TODO: como padronizar isso aqui ?
     vida_academica_habilitacao['ano_limite_integralizacao'] = vida_academica_habilitacao['ano_limite_integralizacao'].replace(np.nan, 0).astype('Int64')
     vida_academica_habilitacao['ano_limite_integralizacao'] = vida_academica_habilitacao['ano_limite_integralizacao'].replace([0,13], pd.NA).astype('Int64')
-       
+    
     padronize_string_miss(vida_academica_habilitacao, ['nome_habilitacao', 'tipo_periodo_saida', 'codigo_habilitacao', 'data_conclusao'], [' ', '0000'])
 
     return vida_academica_habilitacao

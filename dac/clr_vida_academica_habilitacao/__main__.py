@@ -8,24 +8,15 @@ RESULT_NAME = 'vida_academica_habilitacao.csv'
 
 def main():
     habilitacoes_df = cursos_habilitacoes.generate_clean_data()
-    vida_habilitacao_df = vida_academica_habilitacao.generate()
-
-    print(vida_habilitacao_df['codigo_habilitacao'].unique())
-    print(habilitacoes_df['codigo_habilitacao'].unique())
-
-    print(vida_habilitacao_df['curso'].unique())
-    print(habilitacoes_df['curso'].unique())
-
-    print(vida_habilitacao_df['ano_ingresso'].unique())
-    print(habilitacoes_df['ano_ingresso'].unique())       
-
-    print(vida_habilitacao_df.shape)
+    vida_habilitacao_df = vida_academica_habilitacao.generate()       
     merged_df = pd.merge(vida_habilitacao_df, habilitacoes_df, on=['curso', 'ano_ingresso', 'codigo_habilitacao'], how='left')
-    print(merged_df.shape)
-    write_result(merged_df, RESULT_NAME)
+    
+    filt = merged_df['total_creditos_curso_hab'].notnull()
 
-    for c in merged_df.columns:
-        print(merged_df[c].unique())
+    corect_merge = merged_df[filt]
+    wrong_merge = merged_df[~filt]
 
+    write_result(corect_merge, RESULT_NAME)
+    
 if __name__ == '__main__':
     main()
