@@ -11,16 +11,12 @@ def main():
     vida_habilitacao_df = vida_academica_habilitacao.generate()       
     merged_df = pd.merge(vida_habilitacao_df, habilitacoes_df, on=['curso', 'ano_ingresso', 'codigo_habilitacao'], how='left')
     
-    filtro = merged_df['total_creditos_curso_hab'].notnull()
+    filt = merged_df['total_creditos_curso_hab'].notnull()
 
-    corect_merge = merged_df[filtro]
-    wrong_merge = merged_df[~filtro]
+    corect_merge = merged_df[filt]
+    wrong_merge = merged_df[~filt]
 
-    print(corect_merge.shape)
-    print(wrong_shape.shape)
-
-    write_result(corect, RESULT_NAME)
-    write_output(wrong, RESULT_NAME)
+    write_result(corect_merge, RESULT_NAME)
     
 if __name__ == '__main__':
     main()

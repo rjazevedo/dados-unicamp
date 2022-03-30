@@ -70,7 +70,7 @@ def dates_to_year(df, column):
 
 def padronize_string_miss(df, name_columns, values_to_change):
     for column in name_columns:
-        
+        df[column] = df[column].fillna('')
         df[column] = df[column].astype(str).replace(values_to_change, '', regex=True).astype("string")
 
 def padronize_int_miss(df, name_columns, values_to_change):
