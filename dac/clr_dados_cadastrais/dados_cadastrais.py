@@ -8,6 +8,8 @@ from dac.utilities.format import padronize_dates
 from dac.utilities.format import padronize_marstat
 from dac.utilities.format import fill_doc
 from dac.utilities.format import dates_to_year
+from dac.utilities.format import padronize_string_miss
+from dac.utilities.format import padronize_int_miss
 
 drop_cols = ['nome_mae', 'nome_pai', 'idade_atual', 
         'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_esmissao_doc', 'doc_tratado']
@@ -19,8 +21,8 @@ def generate_clean_data():
     dados_cadastrais = read_from_database(FILE_NAME)
     dados_cadastrais.columns = dados_cadastrais_cols
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
-    unicode_cols = ['nome', 'mun_atual', 'mun_resid', 'mun_esc_form_em', 'tipo_esc_form_em', 
-    'raca_descricao', 'mun_nasc', 'pais_nascimento', 'nacionalidade', 'pais_nacionalidade', 'naturalizado',
+    unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
+    'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nacionalidade', 'naturalizado',
     'escola_em_d', 'pais_esc_form_em']
     
     dados_cadastrais.cpf = fill_doc(dados_cadastrais.cpf, 11)
@@ -36,13 +38,16 @@ def generate_clean_data():
     padronize_marstat(dados_cadastrais, 'est_civil_d')
     padronize_dates(dados_cadastrais, ['dta_nasc'])
     dates_to_year(dados_cadastrais, 'ano_conclu_em')
+
     dados_cadastrais.tipo_esc_form_em = dados_cadastrais.tipo_esc_form_em.str[7:]
     dados_cadastrais.insert(
             loc=dados_cadastrais.columns.get_loc('dta_nasc')+1, 
             column='ano_nasc_d', 
             value=dados_cadastrais['dta_nasc'].map(lambda date: date[-4:])
             )
-    
+            
+    padronize_string_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d'], '-')
+    padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
 
     write_result(dados_cadastrais, RESULT_NAME)
     return dados_cadastrais
