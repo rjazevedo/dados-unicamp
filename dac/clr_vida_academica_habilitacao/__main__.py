@@ -16,6 +16,8 @@ def main():
     corect_merge = merged_df[filt]
     wrong_merge = merged_df[~filt]
 
+    wrong_merge = wrong_merge[wrong_merge['codigo_habilitacao'] != '']
+    print(wrong_merge.shape)
     write_result(corect_merge, RESULT_NAME)
     
 if __name__ == '__main__':

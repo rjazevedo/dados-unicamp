@@ -12,7 +12,7 @@ from dac.utilities.format import padronize_string_miss
 from dac.utilities.format import padronize_int_miss
 
 drop_cols = ['nome_mae', 'nome_pai', 'idade_atual', 
-        'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_esmissao_doc', 'doc_tratado']
+        'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_emissor_doc', 'doc_tratado']
 
 FILE_NAME = 'DadosCadastraisAluno.xlsx'
 RESULT_NAME = 'dados_cadastrais.csv'
