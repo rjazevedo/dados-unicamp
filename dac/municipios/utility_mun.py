@@ -1,4 +1,5 @@
 from unidecode import unidecode
+from dac.utilities.io import write_output
 import difflib as dff
 import pandas as pd
 
@@ -37,29 +38,28 @@ def create_dictonary_ufs(df):
         df_uf = df[filter_condition]
         dict[value] = df_uf
         df = df[~filter_condition]
-    
     dict[''] = df
     return dict
-
+# todo: parece que fiz merda
 def merge_by_uf(dict_df, ibge_data, ibge_data_dict):
     dfs = []
     for key,value in dict_df.items():
-
         if key != '':
             ibge_data_filtered = ibge_data_dict[key]
-            value['key'] = value['key'].map(lambda x: get_the_closest_matche(x, ibge_data_filtered['key']))
-            merged_df = pd.merge(value, ibge_data_filtered, on=['key'], how='left')
+            merged_df = key_merge(value, ibge_data_filtered, 0.7)
             dfs.append(merged_df)
-
         else:
             create_concat_key_for_merge(value)
-            value['key'] = value['key'].map(lambda x: get_the_closest_matche(x, ibge_data['key'], cutoff=0.85))
-            merged_df = pd.merge(value, ibge_data, on=['key'], how='left')
+            merged_df = key_merge(value, ibge_data, 0.85)
             dfs.append(merged_df)
-            
     return pd.concat(dfs, ignore_index = True)
 
-def get_the_closest_matche(element, serie, cutoff=0.7):
+def key_merge(value, ibge_data, cutoff):
+    value['key'] = value['key'].map(lambda x: get_the_closest_matche(x, ibge_data['key'], cutoff=cutoff))
+    merged_df = pd.merge(value, ibge_data, on=['key'], how='left')
+    return merged_df
+
+def get_the_closest_matche(element, serie, cutoff):
     values = dff.get_close_matches(element, serie, cutoff=cutoff)
     if len(values) > 0:
         return values[0]
