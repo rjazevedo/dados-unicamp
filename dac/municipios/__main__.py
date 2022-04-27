@@ -78,6 +78,7 @@ def generate_mun_dac_comvest():
     ibge_data = get_ibge_data()
     ibge_data_dict = get_ibge_data_dict()
     merged_dac_df = merge_by_uf(dac_dict, ibge_data, ibge_data_dict)
+    merged_dac_df['confianca'] = 'alta'
     write_result(merged_dac_df, 'dac_counties_df.csv')
     merged_comvest_df = merge_by_uf(comvest_dict, ibge_data, ibge_data_dict)
     write_result(merged_comvest_df, 'comvest_counties_df.csv')
