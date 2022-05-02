@@ -1,9 +1,14 @@
 import pandas as pd
 
 def paais(df,ano):
-	if 2005 <= ano <= 2018:
+	if 2005 <= ano <= 2013:
+		df['paais_a'] = df['paais'].copy()
+		df['paais'] = df['paais'].map({0:0, 1:1, 2:1})
+	elif 2014 <= ano <= 2018:
+		df['paais_b'] = df['paais'].copy()
 		df['paais'] = df['paais'].map({0:0, 1:1, 2:1})
 	elif 2019 <= ano <= 2021:
+		df['paais_c'] = df['paais'].copy()
 		df['paais'] = df['paais'].map({0:0, 1:2, 2:3, 3:4})
 
 	return df
@@ -91,6 +96,12 @@ def cursinho_tempo(df,ano):
 
 	return df
 
+def vest_qts(df, ano):
+	if 1987 <= ano <= 1998:
+		df['vest_qts'] = df['vest_qts'].map({0:0, 1:2, 2:3, 3:4, 4:5, 5:5, 6:5, 7:5, 8:5, 9:1})
+	
+	return df
+
 def univ_outra(df,ano):
 	if 2013 <= ano <= 2021:
 		df['univ_outra'] = df['univ_outra'].map({0:0, 1:2, 2:1, 3:1, 4:1, 5:1, 6:1})
@@ -98,6 +109,10 @@ def univ_outra(df,ano):
 	df['univ_outra'] = df['univ_outra'].map(lambda x: x if x in {0, 1, 2} else pd.NA)
 
 	return df
+
+def career_decishow(df, ano):
+	if not 1999 <= ano <= 2003:
+		df.drop('career_decishow', axis=1, errors='ignore', inplace=True)
 
 def opcao1_motivo(df,ano):
 	if 1987 <= ano <= 1998:
@@ -130,19 +145,6 @@ def ocupacao_pais(df,ano):
 	if 2004 <= ano <= 2007:
 		df['ocup_pai'] = df['ocup_pai'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:10})
 		df['ocup_mae'] = df['ocup_mae'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:10})
-
-	return df
-
-def trabalha_pai(df,ano):
-	if 1987 <= ano <= 2000:
-		df['trabalha_pai'] = df['trabalha_pai'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA)
-
-	return df
-
-
-def trabalha_mae(df,ano):
-	if 1987 <= ano <= 2000:
-		df['trabalha_mae'] = df['trabalha_mae'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA)
 
 	return df
 
@@ -180,6 +182,32 @@ def renda_contrib_qtas(df,ano):
 	
 	return df
 
+def extra_activ(df, ano):
+	if 1999 <= ano <= 2004:
+		df['extra_activ'] = df['extra_activ'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:5,7:6})
+	
+def other_activ(df, ano):
+	if 1987 <= ano <= 1990:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5})
+	elif 1991 <= ano <= 1998:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5,9:5})
+	elif 1999 <= ano <= 2004:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:3,4:5,5:4,6:5,7:5,8:5})
+
+def read_type(df, ano):
+	if 1987 <= ano <= 1996:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:1,3:1,4:2,5:5})
+	elif 1997 <= ano <= 2001:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:1,3:1,4:2,5:3,6:4,7:5})
+	elif 2002 <= ano <= 2004:
+		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:3,3:4,4:1,5:4,6:2,7:2,8:5})
+
+def magazine_type(df, ano):
+	if 1987 <= ano <= 1989:
+		df['magazine_type'] = df['magazine_type'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:7})
+	elif 1999 <= ano <= 2002:
+		df['magazine_type'] = df['magazine_type'].map({0:0,1:1,2:7,3:2,4:3,5:4,6:5,7:6,8:7})
+
 def geladeira(df,ano):
 	if ano == 2004:
 		df['geladeira'] = df['geladeira'].map({0:0, 1:2, 2:1, 3:1, 4:1, 5:1})
@@ -214,12 +242,6 @@ def internet(df,ano):
 	if ano == 2011 or ano == 2012:
 		df['internet'] = df['internet'].map({0:0, 1:1, 2:1, 3:2})
 	
-	return df
-
-def jornal_le(df,ano):
-	if 1987 <= ano <= 2019:
-		df['jornal_le'] = df['jornal_le'].map(lambda x: x if x in {0, 1, 2, 3, 4} else pd.NA)
-
 	return df
 
 def cozinha_qtas(df,ano):
@@ -268,6 +290,9 @@ def computador_qtos(df,ano):
 	if ano == 2004:
 		df['computador_qtos'] = df['computador_qtos'].map({0:0, 1:5, 2:1, 3:2, 4:3, 5:4})
 	
+	if 'computador' not in df.columns:
+		df['computador'] = df['computador_qtos'].map({0:0, 1:1, 2:1, 3:1, 4:1, 5:2})
+	
 	return df
 
 def carro_qtos(df,ano):
@@ -304,27 +329,30 @@ def normalizar(df, ano):
 	df = cursinho(df, ano)
 	df = cursinho_motivo(df, ano)
 	df = cursinho_tempo(df, ano)
+	df = vest_qts(df, ano)
 	df = univ_outra(df, ano)
+	df = career_decishow(df, ano)
 	df = opcao1_motivo(df, ano)
 	df = unicamp_motivo(df, ano)
 	df = idiomas(df, ano)
 
 	df = educacao_pais(df, ano)
 	df = ocupacao_pais(df, ano)
-	df = trabalha_pai(df, ano)
-	df = trabalha_mae(df, ano)
 
 	df = trabalha(df, ano)
 	df = contribui_renda_fam(df, ano)
 	df = renda_sm(df, ano)
 	df = renda_contrib_qtas(df, ano)
 
+	df = extra_activ(df, ano)
+	df = other_activ(df, ano)
+	df = read_type(df, ano)
+	df = magazine_type(df, ano)
 	df = geladeira(df, ano)
 	df = freezer(df, ano)
 	df = maq_roupa(df, ano)
 	df = maq_louca(df, ano)
 	df = internet(df, ano)
-	df = jornal_le(df, ano)
 	df = cozinha_qtas(df, ano)
 	df = sala_qtas(df, ano)
 	df = quarto_qts(df, ano)
