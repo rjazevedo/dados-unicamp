@@ -16,7 +16,7 @@ def extract_mun_and_uf(df, columns):
 
 def concat_and_drop_duplicates(dfs):
     concat = pd.concat(dfs, ignore_index = True)
-    concat = concat.drop_duplicates(keep=False)
+    concat = concat.drop_duplicates()
     return concat
 
 def padronize_string(element):
@@ -40,13 +40,13 @@ def create_dictonary_ufs(df):
         df = df[~filter_condition]
     dict[''] = df
     return dict
-# todo: parece que fiz merda
+
 def merge_by_uf(dict_df, ibge_data, ibge_data_dict):
     dfs = []
     for key,value in dict_df.items():
         if key != '':
             ibge_data_filtered = ibge_data_dict[key]
-            merged_df = key_merge(value, ibge_data_filtered, 0.7)
+            merged_df = key_merge(value, ibge_data_filtered, 0.8)
             dfs.append(merged_df)
         else:
             create_concat_key_for_merge(value)
