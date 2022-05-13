@@ -9,7 +9,7 @@ def merge(dropcolumns=['nome_c','doc_c','cpf','dta_nasc_c','nome_pai_c','nome_ma
     notas = read_result('notas_comvest.csv', dtype=DTYPES_NOTAS)
     matriculados = read_result('matriculados_comvest.csv', dtype=DTYPES_MATRICULADOS)
 
-    dfs = [dados, perfil, matriculados, notas]
+    dfs = [dados, perfil, notas, matriculados]
 
     base_comvest = reduce(lambda left,right: pd.merge(left, right, on=['ano_vest','insc_vest'], how='left'), dfs)
 

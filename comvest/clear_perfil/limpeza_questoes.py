@@ -12,7 +12,7 @@ def filtrar_perguntas(desc):
   elif 'estado civil' in descricao:
     return 'est_civil'
   elif 'língua estrangeira' in descricao:
-    return 'lestrangeira'
+    return 'idioma_vest_escolha'
   elif all(txt in descricao for txt in ['local','residência']):
     return 'local_residencia'
   elif 'você lê jornal?' in descricao:
@@ -135,13 +135,13 @@ def filtrar_perguntas(desc):
   elif any(txt in descricao for txt in ['relação ao domínio de líng.estrang., em que situação você se enquadra melhor?','relação ao domínio de línguas estrang., em que situação você se enquadra melhor?','relação ao domínio de líng. estrang., em que situação você se enquadra melhor?','relação ao domínio de línguas estrangeiras, em que situação você se enquadra melhor?','relação ao domínio de línguas estrang, em que situação você se enquadra melhor?']):
     return 'idiomas'
   elif any(txt in descricao for txt in ['na sua família fala-se']):
-    return 'idiomas_fam'
+    return 'idiomas_familia'
   elif any(txt in descricao for txt in ['no caso de falar outro idioma em casa, qual  é ele?']):
     return 'idiomas_fam_quais'
   elif any(txt in descricao for txt in ['onde você estudou ou estuda francês?']):
-    return 'escola_frances'
+    return 'frances_estudou_onde'
   elif any(txt in descricao for txt in ['por quanto tempo?']):
-    return 'escola_frances_tempo'
+    return 'frances_estudou_tempo'
   elif any(txt in descricao for txt in ['você acha que saber francês é relevante para a sua área de interesse?']):
     return 'frances_relevancia'
   elif any(txt in descricao for txt in ['você já fez ou está fazendo algum curso superior?','você já iniciou ou está cursando algum curso superior?','você já fez ou vem fazendo algum curso superior?']):
@@ -159,7 +159,7 @@ def filtrar_perguntas(desc):
   elif any(txt in descricao for txt in ['qual a situação da moradia em que você reside?']):
     return 'moradia_situacao'
   elif any(txt in descricao for txt in ['como você mora?']):
-    return 'moradia_como'
+    return 'moradia_atual'
   elif any(txt in descricao for txt in ['se aprovado neste vestibular, qual será sua mais provável situação de moradia?']):
     return 'moradia_pos_aprov'
   elif all(txt in descricao for txt in ['ocupação','pai']):
@@ -191,39 +191,39 @@ def filtrar_perguntas(desc):
   elif any(txt in descricao for txt in ['em que ano você fez ou fará o vestibular pela primeira vez?']):
     return 'primeiro_vest'
   elif any(txt in descricao for txt in ['sem levar em consid. exper. c/ treineiro, você já prestou algum vest. anterior.? quantos?','você já prestou algum ex.vest.anteriormente (treineiro não conta)? quantos?','você já prestou algum exame vest. anteriormente (treineiro não conta)? quantos?','você já prestou algum exame vestibular anteriormente (treineiro não conta)? quantos?','em quantas instituições (universidades, faculdades) você já prestou vestibular?','em quantas instituições (universidades, faculdades ) você já prestou vestibular?']):
-    return 'vest_qts'
+    return 'vest_qts_inst'
   elif any(txt in descricao for txt in ['se você já prestou outro(s) vestibular(es), indique em qual(is) instituição(ões)','se você já prestou outro(s) vestibular(es), em qual(is) instituição(ões)?','se você já prestou outro(s) vestibular(es) em qual(is) instituição(ões)?']):
-    return 'vest_quais'
+    return 'vest_quais_inst'
   elif any(txt in descricao for txt in ['você prestará vestibular, no ano']):
     return 'vest_outro'
   elif any(txt in descricao for txt in ['se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou vem fazendo algum curso superior, qual das seguintes alternativas melhor expressa sua situação no referido curso?','se já fez ou está fazendo curso sup., qual das seg.altern.melhor expres.sua situação?','se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está fazendo curso sup., qual das seg. altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres. sua situação?']):
-    return 'other_univreas'
+    return 'univ_outra_escolha'
   elif any(txt in descricao for txt in ['qual a instituição em que você já está ou esteve matriculado?','qual a instituição em que já está ou esteve matriculado?']):
     return 'univ_outra_inst'
   elif any(txt in descricao for txt in ['da relação abaixo, qual a disciplina que você mais gostaria de continuar estudando?']):
     return 'disciplina_favorita'
   elif any(txt in descricao for txt in ['o que você espera, em primeiro lugar, de um curso universitário?']):
-    return 'expectativa_curso'
+    return 'curso_expectativa'
   elif any(txt in descricao for txt in ['como você se posiciona frente às carreiras ou cursos oferecidos pela universidade?']):
-    return 'interesse_curso'
+    return 'curso_interesse'
   elif any(txt in descricao for txt in ['qual a opinião de seus pais sobre a sua escolha profissional?']):
     return 'opiniao_pais'
   elif any(txt in descricao for txt in ['quanto à sua primeira opção, você se considera', 'quanto à sua primeira opção, você considera']):
-    return 'career_decis'
+    return 'opc1_decidido'
   elif any(txt in descricao for txt in ['você escolheu a carreira ou curso no qual está se inscrevendo em 1ª opção baseando-se','você escolheu a carreira ou curso para no qual está inscrevendo em 1ª opção baseando-se']):
-    return 'career_decishow'
+    return 'opc1_escolha'
   elif any(txt in descricao for txt in ['se você abando.ou pretende abandonar o curso superior já iniciado, qual seria o motivo?','se você abandonou ou pretende abandonar o curso superior já iniciado, qual seria o motivo?','se você abandonou ou pretende abandonar o curso superior já iniciado, qual o principal motivo que o levou ou levará a esta decisão?','se você abandonou ou pretende abandonar o curso superior já iniciado, qual o motivo?']):
     return 'other_univdropreas'
   elif any(txt in descricao for txt in ['quais as atividades extraclasse de que você mais participa?']):
-    return 'extra_activ'
+    return 'ativ_extra_quais'
   elif any(txt in descricao for txt in ['com qual das atividades abaixo citadas você ocupa mais tempo?']):
-    return 'other_activ'
+    return 'ativ_extra_principal'
   elif any(txt in descricao for txt in ['qual o meio que você mais utiliza para se manter informado sobre os acontec. atuais?','qual o meio que você mais utiliza p/ manter informado sobre os acontecimentos atuais?','qual o meio que você mais utiliza p/ manter informado(a) sobre os acontecim.atuais?','qual o meio que mais utiliza para se manter informado(a) sobre os acontec. atuais?','qual o meio que você mais utiliza p/ manter informado(a) sobre os acontec.atuais?','qual o meio que você mais utiliza para se manter informado(a) sobre os acontec.atuais?','qual o meio que você mais utiliza p/ manter informado(a) sobre os acontec. atuais?']):
-    return 'news_media'
+    return 'inform_meio'
   elif any(txt in descricao for txt in ['dos tipos de revistas abaixo citados, qual você mais lê?','dos tipos de revistas e/ou jornais de lazer abaixo citados, qual você mais lê?','dos tipos de revistas e/ou jornais abaixo citados, qual você mais lê?']):
-    return 'magazine_type'
+    return 'revistas_tipo'
   elif any(txt in descricao for txt in ['além dos textos didáticos e informativos, o que você mais lê?']):
-    return 'read_type'
+    return 'leitura_tipo'
   elif any(txt in descricao for txt in ['muitos hj. estão deix.os cigarros p/ acharem que são prejs. à saúde. você estaria entre','muitos hj. estão deix. os cigarros p/ acharem que são prejs. à saúde. você estaria entre']):
     return 'cigarro_uso'
   elif any(txt in descricao for txt in ['com qual frequência você lê notícias e reportagens (impresso/internet)?']):
