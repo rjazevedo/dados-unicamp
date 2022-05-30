@@ -50,7 +50,6 @@ def generate():
     dados_dac = read_result_dac('dados_ingressante.csv', dtype=str).loc[:, ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']]
 
     uniao_dac_comvest = dados_dac.merge(dados_comvest, how='outer', on=['insc_vest','ano_ingresso_curso'], suffixes=('_dac','_comvest'))
-
     uniao_dac_comvest['cpf_dac'].fillna('-', inplace=True)
     uniao_dac_comvest['cpf_comvest'].fillna('-', inplace=True)
 
@@ -68,7 +67,6 @@ def generate():
 
     uniao_dac_comvest = uniao_dac_comvest.reindex(columns=['insc_vest','nome','cpf','origem_cpf','dta_nasc','doc','ano_ingresso_curso'])
 
-
     uniao_sem_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].drop(['cpf','origem_cpf','doc'], axis=1)
     uniao_com_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] != '-']
 
@@ -78,6 +76,8 @@ def generate():
     uniao_dac_comvest = pd.concat([uniao, uniao_dac_comvest])
     uniao_dac_comvest.drop_duplicates(subset=['insc_vest','ano_ingresso_curso'], inplace=True)
 
-
+    # MARK: Remove insc_vest
+    # uniao_dac_comvest.drop(columns = ['insc_vest'], inplace=True)
+    
     # uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].to_csv('uniao_dac_comvest_sem_cpf.csv', index=False)
     write_output(uniao_dac_comvest, 'uniao_dac_comvest.csv')

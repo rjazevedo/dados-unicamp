@@ -19,7 +19,7 @@ def generate_cr():
     resumo_semestre = read_result(RESUMO_FILE)
 
     for m in exclui_cr.keys():
-        historico_com_creditos.drop(historico_com_creditos[historico_com_creditos.cod_situacao == m].index, inplace=True)
+        historico_com_creditos.drop(historico_com_creditos[historico_com_creditos.cod_situacao_disciplina == m].index, inplace=True)
 
     cr_obr_periodo = calc_cr_periodo(historico_com_creditos, 'cr_obr_periodo')
     resumo_semestre_cr = resumo_semestre.merge(cr_obr_periodo, how='left')

@@ -16,7 +16,6 @@ def replicate_ids_dac():
     vida_academica_habilitacao = read_result('vida_academica_habilitacao.csv')
     historico_escolar = read_result('historico_escolar_aluno.csv')
     resumo_por_periodo = read_result('resumo_periodo_cr.csv')
-    vida_academica_habilitacao = read_result('vida_academica_habilitacao.csv')
 
     ids = read_result('identifs.csv')
 

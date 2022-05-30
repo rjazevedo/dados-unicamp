@@ -16,7 +16,7 @@ def merge():
         'curricularidade': str,
         'disc': str,
         'turma': str,
-        'cod_situacao': int,
+        'cod_situacao_disciplina': int,
         'situacao': str,
         'nota': float,
         'frequencia': int   
@@ -28,8 +28,8 @@ def merge():
         'disc' : str, 
         'creditos': int
     })
-    historico = historico.drop(historico[historico.cod_situacao == 9].index
-                        ).drop(historico[historico.cod_situacao == 15].index)
+    historico = historico.drop(historico[historico.cod_situacao_disciplina == 9].index
+                        ).drop(historico[historico.cod_situacao_disciplina == 15].index)
 
     disc_cursadas = historico.loc[:, ['disc', 'ano', 'periodo']
                             ].merge(creditos, how='left'

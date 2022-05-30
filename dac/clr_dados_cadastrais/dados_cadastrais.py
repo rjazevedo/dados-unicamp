@@ -24,10 +24,11 @@ UF_CODE_NAME = 'counties_code.csv'
 
 def generate_clean_data():
     dados_cadastrais = read_from_database(FILE_NAME)
+    
     dados_cadastrais.columns = dados_cadastrais_cols
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
     unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
-    'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nacionalidade', 'naturalizado',
+    'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nac_d', 'naturalizado',
     'escola_em_d', 'pais_esc_form_em']
     
     dados_cadastrais.cpf = fill_doc(dados_cadastrais.cpf, 11)
@@ -50,8 +51,8 @@ def generate_clean_data():
             column='ano_nasc_d', 
             value=dados_cadastrais['dta_nasc'].map(lambda date: date[-4:])
             )
-            
-    padronize_string_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d'], '-')
+    
+    padronize_string_miss(dados_cadastrais, ['cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d', 'tipo_esc_form_em'], '-')
     padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
     
     write_result(dados_cadastrais, RESULT_NAME)
@@ -71,4 +72,4 @@ def generate_uf_code():
     mun_nasc_d_merge = pd.merge(mun_nasc_d_merge, final_counties, how='left')
     
     mun_nasc_d_merge = mun_nasc_d_merge.reindex(columns= dados_cadastrais_final_cols)
-    write_output(mun_nasc_d_merge, RESULT_NAME)
+    write_result(mun_nasc_d_merge, RESULT_NAME)

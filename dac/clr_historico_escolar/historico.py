@@ -13,7 +13,6 @@ def generate_clean_data():
     historico_escolar = read_multiple_from_database(DATABASE_FILES)
     historico_escolar.columns = historico_escolar_cols
     
-    
     padronize_dates(historico_escolar, ['dt_inicio','dt_fim'])
     str_to_upper_ascii(historico_escolar, ['curricularidade'])
     historico_escolar.turma = historico_escolar.turma.str.strip()
@@ -26,7 +25,7 @@ def generate_clean_data():
 
     # Eliminando disciplinas canceladas ou não ofertadas em um respectivo semestre (código 15 e 9)
     historico_escolar.drop(
-        historico_escolar[(historico_escolar.cod_situacao - 9) % 6 == 0].index, 
+        historico_escolar[(historico_escolar.cod_situacao_disciplina - 9) % 6 == 0].index, 
         inplace=True)
 
     write_result(historico_escolar, CLEAN_FILE)

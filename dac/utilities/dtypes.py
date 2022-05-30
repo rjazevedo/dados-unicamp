@@ -16,7 +16,7 @@ DTYPES_DADOS_CADASTRAIS = {
     'pais_nasc_d'              :          object,
     'nacionalidade'            :          object,
     'cod_pais_nacionalidade'   :          object,
-    'pais_nacionalidade'       :          object,
+    'pais_nac_d'               :          object,
     'naturalizado'             :          object,
     'ano_conclu_em'            :         'Int64',
     'escola_em_d'              :          object,

@@ -7,16 +7,22 @@ from dac.municipios.utility_mun import concat_and_drop_duplicates
 from dac.municipios.utility_mun import create_key_for_merge
 from dac.municipios.utility_mun import create_dictonary_ufs
 import pandas as pd
+import glob
+
+VEST_PATH = '/home/fernando/dados-unicamp/input/comvest/'
 
 def generate_mun_comvest():
     dfs = []
-    for year in range(1997, 2020):
-        path = '/home/fernando/dados-unicamp/input/comvest/vest' +  str(year) + '.xlsx'
-        df = pd.read_excel(path, sheet_name='dados')
+    all_vests = glob.glob(VEST_PATH + '*')
+    for year in all_vests:
+        print(year)
+        df = pd.read_excel(year, sheet_name='dados')
+        print(df.columns)
         df = rename_colums(df)
         dfs.append(df)
     
     result = concat_and_drop_duplicates(dfs)
+    print(result.columns)
     create_key_for_merge(result)
     comvest_dict = create_dictonary_ufs(result)
     return comvest_dict
