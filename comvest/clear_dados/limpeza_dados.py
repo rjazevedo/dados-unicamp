@@ -330,7 +330,7 @@ def extraction():
   for path, date in files.items():
     df = read_from_db(path, sheet_name='dados', dtype=str)
     progresslog('dados', date)
-
+    print(df.columns)
     df = tratar_dados(df,date,path)
 
     if date >= 2019:

@@ -3,22 +3,23 @@ from dac.clr_vida_academica_habilitacao import vida_academica_habilitacao
 from dac.utilities.io import write_output
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result
-from dac.municipios.dac import generate_mun_dac
-from dac.municipios.dados_ibge import get_ibge_data
-from dac.municipios.dados_ibge import get_ibge_data_dict
-from dac.municipios.comvest import generate_mun_comvest
-from dac.municipios.utility_mun import get_the_closest_matche
-from dac.municipios.utility_mun import merge_by_uf
-from dac.municipios.utility_mun import concat_and_drop_duplicates
-from dac.municipios.utility_mun import key_merge
-from dac.municipios.utility_mun import create_key_for_merge
-from dac.municipios.utility_mun import padronize_string
-from dac.municipios.utility_mun import create_concat_key_for_merge
-from dac.municipios.utility_mun import CODE_UF_EQUIV
+from dac.create_ufs_codes.dac import generate_mun_dac
+from dac.create_ufs_codes.dados_ibge import get_ibge_data
+from dac.create_ufs_codes.dados_ibge import get_ibge_data_dict
+from dac.create_ufs_codes.comvest import generate_mun_comvest
+from dac.create_ufs_codes.utility_mun import get_the_closest_matche
+from dac.create_ufs_codes.utility_mun import merge_by_uf
+from dac.create_ufs_codes.utility_mun import concat_and_drop_duplicates
+from dac.create_ufs_codes.utility_mun import key_merge
+from dac.create_ufs_codes.utility_mun import create_key_for_merge
+from dac.create_ufs_codes.utility_mun import padronize_string
+from dac.create_ufs_codes.utility_mun import create_concat_key_for_merge
+from dac.create_ufs_codes.utility_mun import CODE_UF_EQUIV
 import re
 import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
+
 
 def main():
     concat_mun = generate_mun_dac_comvest()

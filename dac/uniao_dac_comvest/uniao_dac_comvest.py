@@ -1,5 +1,9 @@
 import pandas as pd
 import numpy as np
+import re
+import matplotlib.pyplot as plt
+from dac.utilities.format import fill_doc
+from dac.utilities.io import write_result
 from dac.utilities.io import read_result as read_result_dac, write_output
 from comvest.utilities.io import read_result as read_result_comvest
 
@@ -44,12 +48,31 @@ def set_origemCPF(cpf_dac, cpf_comvest):
         return 2
 
 def generate():
-    dados_comvest = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest']]
-    dados_comvest.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']
+    dados_comvest = setup_comvest()
+    dados_dac = setup_dac()
 
-    dados_dac = read_result_dac('dados_ingressante.csv', dtype=str).loc[:, ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']]
+    # First merge     
+    uniao_dac_comvest = pd.merge(dados_dac, dados_comvest, how='left',  on=['insc_vest', 'ano_ingresso_curso'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
+    wrong1 = wrong_and_right[1]
+    
+    # Second merge 
+    uniao_dac_comvest = pd.merge(wrong1, dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'dta_nasc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
+    wrong2 = wrong_and_right[1]
 
-    uniao_dac_comvest = dados_dac.merge(dados_comvest, how='outer', on=['insc_vest','ano_ingresso_curso'], suffixes=('_dac','_comvest'))
+    # Terceiro merge 
+    uniao_dac_comvest = pd.merge(wrong2, dados_comvest, how='left',  on=['ano_ingresso_curso', 'dta_nasc', 'doc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
+    wrong3 = wrong_and_right[1]
+
+    # Quato merge 
+    uniao_dac_comvest = pd.merge(wrong3, dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'doc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
+
+    return 
+    #uniao_dac_comvest_pos_99 = dados_dac.merge(dados_comvest, how='outer', on=['insc_vest','ano_ingresso_curso'], suffixes=('_dac','_comvest'))
+    
     uniao_dac_comvest['cpf_dac'].fillna('-', inplace=True)
     uniao_dac_comvest['cpf_comvest'].fillna('-', inplace=True)
 
@@ -64,8 +87,8 @@ def generate():
     uniao_dac_comvest['doc'] = uniao_dac_comvest['doc_dac'].fillna(uniao_dac_comvest['doc_comvest'])
 
     uniao_dac_comvest.drop(columns=['cpf_dac','cpf_comvest','doc_dac','doc_comvest','nome_dac','nome_comvest','dta_nasc_dac','dta_nasc_comvest'], inplace=True)
-
     uniao_dac_comvest = uniao_dac_comvest.reindex(columns=['insc_vest','nome','cpf','origem_cpf','dta_nasc','doc','ano_ingresso_curso'])
+
 
     uniao_sem_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].drop(['cpf','origem_cpf','doc'], axis=1)
     uniao_com_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] != '-']
@@ -78,6 +101,48 @@ def generate():
 
     # MARK: Remove insc_vest
     # uniao_dac_comvest.drop(columns = ['insc_vest'], inplace=True)
-    
     # uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].to_csv('uniao_dac_comvest_sem_cpf.csv', index=False)
     write_output(uniao_dac_comvest, 'uniao_dac_comvest.csv')
+
+def padronize_colums():
+    
+
+# Remove colunas inúteis após o merge 
+def remove_discartable_columns(df):
+    for column in df.columns:
+        if '_comvest' in column:
+            df = df.drop(columns=[column])
+    return df
+
+# Separa os registros que deram match dos que não deram
+def get_wrong_an_right(df):
+    filt = pd.Series(dtype=str)
+    if "doc_comvest" in df.columns:
+        filt = df.doc_comvest.isnull()
+    elif "dta_nasc_comvest" in df.columns:
+        filt = df.dta_nasc_comvest.isnull()
+    else:
+        filt = df.nome_comvest.isnull()
+
+    wrong_merge = df[filt]
+    wrong_merge = remove_discartable_columns(wrong_merge)
+    right_merge = df[~filt]
+    return (right_merge, wrong_merge)
+
+# Carrega e padroniza os dados da COMVEST
+def setup_comvest():
+    df = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest']]
+    df.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']
+    df.dta_nasc = df.dta_nasc.astype(str).str.replace('.0', '', regex=False)    
+    df.insc_vest = df.insc_vest.astype('float64')
+    df.doc = df.doc.astype(str)
+    df.doc = df.doc.map(lambda x: re.sub("[^0-9]", "", x))
+    df.doc = fill_doc(df.doc, 15)
+    return df
+
+# Carrega e padroniza os dados da DAC
+def setup_dac():
+    df = read_result_dac('dados_ingressante.csv', dtype=str).loc[:, ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', 'curso']]
+    df.insc_vest.replace("", np.nan, inplace=True)
+    df.insc_vest = df.insc_vest.astype('float64')
+    return df

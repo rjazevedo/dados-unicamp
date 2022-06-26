@@ -14,7 +14,6 @@ dados_cadastrais_final_cols = ['identif', 'nome', 'dta_nasc', 'ano_nasc_d', 'cpf
        'pais_esc_form_em', 'mun_atual', 'cep_atual', 'mun_resid_d',
        'cep_resid_d']    
 
-
 vida_academica_cols = [
     'identif', 'curso', 'curso_nivel', 'curso_atual_nome', 'ano_ingresso_curso', 'periodo_ingresso', 
     'tipo_periodo_ingresso', 'cod_tipo_ingresso', 'tipo_ingresso', 'ano_saida', 
@@ -34,8 +33,8 @@ resumo_por_periodo_cols = ['identif', 'curso_atual', 'curso_nivel', 'cod_espec_h
             'aprov_proficiencia', 'disc_aproveitadas', 'desistencias', 'creditos_periodo', 'bolsa_moradia', 'bolsa_auxilio', 'bolsa_transporte', 
             'bolsa_alimentacao', 'bolsa_pesquisa', 'bolsas_outras', 'estag_obrig',	'estagio_opcion']
 
-cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
-            'tp_integralizacao_max', 'ano_ingresso']
+cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'ano_ingresso', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
+            'tp_integralizacao_max']
 
 vida_academica_habilitacao_cols = ['identif', 'ano_ingresso', 'periodo_ingresso', 'tipo_periodo_ingresso', 'ano_saida', 'periodo_saida', 'tipo_periodo_saida' ,
             'cod_motivo_saida', 'motivo_saida', 'curso', 'nivel_curso', 'codigo_habilitacao', 'nome_habilitacao', 'prioridade_habilitacao', 'situacao_habilitacao',
