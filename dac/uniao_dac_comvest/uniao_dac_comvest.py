@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 import re
 import matplotlib.pyplot as plt
+import seaborn as sns
 from dac.utilities.format import fill_doc
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result as read_result_dac, write_output
 from comvest.utilities.io import read_result as read_result_comvest
 
+from dac.uniao_dac_comvest import testes
 
 def validar_CPF(cpf_dac, cpf_comvest):
     if cpf_dac != '-':
@@ -50,62 +52,60 @@ def set_origemCPF(cpf_dac, cpf_comvest):
 def generate():
     dados_comvest = setup_comvest()
     dados_dac = setup_dac()
-
-    # First merge     
-    uniao_dac_comvest = pd.merge(dados_dac, dados_comvest, how='left',  on=['insc_vest', 'ano_ingresso_curso'], suffixes=('','_comvest'))
-    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
-    wrong1 = wrong_and_right[1]
     
-    # Second merge 
-    uniao_dac_comvest = pd.merge(wrong1, dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'dta_nasc'], suffixes=('','_comvest'))
-    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
-    wrong2 = wrong_and_right[1]
+    correct_merge_list = []
 
-    # Terceiro merge 
-    uniao_dac_comvest = pd.merge(wrong2, dados_comvest, how='left',  on=['ano_ingresso_curso', 'dta_nasc', 'doc'], suffixes=('','_comvest'))
-    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
-    wrong3 = wrong_and_right[1]
+    uniao_dac_comvest = pd.merge(dados_dac, dados_comvest, how='left',  on=['insc_vest', 'ano_ingresso_curso'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_and_right(uniao_dac_comvest, correct_merge_list)
+    
+    uniao_dac_comvest = pd.merge(wrong_and_right[1], dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'dta_nasc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_and_right(uniao_dac_comvest, correct_merge_list)
 
-    # Quato merge 
-    uniao_dac_comvest = pd.merge(wrong3, dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'doc'], suffixes=('','_comvest'))
-    wrong_and_right = get_wrong_an_right(uniao_dac_comvest)
+    uniao_dac_comvest = pd.merge(wrong_and_right[1], dados_comvest, how='left',  on=['ano_ingresso_curso', 'dta_nasc', 'doc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_and_right(uniao_dac_comvest, correct_merge_list)
+
+    uniao_dac_comvest = pd.merge(wrong_and_right[1], dados_comvest, how='left',  on=['nome', 'ano_ingresso_curso', 'doc'], suffixes=('','_comvest'))
+    wrong_and_right = get_wrong_and_right(uniao_dac_comvest, correct_merge_list)
+
+    #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    # testes.encontrar_vestibular_dos_alunos_109_110(wrong_and_right[1], dados_dac)
+
+    # Apenas tratamento pre 99
+    wrong = wrong_and_right[1]
+    filt = (wrong.origem == 'pre')
+    wrong = wrong[filt]
+
+    wrong_and_right = merge_faltantes_pre_99(wrong, dados_comvest, correct_merge_list)
 
     return 
-    #uniao_dac_comvest_pos_99 = dados_dac.merge(dados_comvest, how='outer', on=['insc_vest','ano_ingresso_curso'], suffixes=('_dac','_comvest'))
-    
-    uniao_dac_comvest['cpf_dac'].fillna('-', inplace=True)
-    uniao_dac_comvest['cpf_comvest'].fillna('-', inplace=True)
+    final_df = concat_wrong_and_right(wrong_and_right[1], correct_merge_list)
+    final_df.drop_duplicates(subset=['insc_vest','ano_ingresso_curso'], inplace=True)
+    write_result(final_df, 'uniao_dac_comvest.csv')
 
-    valida_cpf = np.vectorize(validar_CPF)
-    uniao_dac_comvest['cpf'] = valida_cpf(uniao_dac_comvest['cpf_dac'], uniao_dac_comvest['cpf_comvest'])
+def concat_wrong_and_right(wrong, right):
+    wrong = create_colums_for_concat(wrong)
+    right = pd.concat(right)
 
-    origem_cpf = np.vectorize(set_origemCPF)
-    uniao_dac_comvest['origem_cpf'] = origem_cpf(uniao_dac_comvest['cpf_dac'], uniao_dac_comvest['cpf_comvest'])
+    wrong_and_right = pd.concat([right, wrong])
 
-    uniao_dac_comvest['nome'] = uniao_dac_comvest['nome_dac'].fillna(uniao_dac_comvest['nome_comvest'])
-    uniao_dac_comvest['dta_nasc'] = uniao_dac_comvest['dta_nasc_dac'].fillna(uniao_dac_comvest['dta_nasc_comvest'])
-    uniao_dac_comvest['doc'] = uniao_dac_comvest['doc_dac'].fillna(uniao_dac_comvest['doc_comvest'])
+    final_df = padronize_colums(wrong_and_right)
+    return final_df
 
-    uniao_dac_comvest.drop(columns=['cpf_dac','cpf_comvest','doc_dac','doc_comvest','nome_dac','nome_comvest','dta_nasc_dac','dta_nasc_comvest'], inplace=True)
-    uniao_dac_comvest = uniao_dac_comvest.reindex(columns=['insc_vest','nome','cpf','origem_cpf','dta_nasc','doc','ano_ingresso_curso'])
-
-
-    uniao_sem_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].drop(['cpf','origem_cpf','doc'], axis=1)
-    uniao_com_cpf = uniao_dac_comvest[uniao_dac_comvest['cpf'] != '-']
-
-    uniao = uniao_sem_cpf.merge(uniao_com_cpf[['nome','dta_nasc','cpf','origem_cpf','doc']], on=['nome','dta_nasc'])
-    uniao = uniao.loc[:, ['insc_vest','nome','cpf','origem_cpf','doc','dta_nasc','ano_ingresso_curso']]
-
-    uniao_dac_comvest = pd.concat([uniao, uniao_dac_comvest])
-    uniao_dac_comvest.drop_duplicates(subset=['insc_vest','ano_ingresso_curso'], inplace=True)
-
-    # MARK: Remove insc_vest
-    # uniao_dac_comvest.drop(columns = ['insc_vest'], inplace=True)
-    # uniao_dac_comvest[uniao_dac_comvest['cpf'] == '-'].to_csv('uniao_dac_comvest_sem_cpf.csv', index=False)
-    write_output(uniao_dac_comvest, 'uniao_dac_comvest.csv')
-
-def padronize_colums():
-    
+# Completa as colunas que faltam de um df
+def create_colums_for_concat(df):
+    if 'insc_vest_comvest' not in df.columns:
+        df['insc_vest_comvest'] = df['insc_vest']
+    if 'dta_nasc_comvest' not in df.columns:
+        df['dta_nasc_comvest'] = df['dta_nasc']
+    if 'doc_comvest' not in df.columns:
+        df['doc_comvest'] = df['doc']
+    if 'nome_comvest' not in df.columns:
+        df['nome_comvest'] = df['nome']
+    df = df.reindex(columns=['identif', 'nome', 'cpf', 'doc', 'dta_nasc', 'insc_vest',
+       'ano_ingresso_curso', 'origem', 'motivo_saida', 'curso',
+       'tipo_ingresso', 'nome_comvest', 'cpf_comvest', 'doc_comvest',
+       'dta_nasc_comvest', 'insc_vest_comvest']) 
+    return df
 
 # Remove colunas inúteis após o merge 
 def remove_discartable_columns(df):
@@ -115,7 +115,7 @@ def remove_discartable_columns(df):
     return df
 
 # Separa os registros que deram match dos que não deram
-def get_wrong_an_right(df):
+def get_wrong_and_right(df, correct_merge_list):
     filt = pd.Series(dtype=str)
     if "doc_comvest" in df.columns:
         filt = df.doc_comvest.isnull()
@@ -126,23 +126,92 @@ def get_wrong_an_right(df):
 
     wrong_merge = df[filt]
     wrong_merge = remove_discartable_columns(wrong_merge)
-    right_merge = df[~filt]
+    right_merge = df[~filt].copy()
+    right_merge = create_colums_for_concat(right_merge)
+
+    correct_merge_list.append(right_merge)
     return (right_merge, wrong_merge)
 
 # Carrega e padroniza os dados da COMVEST
 def setup_comvest():
-    df = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest']]
-    df.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']
+    df = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest', 'opc1']]
+    df.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', 'curso']
+    write_result(df, "comvest.csv")
+
+    #df = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest', 'opc1', 'opc2', 'opc3', 'tipo_ingresso_comvest']]
+    #df.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', 'opc1', 'opc2', 'opc3', 'tipo_ingresso_comvest']
+    #write_result(df, "comvest_to_test.csv")
+
     df.dta_nasc = df.dta_nasc.astype(str).str.replace('.0', '', regex=False)    
     df.insc_vest = df.insc_vest.astype('float64')
     df.doc = df.doc.astype(str)
     df.doc = df.doc.map(lambda x: re.sub("[^0-9]", "", x))
     df.doc = fill_doc(df.doc, 15)
+    df.dta_nasc = df.dta_nasc.astype(str).str.zfill(8)
     return df
 
 # Carrega e padroniza os dados da DAC
 def setup_dac():
-    df = read_result_dac('dados_ingressante.csv', dtype=str).loc[:, ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', 'curso']]
+    df = read_result_dac('dados_ingressante.csv', dtype=str).loc[:, ['identif', 'nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', "origem", 'motivo_saida','curso', 'tipo_ingresso']]
     df.insc_vest.replace("", np.nan, inplace=True)
     df.insc_vest = df.insc_vest.astype('float64')
+    df.doc = fill_doc(df.doc, 15)
+    df.dta_nasc = df.dta_nasc.astype(str).str.zfill(8)
     return df
+
+def padronize_colums(df):
+    df['cpf'].fillna('-', inplace=True)
+    df['cpf_comvest'].fillna('-', inplace=True)
+
+    valida_cpf = np.vectorize(validar_CPF)
+    df['cpf'] = valida_cpf(df['cpf'], df['cpf_comvest'])
+
+    origem_cpf = np.vectorize(set_origemCPF)
+    df['origem_cpf'] = origem_cpf(df['cpf'], df['cpf_comvest'])
+ 
+    df['nome'] = df['nome'].fillna(df['nome_comvest'])
+    df['dta_nasc'] = df['dta_nasc'].fillna(df['dta_nasc_comvest'])
+    df['doc'] = df['doc'].fillna(df['doc_comvest'])
+
+    #df.drop(columns=['cpf_dac','cpf_comvest','doc_dac','doc_comvest','nome_dac','nome_comvest','dta_nasc_dac','dta_nasc_comvest'], inplace=True)
+    df.drop(columns=['cpf_comvest','doc_comvest','nome_comvest','dta_nasc_comvest'], inplace=True)
+    df = df.reindex(columns=['insc_vest','nome','cpf','origem_cpf','dta_nasc','doc','ano_ingresso_curso'])
+    return df
+
+# Da merge dos casos que não deram match usando apenas u pedaço do doc
+def merge_faltantes_pre_99(wrong_pre, dados_comvest, correct_merge_list):
+    wrong_pre_temp = create_doc_key(wrong_pre.copy(), 5)
+    comvest_temp = create_doc_key(dados_comvest.copy(), 5)
+    merge = pd.merge(wrong_pre_temp, comvest_temp, how ='left', on=['doc_key', 'dta_nasc', 'curso', 'ano_ingresso_curso'], suffixes=('','_comvest'))
+    merge = merge.drop(columns = ["doc_key"])
+
+    wrong_and_right = get_wrong_and_right(merge, correct_merge_list)
+    wrong = wrong_and_right[1]
+
+    wrong_pre_temp = create_doc_key(wrong.copy(), 7)
+    comvest_temp = create_doc_key(dados_comvest.copy(), 7)
+    merge = pd.merge(wrong_pre_temp, comvest_temp, how ='left', on=['doc_key', 'curso', 'ano_ingresso_curso'], suffixes=('','_comvest'))
+    merge = merge.drop(columns = ["doc_key"])
+
+    wrong_and_right = get_wrong_and_right(merge, correct_merge_list)
+    wrong = wrong_and_right[1]
+
+    return 
+
+# Função que cria coluna com apenas alguns valores do doc
+def create_doc_key(df, doc_size):
+    df_temp = df.copy()
+    df_temp['doc_key'] = df['doc'].map(lambda x: re.sub('0', '', x))
+    df_temp['doc_key'] = df_temp['doc_key'].map(lambda x: x[:doc_size])
+    return df_temp
+
+def plot_graphs(wrong):
+    ano_ingresso_curso = wrong['ano_ingresso_curso'].astype(str)
+    picture = sns.displot(ano_ingresso_curso, color='red')
+
+    plt.title('Wrong Merge', fontsize=18)
+    plt.xlabel('Year', fontsize=16)
+    plt.ylabel('Frequency', fontsize=16)
+
+    picture.figure.set_size_inches(10,8)
+    picture.savefig("curso-histogram.png")

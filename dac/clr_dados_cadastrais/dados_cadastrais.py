@@ -29,12 +29,7 @@ CONCAT_NAME = 'dados_cadastrais_pre_and_pos.csv'
 UF_CODE_NAME = 'counties_code.csv'
 
 def generate_clean_data():
-    dados_cadastrais_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=DADOS_SHEET_NAME, names=dados_cadastrais_cols)
-    dados_cadastrais_pos_99 = read_from_database(POS_99_BASE_NAME, names=dados_cadastrais_cols)
-    
-    dados_cadastrais = pd.concat([dados_cadastrais_pre_99, dados_cadastrais_pos_99])
-    dados_cadastrais = clear_dados_cadastrais_pre_99(dados_cadastrais)
-    write_result(dados_cadastrais, CONCAT_NAME)
+    dados_cadastrais = load_dados_cadastais()
     
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
     unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
@@ -65,10 +60,20 @@ def generate_clean_data():
     padronize_string_miss(dados_cadastrais, ['cpf', 'cep_nasc', 'cep_escola_em', 'cep_atual', 'cep_resid_d', 'tipo_esc_form_em'], '-')
     padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
 
-    dados_cadastrais.drop_duplicates(subset=['identif'], keep='last', inplace=True)    
-    
+    dados_cadastrais.drop_duplicates(subset=['identif'], keep='last', inplace=True)
     write_result(dados_cadastrais, RESULT_NAME)
     generate_uf_code()
+
+
+def load_dados_cadastais():
+    dados_cadastrais_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=DADOS_SHEET_NAME, names=dados_cadastrais_cols)
+    dados_cadastrais_pos_99 = read_from_database(POS_99_BASE_NAME, names=dados_cadastrais_cols)
+   
+    dados_cadastrais = pd.concat([dados_cadastrais_pre_99, dados_cadastrais_pos_99])
+    dados_cadastrais = clear_dados_cadastrais_pre_99(dados_cadastrais)
+
+    write_result(dados_cadastrais, CONCAT_NAME)
+    return dados_cadastrais
 
 # Limpa erros na tabela pré 99 vistos empiricamente
 def clear_dados_cadastrais_pre_99(df):

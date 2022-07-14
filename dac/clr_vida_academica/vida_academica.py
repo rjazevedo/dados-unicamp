@@ -18,11 +18,7 @@ RESULT_NAME = 'vida_academica.csv'
 INDICES_NAME = 'indices.csv'
 
 def generate_clean_data():
-    vida_academica_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=VIDA_ACADEMICA_SHEET_NAME, names=vida_academica_cols)
-    vida_academica_pos_99 = read_from_database(POS_99_BASE_NAME, names=vida_academica_cols)
-
-    vida_academica = pd.concat([vida_academica_pre_99, vida_academica_pos_99])
-    clear_columns(vida_academica)
+    vida_academica = load_vida_academica()
     
     str_to_upper_ascii(vida_academica, ['curso_atual_nome', 'tipo_ingresso', 'motivo_saida', 'cota_d', 'cota_tipo', 'cota_descricao'])
     vida_academica.insc_vest = vida_academica.insc_vest.astype(str).str[:-2]
@@ -34,6 +30,24 @@ def generate_clean_data():
     indices = vida_academica.loc[:, ['insc_vest', 'ano_ingresso_curso', 'identif', 'curso']]
     write_result(indices, INDICES_NAME)
     return vida_academica, indices
+
+def load_vida_academica():
+    vida_academica_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=VIDA_ACADEMICA_SHEET_NAME, names=vida_academica_cols)
+    vida_academica_pos_99 = read_from_database(POS_99_BASE_NAME, names=vida_academica_cols)
+
+    vida_academica = pd.concat([vida_academica_pre_99, vida_academica_pos_99])
+    clear_columns(vida_academica)
+    filt = (vida_academica['ano_ingresso_curso'] >= 1999)
+
+    # Isso é nescessário para remover a intersecção de bases, tem registros < 99 na base pós e vice-versa
+    pre_99 = vida_academica[~filt].copy()
+    pos_99 = vida_academica[filt].copy()
+
+    pre_99["origem"] = 'pre'
+    pos_99["origem"] = 'pos'
+
+    vida_academica = pd.concat([pre_99, pos_99])
+    return vida_academica
 
 # Limpa erros na tabela pré 99 vistos empiricamente
 def clear_columns(df):
