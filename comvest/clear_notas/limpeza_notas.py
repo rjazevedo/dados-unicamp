@@ -109,7 +109,7 @@ def tratar_notas_f2(notas_f2, date):
 	if notas_f2['insc'].dtype == object:
 		notas_f2['insc'] = notas_f2['insc'].str.replace(r'\D','',regex=True).astype(int)
 
-	notas_f2 = notas_f2.reindex(columns=['insc','nf_f1','notpad_f1','not_f1_opc2','notpad_f1_opc2','aprov_apt','not_apt','notpad_aptidao','pqui','not_qui','notpad_qui','pgeo','not_geo','notpad_geo','pfis','not_fis','notpad_fis','pbio','not_bio','notpad_bio','pmat','not_mat','notpad_mat','phis','not_his','notpad_his','ppor','not_por_f2','notpad_por','pest','not_est','notpad_est','not_cha','notpad_cha','not_cn','notpad_cn','not_inter','notpad_inter','not_red','notpad_red','npo1','npo2','npo3','np_unica','area','grupo1','grupo2','grupo3','clas_opc1','clas_opc2','clas_opc3','clacar','nf_f2_opc1','nf_f2_opc2','pres_f2_d4'])
+	notas_f2 = notas_f2.reindex(columns=['insc','nf_f1','notpad_f1','not_f1_opc2','notpad_f1_opc2','aprov_apt','papt','not_apt','notpad_aptidao','pqui','not_qui','notpad_qui','pgeo','not_geo','notpad_geo','pfis','not_fis','notpad_fis','pbio','not_bio','notpad_bio','pmat','not_mat','notpad_mat','phis','not_his','notpad_his','ppor','not_por_f2','notpad_por','pest','not_est','notpad_est','pcha','not_cha','notpad_cha','pcn','not_cn','notpad_cn','pinter','not_inter','notpad_inter','not_red','notpad_red','npo1','npo2','npo3','np_unica','area','grupo1','grupo2','grupo3','clas_opc1','clas_opc2','clas_opc3','clacar','nf_f2_opc1','nf_f2_opc2','pres_f2_d4'])
 	return notas_f2
 
 

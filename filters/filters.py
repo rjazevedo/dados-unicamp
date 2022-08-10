@@ -12,7 +12,7 @@ def filterby_course(df, courses, db):
             (df['opc2'].isin(courses)) | 
             (df['opc3'].isin(courses)) | 
             (df['curso_matric'].isin(courses)) |
-            (df['curso_aprovado'].isin(courses))
+            (df['curso_convocado'].isin(courses))
             ]['id']
     elif db == 'dac':
         return df[df['curso'].isin(courses)]['id']

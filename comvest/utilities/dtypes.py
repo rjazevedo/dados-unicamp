@@ -18,6 +18,10 @@ DTYPES_DADOS = {
     'uf_esc_em'                :      str,
     'nat_esc_em_c'             :  'Int64',
     'ano_conclu_em_c'          :  'Int64',
+    'cod_mun_nasc_c'           :  'Int64',
+    'cod_mun_resid_c'          :  'Int64',
+    'cod_mun_esc_em_c'         :  'Int64',
+    'cod_esc_inep'             :  'Int64'
 }
 
 DTYPES_PERFIL = {

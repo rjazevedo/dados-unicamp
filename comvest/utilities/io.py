@@ -19,8 +19,8 @@ files = { path: int(re.sub('[^0-9]','',path)) for path in files_path }
 def read_from_db(PATH, sheet_name=None, dtype=None):
     return pd.read_excel(PATH, sheet_name=sheet_name, dtype=dtype)
 
-def read_auxiliary(FILE_NAME, dtype=None):
-    return pd.read_excel(AUXILIARY_PATH + FILE_NAME, dtype=dtype)
+def read_auxiliary(FILE_NAME, dtype=None, sep=',', encoding=None):
+    return pd.read_excel(AUXILIARY_PATH + FILE_NAME, dtype=dtype) if '.xls' in FILE_NAME else pd.read_csv(AUXILIARY_PATH + FILE_NAME, dtype=dtype, sep=sep, encoding=encoding)
 
 def read_result(FILE_NAME, dtype=None):
     return pd.read_csv(RESULT_PATH + FILE_NAME, dtype=dtype)

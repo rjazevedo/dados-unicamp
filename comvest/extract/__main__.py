@@ -6,5 +6,6 @@ def extract():
     extract_comvest.extraction()
     merge_sheets.merge()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     extract()

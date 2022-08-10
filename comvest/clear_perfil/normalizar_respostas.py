@@ -3,12 +3,18 @@ import pandas as pd
 def paais(df,ano):
 	if 2005 <= ano <= 2013:
 		df['paais_a'] = df['paais'].copy()
+
+		df['paais_a'] = df['paais_a'].map(lambda x: x if x in {0, 1, 2} else pd.NA)
 		df['paais'] = df['paais'].map({0:0, 1:1, 2:1})
 	elif 2014 <= ano <= 2018:
 		df['paais_b'] = df['paais'].copy()
+
+		df['paais_b'] = df['paais_b'].map(lambda x: x if x in {0, 1, 2} else pd.NA)
 		df['paais'] = df['paais'].map({0:0, 1:1, 2:1})
 	elif 2019 <= ano <= 2021:
 		df['paais_c'] = df['paais'].copy()
+
+		df['paais_c'] = df['paais_c'].map(lambda x: x if x in {0, 1, 2, 3} else pd.NA)
 		df['paais'] = df['paais'].map({0:0, 1:2, 2:3, 3:4})
 
 	return df
@@ -96,10 +102,20 @@ def cursinho_tempo(df,ano):
 
 	return df
 
-def vest_qts(df, ano):
+def vest_primeiro(df, ano):
 	if 1987 <= ano <= 1998:
-		df['vest_qts'] = df['vest_qts'].map({0:0, 1:2, 2:3, 3:4, 4:5, 5:5, 6:5, 7:5, 8:5, 9:1})
-	
+		df['vest_primeiro'] = df['vest_primeiro'].map({0:0, 1:1, 2:2, 3:3, 4:3, 5:3, 6:3, 7:3, 8:3, 9:3})
+
+	return df
+
+def vest_qts_inst(df, ano):
+	if 1987 <= ano <= 2004 and ano != 2001:
+		if ano <= 1998:
+			df['vest_qts_inst'] = df['vest_qts_inst'].map({0:0, 1:2, 2:3, 3:4, 4:5, 5:5, 6:5, 7:5, 8:5, 9:1})
+		
+		validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+		df['vest_qts_inst'] = df['vest_qts_inst'].map(validation)
+
 	return df
 
 def univ_outra(df,ano):
@@ -110,9 +126,17 @@ def univ_outra(df,ano):
 
 	return df
 
-def career_decishow(df, ano):
+def disciplina_favorita(df, ano):
+	if 1987 <= ano <= 1990:
+		df['disciplina_favorita'] = df['disciplina_favorita'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:4, 6:5, 7:6, 8:7, 9:8, 10:9, 11:0})
+
+	return df
+
+def opc1_escolha(df, ano):
 	if not 1999 <= ano <= 2003:
-		df.drop('career_decishow', axis=1, errors='ignore', inplace=True)
+		df = df.drop('opc1_escolha', axis=1, errors='ignore')
+	
+	return df
 
 def opcao1_motivo(df,ano):
 	if 1987 <= ano <= 1998:
@@ -134,6 +158,24 @@ def idiomas(df,ano):
 
 	return df
 
+def idiomas_familia(df, ano):
+	if 1987 <= ano <= 1998:
+		if ano <= 1990:
+			df['idiomas_familia'] = df['idiomas_familia'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:9, 9:8, 10:9, 11:9, 12:9, 13:9, 14:9, 15:9})
+
+		validation = lambda x: x if x in {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} else pd.NA
+		df['idiomas_familia'] = df['idiomas_familia'].map(validation)
+
+	return df
+
+def situacao_pais(df, ano):
+	if 1987 <= ano <= 1998:
+		validation = lambda x: x if x in {0, 1, 2, 3, 4, 5, 6, 7, 8} else pd.NA
+		df['situacao_pai'] = df['situacao_pai'].map(validation)
+		df['situacao_mae'] = df['situacao_mae'].map(validation)
+
+	return df
+
 def educacao_pais(df,ano):
 	if 1987 <= ano <= 2012:
 		df['educ_pai'] = df['educ_pai'].map({0:0, 1:1, 2:2, 3:2, 4:2, 5:3, 6:4, 7:5, 8:6, 9:7, 10:8, 11:9})
@@ -146,6 +188,13 @@ def ocupacao_pais(df,ano):
 		df['ocup_pai'] = df['ocup_pai'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:10})
 		df['ocup_mae'] = df['ocup_mae'].map({0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:10})
 
+	return df
+
+def trabalha_pais(df, ano):
+	if 1987 <= ano <= 2004:
+		df['trabalha_pai'] = df['trabalha_pai'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA)
+		df['trabalha_mae'] = df['trabalha_mae'].map(lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA)
+	
 	return df
 
 def trabalha(df,ano):
@@ -182,31 +231,43 @@ def renda_contrib_qtas(df,ano):
 	
 	return df
 
-def extra_activ(df, ano):
-	if 1999 <= ano <= 2004:
-		df['extra_activ'] = df['extra_activ'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:5,7:6})
-	
-def other_activ(df, ano):
+def ativ_extra_quais(df, ano):
+	if 1987 <= ano <= 2004:
+		if ano >= 1999:
+			df['ativ_extra_quais'] = df['ativ_extra_quais'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:5,7:6})
+
+		validation = lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA
+		df['ativ_extra_quais'] = df['ativ_extra_quais'].map(validation)
+
+	return df
+
+def ativ_extra_principal(df, ano):
 	if 1987 <= ano <= 1990:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5})
+		df['ativ_extra_principal'] = df['ativ_extra_principal'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5})
 	elif 1991 <= ano <= 1998:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5,9:5})
+		df['ativ_extra_principal'] = df['ativ_extra_principal'].map({0:0,1:1,2:2,3:2,4:3,5:5,6:5,7:4,8:5,9:5})
 	elif 1999 <= ano <= 2004:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:2,3:3,4:5,5:4,6:5,7:5,8:5})
+		df['ativ_extra_principal'] = df['ativ_extra_principal'].map({0:0,1:1,2:2,3:3,4:5,5:4,6:5,7:5,8:5})
+	
+	return df
 
-def read_type(df, ano):
+def leitura_tipo(df, ano):
 	if 1987 <= ano <= 1996:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:1,3:1,4:2,5:5})
+		df['leitura_tipo'] = df['leitura_tipo'].map({0:0,1:1,2:1,3:1,4:2,5:4})
 	elif 1997 <= ano <= 2001:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:1,3:1,4:2,5:3,6:4,7:5})
+		df['leitura_tipo'] = df['leitura_tipo'].map({0:0,1:1,2:1,3:1,4:2,5:1,6:3,7:4})
 	elif 2002 <= ano <= 2004:
-		df['other_activ'] = df['other_activ'].map({0:0,1:1,2:3,3:4,4:1,5:4,6:2,7:2,8:5})
+		df['leitura_tipo'] = df['leitura_tipo'].map({0:0,1:1,2:1,3:3,4:1,5:3,6:2,7:2,8:4})
+	
+	return df
 
-def magazine_type(df, ano):
+def revistas_tipo(df, ano):
 	if 1987 <= ano <= 1989:
-		df['magazine_type'] = df['magazine_type'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:7})
+		df['revistas_tipo'] = df['revistas_tipo'].map({0:0,1:1,2:2,3:3,4:4,5:5,6:7})
 	elif 1999 <= ano <= 2002:
-		df['magazine_type'] = df['magazine_type'].map({0:0,1:1,2:7,3:2,4:3,5:4,6:5,7:6,8:7})
+		df['revistas_tipo'] = df['revistas_tipo'].map({0:0,1:1,2:2,3:2,4:3,5:4,6:5,7:6,8:7})
+	
+	return df
 
 def geladeira(df,ano):
 	if ano == 2004:
@@ -284,13 +345,15 @@ def dvd_vhs_qts(df,ano):
 	if ano == 2004:
 		df['dvd_vhs_qts'] = df['dvd_vhs_qts'].map({0:0, 1:5, 2:1, 3:2, 4:3, 5:4})
 	
+	df = df.loc[:,~df.columns.duplicated()]
+	
 	return df
 
 def computador_qtos(df,ano):
 	if ano == 2004:
 		df['computador_qtos'] = df['computador_qtos'].map({0:0, 1:5, 2:1, 3:2, 4:3, 5:4})
 	
-	if 'computador' not in df.columns:
+	if 'computador' not in df.columns and 'computador_qtos' in df.columns:
 		df['computador'] = df['computador_qtos'].map({0:0, 1:1, 2:1, 3:1, 4:1, 5:2})
 	
 	return df
@@ -305,6 +368,13 @@ def aspirador(df,ano):
 	if ano == 2004:
 		df['aspirador'] = df['aspirador'].map({0:0, 1:2, 2:1, 3:1, 4:1, 5:1})
 
+	return df
+
+def jornal_le(df, ano):
+	if 1987 <= ano <= 2019:
+		validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+		df['jornal_le'] = df['jornal_le'].map(validation)
+	
 	return df
 
 
@@ -329,25 +399,30 @@ def normalizar(df, ano):
 	df = cursinho(df, ano)
 	df = cursinho_motivo(df, ano)
 	df = cursinho_tempo(df, ano)
-	df = vest_qts(df, ano)
+	df = vest_primeiro(df, ano)
+	df = vest_qts_inst(df, ano)
 	df = univ_outra(df, ano)
-	df = career_decishow(df, ano)
+	df = disciplina_favorita(df, ano)
+	df = opc1_escolha(df, ano)
 	df = opcao1_motivo(df, ano)
 	df = unicamp_motivo(df, ano)
 	df = idiomas(df, ano)
+	df = idiomas_familia(df, ano)
 
+	df = situacao_pais(df, ano)
 	df = educacao_pais(df, ano)
 	df = ocupacao_pais(df, ano)
+	df = trabalha_pais(df, ano)
 
 	df = trabalha(df, ano)
 	df = contribui_renda_fam(df, ano)
 	df = renda_sm(df, ano)
 	df = renda_contrib_qtas(df, ano)
 
-	df = extra_activ(df, ano)
-	df = other_activ(df, ano)
-	df = read_type(df, ano)
-	df = magazine_type(df, ano)
+	df = ativ_extra_quais(df, ano)
+	df = ativ_extra_principal(df, ano)
+	df = leitura_tipo(df, ano)
+	df = revistas_tipo(df, ano)
 	df = geladeira(df, ano)
 	df = freezer(df, ano)
 	df = maq_roupa(df, ano)
@@ -363,5 +438,6 @@ def normalizar(df, ano):
 	df = computador_qtos(df, ano)
 	df = carro_qtos(df, ano)
 	df = aspirador(df, ano)
+	df = jornal_le(df, ano)
 
 	return df

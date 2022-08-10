@@ -1,4 +1,4 @@
-from utilities.read import read_from_db
+from comvest.utilities.io import read_from_db
 
 
 def filtrar_perguntas(desc):
@@ -93,7 +93,7 @@ def filtrar_perguntas(desc):
     return 'carro_qtos'
   elif any(txt in descricao for txt in ['televisão','televisões']):
     return 'tv_qts'
-  elif any(txt in descricao for txt in ['quantos vídeocassetes/dvd há em sua residência?']):
+  elif any(txt in descricao for txt in ['quantos vídeocassetes há em sua residência?','quantos vídeocassetes/dvd há em sua residência?','quanto videocassete há em sua residência?','quantos dvds há em sua residência?']):
     return 'dvd_vhs_qts'
   elif all(txt in descricao for txt in ['cor','raça']):
     return 'raca'
@@ -189,14 +189,14 @@ def filtrar_perguntas(desc):
   elif any(txt in descricao for txt in ['você foi reprovado em alguma série do 2º grau?','você foi reprovado em alguma série do ensino médio (2º grau)?']):
     return 'reprovacao_em'
   elif any(txt in descricao for txt in ['em que ano você fez ou fará o vestibular pela primeira vez?']):
-    return 'primeiro_vest'
+    return 'vest_primeiro'
   elif any(txt in descricao for txt in ['sem levar em consid. exper. c/ treineiro, você já prestou algum vest. anterior.? quantos?','você já prestou algum ex.vest.anteriormente (treineiro não conta)? quantos?','você já prestou algum exame vest. anteriormente (treineiro não conta)? quantos?','você já prestou algum exame vestibular anteriormente (treineiro não conta)? quantos?','em quantas instituições (universidades, faculdades) você já prestou vestibular?','em quantas instituições (universidades, faculdades ) você já prestou vestibular?']):
     return 'vest_qts_inst'
   elif any(txt in descricao for txt in ['se você já prestou outro(s) vestibular(es), indique em qual(is) instituição(ões)','se você já prestou outro(s) vestibular(es), em qual(is) instituição(ões)?','se você já prestou outro(s) vestibular(es) em qual(is) instituição(ões)?']):
     return 'vest_quais_inst'
   elif any(txt in descricao for txt in ['você prestará vestibular, no ano']):
     return 'vest_outro'
-  elif any(txt in descricao for txt in ['se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou vem fazendo algum curso superior, qual das seguintes alternativas melhor expressa sua situação no referido curso?','se já fez ou está fazendo curso sup., qual das seg.altern.melhor expres.sua situação?','se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está fazendo curso sup., qual das seg. altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres. sua situação?']):
+  elif any(txt in descricao for txt in ['se já fez ou está fazendo algum curso superior, qual das seguintes alternativas melhor expressa sua situação no referido curso?','se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou vem fazendo algum curso superior, qual das seguintes alternativas melhor expressa sua situação no referido curso?','se já fez ou está fazendo curso sup., qual das seg.altern.melhor expres.sua situação?','se já fez ou está faz. curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está fazendo curso sup., qual das seg. altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres.sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern. melhor expres. sua situação?','se já fez ou está faz.curso sup., qual das seguintes altern.melhor expres. sua situação?']):
     return 'univ_outra_escolha'
   elif any(txt in descricao for txt in ['qual a instituição em que você já está ou esteve matriculado?','qual a instituição em que já está ou esteve matriculado?']):
     return 'univ_outra_inst'
@@ -248,11 +248,6 @@ def filtrar_perguntas(desc):
     return 'rua_pavimentada'
   elif any(txt in descricao for txt in ['quantos aparelhos de som há em sua residência?']):
     return 'som_qts'
-  elif any(txt in descricao for txt in ['quantos dvds há em sua residência?']):
-    return 'dvd_qts'
-  elif any(txt in descricao for txt in ['quanto videocassete há em sua residência?','quantos vídeocassetes há em sua residência?']):
-    return 'vhs_qts'
-  
   
   return 'TODO'
 
@@ -266,7 +261,7 @@ def get_questions(path):
 
 
   df_questoes['descricao'] = df_questoes['descricao'].map(filtrar_perguntas)
-  # df_questoes = df_questoes[df_questoes['descricao'] != 'TODO']
+  df_questoes = df_questoes[df_questoes['descricao'] != 'TODO']
   df_questoes = df_questoes.reindex(columns=['questao','descricao'])
 
   questoes_dict = df_questoes.set_index(['questao']).to_dict()['descricao']
