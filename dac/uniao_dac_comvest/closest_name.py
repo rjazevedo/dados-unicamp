@@ -28,7 +28,26 @@ def deal_with_last_students(df):
 
     # adicionar alunos na união
     df = df.drop(columns=['new_name', 'turma'])
-    return create_colums_for_concat(df)
+    return create_empty_colums_for_concat(df)
+
+
+def create_empty_colums_for_concat(df):
+    new_df = df.copy()
+
+    if 'insc_vest_comvest' not in df.columns:
+        new_df['insc_vest_comvest'] = ""
+    if 'dta_nasc_comvest' not in df.columns:
+        new_df['dta_nasc_comvest'] = ""
+    if 'doc_comvest' not in df.columns:
+        new_df['doc_comvest'] = ""
+    if 'nome_comvest' not in df.columns:
+        new_df['nome_comvest'] = ""
+    
+    new_df = new_df.reindex(columns=['identif', 'nome', 'cpf', 'doc', 'dta_nasc', 'insc_vest', 'ano_ingresso_curso',
+                             'origem', 'curso', 'nome_comvest', 'cpf_comvest', 'doc_comvest','dta_nasc_comvest',
+                             'insc_vest_comvest', 'curso_comvest', 'merge_id', 'tipo_ingresso']) 
+
+    return new_df
 
 
 def merge_by_name(df, comvest):

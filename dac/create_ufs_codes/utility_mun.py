@@ -7,6 +7,7 @@ CODE_UF_EQUIV = { 11: 'RO', 12: 'AC', 13: 'AM', 14: 'RR', 15: 'PA', 16: 'AP', 17
                   23: 'CE', 24: 'RN', 25: 'PB', 26: 'PE', 27: 'AL', 28: 'SE', 29: 'BA', 31: 'MG', 32: 'ES',
                   33: 'RJ', 35: 'SP', 41: 'PR', 42: 'SC', 43: 'RS', 50: 'MS', 51: 'MT', 52: 'GO', 53: 'DF' }
 
+
 def extract_mun_and_uf(df, columns):
     mun_and_uf = df[columns]
     mun_and_uf.columns = ['municipio', 'uf', 'pais']
@@ -14,10 +15,12 @@ def extract_mun_and_uf(df, columns):
     mun_and_uf.pop('pais')
     return mun_and_uf
 
+
 def concat_and_drop_duplicates(dfs):
     concat = pd.concat(dfs, ignore_index = True)
     concat = concat.drop_duplicates()
     return concat
+
 
 def padronize_string(element):
     string_to_lower = element.lower()
@@ -25,12 +28,15 @@ def padronize_string(element):
     no_accent_string = unidecode(no_space_string)
     return no_accent_string
 
+
 def create_key_for_merge(df):
     df['key'] = df['municipio'].astype(str).map(lambda x: padronize_string(x))
 
+
 def create_concat_key_for_merge(df):
     df['key'] = df['uf'].astype(str).map(lambda x: padronize_string(x)) + df['municipio'].astype(str).map(lambda x: padronize_string(x))
- 
+
+
 def create_dictonary_ufs(df):
     dict = {}
     for key,value in CODE_UF_EQUIV.items():
@@ -40,6 +46,21 @@ def create_dictonary_ufs(df):
         df = df[~filter_condition]
     dict[''] = df
     return dict
+
+def normal_merge(df, ibge_data, correct_merge_list):
+    merged_df = pd.merge(df, ibge_data, on=['municipio', 'uf'], how='left')
+    right, wrong = get_right_and_wrong(merged_df)
+    right["confianca"] = 1
+    correct_merge_list.append(right)
+    return wrong
+
+
+def get_right_and_wrong(df):
+    filtro = df['codigo_municipio'].isnull()
+    wrong = df[filtro]
+    right = df[~filtro]
+    return (right, wrong)
+
 
 def merge_by_uf(dict_df, ibge_data, ibge_data_dict):
     dfs = []
@@ -54,10 +75,12 @@ def merge_by_uf(dict_df, ibge_data, ibge_data_dict):
             dfs.append(merged_df)
     return pd.concat(dfs, ignore_index = True)
 
+
 def key_merge(value, ibge_data, cutoff):
     value['key'] = value['key'].map(lambda x: get_the_closest_matche(x, ibge_data['key'], cutoff=cutoff))
     merged_df = pd.merge(value, ibge_data, on=['key'], how='left')
     return merged_df
+
 
 def get_the_closest_matche(element, serie, cutoff):
     values = dff.get_close_matches(element, serie, cutoff=cutoff)
