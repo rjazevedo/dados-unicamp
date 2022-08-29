@@ -4,7 +4,6 @@ import numpy as np
 from dac.utilities.format import fill_doc
 from dac.utilities.io import read_result as read_result_dac
 from comvest.utilities.io import read_result as read_result_comvest
-from dac.uniao_dac_comvest import uniao_dac_comvest
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result as read_result_dac, write_output
 
