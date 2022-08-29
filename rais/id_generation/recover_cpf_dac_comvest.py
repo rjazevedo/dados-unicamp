@@ -127,6 +127,9 @@ def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
     dfs = []
     for file in files_rais:
         df_rais = read_rais_identification(file)
+        # Data from year 2011-2013 has the wrong dtype on column 'dta_nasc_r', it's float64 when it should be object
+        if year == 2011 or year == 2012 or year == 2013:
+            df_rais = df_rais.astype({'dta_nasc_r': 'object'})
         del df_rais['pispasep']
         if is_probabilistic:
             df_recovered = find_cpf_probabilistic_match(df_dac_comvest, df_rais)
