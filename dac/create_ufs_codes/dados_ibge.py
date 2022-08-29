@@ -6,6 +6,7 @@ from dac.create_ufs_codes.utility_mun import create_concat_key_for_merge
 from dac.create_ufs_codes.utility_mun import create_dictonary_ufs
 import pandas as pd
 
+
 def generate_ibge_data():
     brasil_create_ufs_codes = read_from_database('RELATORIO_DTB_BRASIL_MUNICIPIO.xls')
     brasil_create_ufs_codes = brasil_create_ufs_codes[['UF', 'Nome_UF', 'Código Município Completo', 'Nome_Município']]

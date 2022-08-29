@@ -6,6 +6,7 @@ from comvest.utilities.dtypes import DTYPES_DADOS
 from dac.create_ufs_codes.utility_mun import concat_and_drop_duplicates
 from dac.create_ufs_codes.utility_mun import create_key_for_merge
 from dac.create_ufs_codes.utility_mun import create_dictonary_ufs
+from comvest.utilities.io import read_result as read_result_comvest
 import pandas as pd
 import glob
 
@@ -20,9 +21,11 @@ def generate_mun_comvest():
         dfs.append(df)
     
     result = concat_and_drop_duplicates(dfs)
+    print(result.shape)
     create_key_for_merge(result)
     comvest_dict = create_dictonary_ufs(result)
     return comvest_dict
+
 
 def rename_colums(df):
     df = tratar_mun_nasc(df)
@@ -39,6 +42,7 @@ def rename_colums(df):
     df_concat = concat_and_drop_duplicates([df1, df2, df3])
     return df_concat
 
+
 def tratar_mun_nasc(df):
     for col in df.columns:
         if col in {'MUNICIPIO_NASC','MU_NASC','MUNIC_NASC','CIDNASC','CIDNAS'}:
@@ -46,6 +50,7 @@ def tratar_mun_nasc(df):
             df['MUN_NASC'] = df['MUN_NASC'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
             return df
     return df
+
 
 def tratar_uf_nasc(df):
     for col in df.columns:
@@ -55,6 +60,7 @@ def tratar_uf_nasc(df):
             return df
     return df
 
+
 def tratar_mun_resid(df):
     for col in df.columns:
         if col in {'MUEND','MUNIC_END','MUNICIPIO','CID','CIDEND'}:
@@ -62,6 +68,7 @@ def tratar_mun_resid(df):
             df['MUN_RESID'] = df['MUN_RESID'].map(lambda mun: unidecode(str(mun)).upper())
             return df
     return df
+
 
 def tratar_uf_resid(df):
   # Se a UF de Residência é dado por UFEND, UF_END ou ESTADO, entao renomeia a coluna para UF_RESID
@@ -75,6 +82,7 @@ def tratar_uf_resid(df):
         df.rename({'EST': 'UF_RESID'}, axis=1, inplace=True)
     return df
 
+
 def tratar_mun_escola(df):
   # Checa coluna do município da escola do ensino médio do candidato
     for col in df.columns:
@@ -83,6 +91,7 @@ def tratar_mun_escola(df):
             df['MUN_ESC_EM'] = df['MUN_ESC_EM'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
             return df
     return df
+
 
 def tratar_uf_escola(df):
   # Checa coluna da UF onde se localiza a escola do ensino médio do candidato

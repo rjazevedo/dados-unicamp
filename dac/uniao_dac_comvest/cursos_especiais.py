@@ -1,6 +1,8 @@
 import pandas as pd
 from dac.utilities.io import write_result
 from dac.uniao_dac_comvest.utilities import create_colums_for_concat
+from dac.uniao_dac_comvest.utilities import setup_comvest
+from dac.uniao_dac_comvest.utilities import setup_dac
 
 
 def deal_special_students(df, correct_merge_list):
@@ -9,7 +11,7 @@ def deal_special_students(df, correct_merge_list):
     unknow = tecnology_students(df, correct_special_list)
     pedagogy = pedagogy_students(unknow, correct_special_list)
     profis = profis_students(pedagogy, correct_special_list)
-    rest = drop_109_110_students(profis)
+    rest = adm_students(profis, correct_special_list)
 
     correct_df = pd.concat(correct_special_list)
     correct_merge_list.append(correct_df)
@@ -18,12 +20,12 @@ def deal_special_students(df, correct_merge_list):
 
 def tecnology_students(df, correct_special_list):
     pre_filt = (df['origem'] == 'pre')
-    unknow_filt = (df['curso'].isin(['36','35','33','32','31']))
-    course_filt = (pre_filt & unknow_filt)
+    unknow_filt = (df['curso'].isin(['36','33','32','31']))
+    year_filt = (df['ano_ingresso_curso'] == '1987')
+    course_filt = (pre_filt & unknow_filt & year_filt)
 
     unknow_students = df[course_filt]
     normal_students = df[~course_filt]
-
     unknow_students = create_colums_for_concat(unknow_students)
     correct_special_list.append(unknow_students)
     return normal_students
@@ -31,8 +33,9 @@ def tecnology_students(df, correct_special_list):
 
 def pedagogy_students(df, correct_special_list):   
     pos_filt = (df['origem'] == 'pos')
-    pedagogy_filt = (df['curso'].isin(['65', '59', '66', '67']))
-    courses_filt =  (pos_filt & pedagogy_filt)
+    pre_filt = (df['origem'] == 'pre')
+    pedagogy_filt = (df['curso'].isin(['35', '65', '59', '66', '67']))
+    courses_filt =  ((pos_filt & pedagogy_filt) | (pre_filt & (df['curso'] == '35')))
 
     pedagogy_students = df[courses_filt]
     normal_students = df[~courses_filt]    
@@ -51,25 +54,37 @@ def profis_students(df, correct_special_list):
     profis_students = df[courses_filt]
     normal_students = df[~courses_filt]    
 
+    #testar_profis(profis_students)
     profis_students = create_colums_for_concat(profis_students)
     correct_special_list.append(profis_students)
     return normal_students
 
 
-def drop_109_110_students(df):
+def adm_students(df, correct_special_list):
     pos_filt = (df['origem'] == 'pos')
     adm_filt = (df['curso'].isin(['109', '110']))
     ingresso_filt = (adm_filt & pos_filt)
-    
-    normal_students = df[~ingresso_filt]
+
+    adm_students = df[ingresso_filt]
+    normal_students = df[~ingresso_filt]    
+
+    adm_students = create_colums_for_concat(adm_students)
+    correct_special_list.append(adm_students)
+
+    # find_entry_109_110_students(df[ingresso_filt])
     return normal_students
 
 
-def find_entry_109_110_students(wrong, dados_dac, dados_comvest):
-    wrong_pos = wrong[(wrong['origem'] == 'pos')]
-    wrong_pos = remove_pedagogia_and_profis_students(wrong_pos)
+def find_entry_109_110_students(df):
+    dados_comvest = setup_comvest()
+    dados_comvest = dados_comvest[(dados_comvest['curso'].isin(['103', '104', '105', '106']))]
 
-    merge = pd.merge(wrong_pos, dados_comvest, how="left", on=['nome', 'dta_nasc'])
+    dados_dac = setup_dac()
+    dados_dac = dados_dac[(dados_dac['curso'].isin(['103', '104', '105', '106']))]
+
+    merge = pd.merge(df, dados_comvest, how="left", on=['doc', 'dta_nasc'], suffixes=('','_comvest'))
+
+    return
 
     df = merge.loc[:, ['identif', 'nome', 'dta_nasc', 'curso_x', 'insc_vest_y','ano_ingresso_curso_y', 'curso_y']]
     df.columns =  ['identif', 'nome', 'dta_nasc', 'curso', 'insc_vest', 'ano_ingresso_curso_comvest', 'curso_matric']
@@ -100,3 +115,29 @@ def courses_that_are_different_in_both_bases(right_list):
     dfs = dfs[~(dfs['curso'] == dfs['curso_matric'])]
     dfs = dfs.loc[:, ['curso', 'curso_matric']]
     write_result(dfs, "cursos_que_diferem_nas_bases.csv")
+
+
+def testar_profis(df):
+    print('total:')
+    print(df.shape)
+
+    filt = df.duplicated(subset=['identif'], keep=False)
+    profis_e_enem = df[filt]
+
+    print('profis enem:')
+    print(profis_e_enem.shape)
+    write_result(profis_e_enem, 'a_profis_enem.csv')
+
+    profis_ou_enem = df[~filt]
+
+    filt = (profis_ou_enem['curso'] == '200')
+    enem = profis_ou_enem[filt]
+    print('enem:')
+    print(enem.shape)
+
+    profis = profis_ou_enem[~filt]
+    print('profis:')
+    print(profis.shape)
+    
+    write_result(enem, 'a_enem.csv')
+    write_result(profis, 'a_profis.csv')

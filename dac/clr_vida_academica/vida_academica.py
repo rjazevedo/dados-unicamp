@@ -25,11 +25,15 @@ def generate_clean_data():
     padronize_int_miss(vida_academica, ['ano_saida', 'opcao_vest'], 0)
 
     vida_academica.drop_duplicates(subset=None, keep="first", inplace=True)
+    tecnology_courses(vida_academica)
+    adm_courses(vida_academica)
+    agreements_courses(vida_academica)
     write_result(vida_academica, RESULT_NAME)
     
     indices = vida_academica.loc[:, ['insc_vest', 'ano_ingresso_curso', 'identif', 'curso']]
     write_result(indices, INDICES_NAME)
     return vida_academica, indices
+
 
 def load_vida_academica():
     vida_academica_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=VIDA_ACADEMICA_SHEET_NAME, names=vida_academica_cols)
@@ -49,6 +53,7 @@ def load_vida_academica():
     vida_academica = pd.concat([pre_99, pos_99])
     return vida_academica
 
+
 # Limpa erros na tabela pré 99 vistos empiricamente
 def clear_columns(df):
     df['insc_vest'] = df['insc_vest'].fillna(0)
@@ -60,3 +65,33 @@ def clear_columns(df):
     df['insc_vest'].replace("", np.nan, inplace=True)
     df['insc_vest'] = df['insc_vest'].astype('float64')
     df['insc_vest'].replace(np.nan, "", inplace=True)
+
+
+def tecnology_courses(df):
+    tecnology_courses_list = [36, 33, 32, 31]
+    course_filt = df['curso'].isin(tecnology_courses_list)
+    no_insc_vest = (df['insc_vest'] == '')
+    year_filt = (df['ano_ingresso_curso'] == 1987)
+    filt = (no_insc_vest & course_filt & year_filt)
+
+    df.loc[filt, 'tipo_ingresso'] = "OUTROS"
+    df.loc[filt, 'cod_tipo_ingresso'] = 102
+
+
+def adm_courses(df):
+    adm_courses_list = [109, 110]
+    course_filt = df['curso'].isin(adm_courses_list)
+    no_insc_vest = (df['insc_vest'] == '')
+    no_profis = (df['cod_tipo_ingresso'] == 1)
+    filt = (no_insc_vest & course_filt & no_profis)
+    
+    df.loc[filt, 'tipo_ingresso'] = "RETORNO P/ NOVA HABILITACAO/CURSO"
+    df.loc[filt, 'cod_tipo_ingresso'] = 103
+    
+    
+def agreements_courses(df):    
+    agreements_courses_list = [35, 59, 65, 66, 67]
+    filt = df['curso'].isin(agreements_courses_list)
+    df.loc[filt, 'tipo_ingresso'] = "CONVENIO"
+    df.loc[filt, 'cod_tipo_ingresso'] = 101
+    write_result(df[filt], "agreements.csv")
