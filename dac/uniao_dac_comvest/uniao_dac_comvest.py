@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import difflib as dff
 import matplotlib.pyplot as plt
-import seaborn as sns
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result as read_result_dac, write_output
 from dac.utilities.io import read_from_external

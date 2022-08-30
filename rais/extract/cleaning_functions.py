@@ -30,6 +30,8 @@ def get_cpf(cpf):
 # Invalid birthdates must be NaN
 # Birthdates must have 8 digits
 def get_birthdate(value):
+    if np.isnan(value):
+        return np.nan
     return value.zfill(8)
 
 # Invalid names must be NaN

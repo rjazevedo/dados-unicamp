@@ -1,5 +1,7 @@
 import pandas
 
+from rais.extract.clear import rename_columns
+
 from rais.extract.cleaning_functions import clear_cpf_column
 from rais.extract.cleaning_functions import clear_pispasep_column
 from rais.extract.cleaning_functions import clear_name_column
@@ -40,7 +42,7 @@ def get_identification_from_file(file, year):
 
 def filter_columns(df, year):
     columns = ['nome_r', 'cpf_r', 'dta_nasc_r', 'pispasep', 'mun_estbl']
-    df = rais.clean_module.clean_columns.rename_columns(df, year, columns)
+    df = rename_columns(df, year, columns)
     return df.loc[:, columns]
 
 # Clean columns with identification data
