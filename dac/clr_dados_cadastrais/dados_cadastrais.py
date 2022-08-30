@@ -25,8 +25,7 @@ POS_99_BASE_NAME = 'DadosCadastraisAluno.xlsx'
 DADOS_SHEET_NAME = 'Dados Cadastrais'
 
 RESULT_NAME = 'dados_cadastrais.csv'
-CONCAT_NAME = 'dados_cadastrais_pre_and_pos.csv'
-UF_CODE_NAME = 'counties_code.csv'
+UF_CODE_NAME = 'final_counties.csv'
 
 def generate_clean_data():
     dados_cadastrais = load_dados_cadastais()
@@ -61,8 +60,7 @@ def generate_clean_data():
     padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
 
     dados_cadastrais.drop_duplicates(subset=['identif'], keep='last', inplace=True)
-    write_result(dados_cadastrais, RESULT_NAME)
-    generate_uf_code()
+    generate_uf_code(dados_cadastrais)
 
 
 def load_dados_cadastais():
@@ -72,8 +70,8 @@ def load_dados_cadastais():
     dados_cadastrais = pd.concat([dados_cadastrais_pre_99, dados_cadastrais_pos_99])
     dados_cadastrais = clear_dados_cadastrais_pre_99(dados_cadastrais)
 
-    write_result(dados_cadastrais, CONCAT_NAME)
     return dados_cadastrais
+
 
 # Limpa erros na tabela pré 99 vistos empiricamente
 def clear_dados_cadastrais_pre_99(df):
@@ -88,18 +86,18 @@ def clear_dados_cadastrais_pre_99(df):
     df['ano_conclu_em'] = pd.to_datetime(df['ano_conclu_em'], errors='coerce', format= '%Y-%m-%d')
     return df
 
+
 # Atribui os códigos das ufs presentes na tabela
-def generate_uf_code():
+def generate_uf_code(dados_cadastrais):
     final_counties = read_result(UF_CODE_NAME)
-    dados_cadastrais = read_result(RESULT_NAME)
 
-    final_counties = final_counties[['municipio_x', 'uf_y', 'codigo_municipio', 'confianca']]
-    final_counties = final_counties.drop_duplicates(['municipio_x', 'uf_y'])
+    final_counties = final_counties[['municipio', 'uf', 'codigo_municipio', 'confianca', 'municipio_ibge', 'uf_ibge']]
+    final_counties = final_counties.drop_duplicates(['municipio', 'uf'])
 
-    final_counties.columns = ['mun_nasc_d', 'uf_nasc_d', 'cod_mun_nasc_d', 'origem_cod_mun_nasc_d']
+    final_counties.columns = ['mun_nasc_d', 'uf_nasc_d', 'cod_mun_nasc_d', 'origem_cod_mun_nasc_d', 'mun_nasc_ibge', 'uf_nasc_ibge']
     mun_nasc_d_merge = pd.merge(dados_cadastrais, final_counties, how='left')
 
-    final_counties.columns = ['mun_esc_form_em', 'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em']
+    final_counties.columns = ['mun_esc_form_em', 'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em', 'mun_esc_form_em_ibge', 'uf_esc_form_em_ibge']
     mun_nasc_d_merge = pd.merge(mun_nasc_d_merge, final_counties, how='left')
     
     mun_nasc_d_merge = mun_nasc_d_merge.reindex(columns= dados_cadastrais_final_cols)

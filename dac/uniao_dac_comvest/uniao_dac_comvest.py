@@ -47,7 +47,8 @@ def generate():
 def generate_planilha_paulo(merge_list):
     dac_df = pd.concat(merge_list[1:])
     df_paulo = dac_df.loc[:, ['identif', 'insc_vest', 'insc_vest_comvest', 'ano_ingresso_curso', 'nome', 'nome_comvest', 
-                          'dta_nasc', 'dta_nasc_comvest', 'curso', 'curso_comvest', 'doc', 'doc_comvest']]
+                          'dta_nasc', 'dta_nasc_comvest', 'curso', 'curso_comvest', 'doc', 'doc_comvest', 'tipo_ingresso', 'tipo_ingresso_comvest']]
+    df_paulo['tipo_ingresso_comvest'] = df_paulo['tipo_ingresso_comvest'].map({'1': 'Vestibular Comum', '2': 'Vestibular Indígena', '3': 'Vagas Olímpicas', '4': 'Enem-Unicamp'})
     write_result(df_paulo, 'planilha_paulo.csv')
 
 

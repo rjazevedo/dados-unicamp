@@ -9,7 +9,7 @@ def get_closest_name(wrong, comvest, correct_merge_list):
     wrong = setup_wrong(wrong)
     comvest = setup_comvest(comvest)
     
-    wrong_and_right = closest_name(wrong, comvest, 'turma', 0.65)
+    wrong_and_right = closest_name(wrong, comvest, 'turma', 0.75)
     right1 = closest_name(wrong_and_right[1], comvest, 'ano_ingresso_curso', 0.8)
     right2 = closest_name(right1[1], comvest, 'ano_ingresso_curso', 0.9, first_name=1)
     

@@ -53,8 +53,8 @@ def setup_comvest():
     curso = read_result_comvest('matriculados_comvest.csv', dtype=str).loc[:, ['ano_vest','insc_vest','curso_matric']]
     curso.columns = ['ano_ingresso_curso', 'insc_vest', 'curso']
 
-    comvest = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest']]
-    comvest.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso']
+    comvest = read_result_comvest('dados_comvest.csv', dtype=str).loc[:, ['nome_c','cpf','doc_c','dta_nasc_c','insc_vest','ano_vest', 'tipo_ingresso_comvest']]
+    comvest.columns = ['nome','cpf','doc','dta_nasc','insc_vest','ano_ingresso_curso', 'tipo_ingresso_comvest']
 
     df = pd.merge(comvest, curso, how='left', on=['ano_ingresso_curso', 'insc_vest'])
 
@@ -110,7 +110,7 @@ def create_colums_for_concat(df):
     
     new_df = new_df.reindex(columns=['identif', 'nome', 'cpf', 'doc', 'dta_nasc', 'insc_vest', 'ano_ingresso_curso',
                              'origem', 'curso', 'nome_comvest', 'cpf_comvest', 'doc_comvest','dta_nasc_comvest',
-                             'insc_vest_comvest', 'curso_comvest', 'merge_id', 'tipo_ingresso']) 
+                             'insc_vest_comvest', 'curso_comvest', 'merge_id', 'tipo_ingresso', 'tipo_ingresso_comvest']) 
 
     return new_df
 
