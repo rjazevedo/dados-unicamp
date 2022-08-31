@@ -3,24 +3,30 @@ from dac.clr_vida_academica_habilitacao import vida_academica_habilitacao
 from dac.utilities.io import write_output
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result
-from dac.municipios.dac import generate_mun_dac
-from dac.municipios.dados_ibge import get_ibge_data
-from dac.municipios.dados_ibge import get_ibge_data_dict
-from dac.municipios.comvest import generate_mun_comvest
-from dac.municipios.utility_mun import get_the_closest_matche
-from dac.municipios.utility_mun import merge_by_uf
-from dac.municipios.utility_mun import concat_and_drop_duplicates
-from dac.municipios.utility_mun import key_merge
-from dac.municipios.utility_mun import create_key_for_merge
-from dac.municipios.utility_mun import padronize_string
-from dac.municipios.utility_mun import create_concat_key_for_merge
-from dac.municipios.utility_mun import CODE_UF_EQUIV
+from dac.create_ufs_codes.dac import generate_mun_dac
+from dac.create_ufs_codes.dados_ibge import get_ibge_data
+from dac.create_ufs_codes.dados_ibge import get_ibge_data_dict
+from dac.create_ufs_codes.comvest import generate_mun_comvest
+from dac.create_ufs_codes.utility_mun import get_the_closest_matche
+from dac.create_ufs_codes.utility_mun import merge_by_uf
+from dac.create_ufs_codes.utility_mun import concat_and_drop_duplicates
+from dac.create_ufs_codes.utility_mun import key_merge
+from dac.create_ufs_codes.utility_mun import create_key_for_merge
+from dac.create_ufs_codes.utility_mun import padronize_string
+from dac.create_ufs_codes.utility_mun import create_concat_key_for_merge
+from dac.create_ufs_codes.utility_mun import CODE_UF_EQUIV
+from dac.create_ufs_codes.new_ufs_codes import inicio
 import re
 import pandas as pd
 import numpy as np
 pd.options.mode.chained_assignment = None
 
+
 def main():
+    #comvest_dict = generate_mun_comvest()
+    inicio()
+
+    return
     concat_mun = generate_mun_dac_comvest()
     ibge_data = get_ibge_data()
     create_key_for_merge(ibge_data)
@@ -45,6 +51,7 @@ def main():
     match_results = concat_and_drop_duplicates([right_merge_df, valid_uf_with_trust, invalid_uf_with_trust, dac_counties_df])
     write_result(match_results, 'counties_code.csv')
 
+
 def atribute_trust(df, trust, cutoff, ibge_data):
     merged_valid_df = key_merge(df, ibge_data, cutoff)
     valid_match = null_filter(merged_valid_df, trust)
@@ -53,6 +60,7 @@ def atribute_trust(df, trust, cutoff, ibge_data):
     no_valid_match.drop_duplicates(subset=['municipio_y'], keep=False, inplace=True)
     concat = pd.concat([valid_match, no_valid_match], ignore_index=True)
     return concat
+
 
 def null_filter(df, trust='', complement=True):
     filtro = df['codigo_municipio'].isnull()
@@ -70,6 +78,7 @@ def clear_typos_comvest_uf(df):
     df['uf'] = df['uf'].astype(str).replace(['0', 'NAN'], '', regex=True).astype("string")
     df['uf'].map(lambda x: "".join(re.findall("[a-zA-Z]+", x)))
     return df
+
 
 def clear_wrong_merge_df(df):
     df = df[['municipio_x', 'uf_x']]
@@ -96,11 +105,13 @@ def generate_mun_dac_comvest():
     merged_comvest_df = merge_by_uf(comvest_dict, ibge_data, ibge_data_dict)
     write_result(merged_comvest_df, 'comvest_counties_df.csv')
 
+
 def atribute_exact_matches(df):
     df['mun_a'] = df['municipio_x'].astype(str).map(lambda x: padronize_string(x))
     df['mun_b'] = df['municipio_y'].astype(str).map(lambda x: padronize_string(x))
     df['confianca'][df['mun_a'] == df['mun_b']] = 1
     df.drop(['mun_a', 'mun_b'], axis=1, inplace=True)
+
 
 if __name__ == '__main__':
     main()

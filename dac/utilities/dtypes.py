@@ -1,4 +1,4 @@
-DTYPES_DADOS_CADASTRAIS = {
+dtypes_dados_cadastrais = {
     'identif'                  :         'int64',
     'nome'                     :          object,
     'dta_nasc'                 :          object,
@@ -16,7 +16,7 @@ DTYPES_DADOS_CADASTRAIS = {
     'pais_nasc_d'              :          object,
     'nacionalidade'            :          object,
     'cod_pais_nacionalidade'   :          object,
-    'pais_nacionalidade'       :          object,
+    'pais_nac_d'               :          object,
     'naturalizado'             :          object,
     'ano_conclu_em'            :         'Int64',
     'escola_em_d'              :          object,
@@ -31,8 +31,7 @@ DTYPES_DADOS_CADASTRAIS = {
     'mun_resid_d'              :          object,
     'cep_resid_d'              :             str,
 }
-
-DTYPES_HISTORICO_ESCOLAR = {
+dtypes_historico_escolar = {
     'identif'                  :         'int64',
     'periodo'                  :         'int64',
     'ano'                      :         'int64',
@@ -49,7 +48,7 @@ DTYPES_HISTORICO_ESCOLAR = {
     'creditos'                 :         'int64',
 }
 
-DTYPES_VIDA_ACADEMICA = {
+dtypes_vida_academica = {
     'identif'                  :         'int64',
     'curso'                    :         'int64',
     'curso_nivel'              :          object,
@@ -69,7 +68,7 @@ DTYPES_VIDA_ACADEMICA = {
     'cr_medio_turma'           :       'float64',
     'insc_vest'                :          object,
     'opcao_vest'               :         'int64',
-    'chamada_vest'             :       'float64',
+    'chamada_vest'             :             str,
     'aa'                       :          object,
     'cota_d'                   :          object,
     'cota_tipo'                :          object,

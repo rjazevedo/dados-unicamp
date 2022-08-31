@@ -3,23 +3,29 @@ from dac.utilities.io import read_from_database
 from dac.utilities.io import write_output
 from unidecode import unidecode
 from comvest.utilities.dtypes import DTYPES_DADOS
-from dac.municipios.utility_mun import concat_and_drop_duplicates
-from dac.municipios.utility_mun import create_key_for_merge
-from dac.municipios.utility_mun import create_dictonary_ufs
+from dac.create_ufs_codes.utility_mun import concat_and_drop_duplicates
+from dac.create_ufs_codes.utility_mun import create_key_for_merge
+from dac.create_ufs_codes.utility_mun import create_dictonary_ufs
+from comvest.utilities.io import read_result as read_result_comvest
 import pandas as pd
+import glob
+
+VEST_PATH = '/home/fernando/dados-unicamp/input/comvest/'
 
 def generate_mun_comvest():
     dfs = []
-    for year in range(1997, 2020):
-        path = '/home/fernando/dados-unicamp/input/comvest/vest' +  str(year) + '.xlsx'
-        df = pd.read_excel(path, sheet_name='dados')
+    all_vests = glob.glob(VEST_PATH + '*')
+    for year in all_vests:
+        df = pd.read_excel(year, sheet_name='dados')
         df = rename_colums(df)
         dfs.append(df)
     
     result = concat_and_drop_duplicates(dfs)
+    print(result.shape)
     create_key_for_merge(result)
     comvest_dict = create_dictonary_ufs(result)
     return comvest_dict
+
 
 def rename_colums(df):
     df = tratar_mun_nasc(df)
@@ -36,6 +42,7 @@ def rename_colums(df):
     df_concat = concat_and_drop_duplicates([df1, df2, df3])
     return df_concat
 
+
 def tratar_mun_nasc(df):
     for col in df.columns:
         if col in {'MUNICIPIO_NASC','MU_NASC','MUNIC_NASC','CIDNASC','CIDNAS'}:
@@ -43,6 +50,7 @@ def tratar_mun_nasc(df):
             df['MUN_NASC'] = df['MUN_NASC'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
             return df
     return df
+
 
 def tratar_uf_nasc(df):
     for col in df.columns:
@@ -52,6 +60,7 @@ def tratar_uf_nasc(df):
             return df
     return df
 
+
 def tratar_mun_resid(df):
     for col in df.columns:
         if col in {'MUEND','MUNIC_END','MUNICIPIO','CID','CIDEND'}:
@@ -59,6 +68,7 @@ def tratar_mun_resid(df):
             df['MUN_RESID'] = df['MUN_RESID'].map(lambda mun: unidecode(str(mun)).upper())
             return df
     return df
+
 
 def tratar_uf_resid(df):
   # Se a UF de Residência é dado por UFEND, UF_END ou ESTADO, entao renomeia a coluna para UF_RESID
@@ -72,6 +82,7 @@ def tratar_uf_resid(df):
         df.rename({'EST': 'UF_RESID'}, axis=1, inplace=True)
     return df
 
+
 def tratar_mun_escola(df):
   # Checa coluna do município da escola do ensino médio do candidato
     for col in df.columns:
@@ -80,6 +91,7 @@ def tratar_mun_escola(df):
             df['MUN_ESC_EM'] = df['MUN_ESC_EM'].map(lambda mun: unidecode(str(mun)).upper() if str(mun) != '-' else '')
             return df
     return df
+
 
 def tratar_uf_escola(df):
   # Checa coluna da UF onde se localiza a escola do ensino médio do candidato

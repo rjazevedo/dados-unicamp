@@ -1,22 +1,19 @@
 dados_cadastrais_cols = [
     'identif', 'nome', 'nome_mae', 'nome_pai', 'dta_nasc', 'idade_atual', 'cpf', 'tipo_doc', 'doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_emissor_doc', 'doc_tratado', 
     'sexo_d', 'est_civil_d', 'raca_d', 'raca_descricao', 
-    'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 'cod_pais_nascimento', 'pais_nasc_d', 'nacionalidade_d', 'cod_pais_nacionalidade', 'pais_nacionalidade', 'naturalizado',
+    'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 'cod_pais_nascimento', 'pais_nasc_d', 'nacionalidade_d', 'cod_pais_nacionalidade', 'pais_nac_d', 'naturalizado',
     'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em', 'uf_esc_form_em', 'mun_esc_form_em', 'sigla_pais_esc_form_em', 'pais_esc_form_em', 
     'mun_atual', 'cep_atual', 'mun_resid_d', 'cep_resid_d']
     
-dados_cadastrais_final_cols = ['identif', 'nome', 'dta_nasc', 'ano_nasc_d', 'cpf', 'doc', 'sexo_d',
-       'est_civil_d', 'raca_d', 'raca_descricao', 'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 'cod_mun_nasc_d', 
-       'origem_cod_mun_nasc_d', 'cod_pais_nascimento', 'pais_nasc_d', 'nacionalidade_d',
-       'cod_pais_nacionalidade', 'pais_nacionalidade', 'naturalizado',
-       'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em',
-       'mun_esc_form_em', 'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em', 'sigla_pais_esc_form_em',
-       'pais_esc_form_em', 'mun_atual', 'cep_atual', 'mun_resid_d',
-       'cep_resid_d']    
-
+dados_cadastrais_final_cols = ['identif', 'nome', 'dta_nasc', 'ano_nasc_d', 'cpf', 'doc', 'sexo_d', 'est_civil_d', 
+        'raca_d', 'raca_descricao', 'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 'cod_mun_nasc_d', 'origem_cod_mun_nasc_d', 
+        'mun_nasc_ibge', 'uf_nasc_ibge', 'cod_pais_nascimento', 'pais_nasc_d', 'nacionalidade_d', 'cod_pais_nacionalidade',
+        'pais_nac_d', 'naturalizado', 'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em', 'mun_esc_form_em', 
+        'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em', 'mun_esc_form_em_ibge', 'uf_esc_form_em_ibge', 
+        'sigla_pais_esc_form_em', 'pais_esc_form_em', 'mun_atual', 'cep_atual', 'mun_resid_d', 'cep_resid_d']    
 
 vida_academica_cols = [
-    'identif', 'curso', 'curso_nivel', 'curso_nome', 'ano_ingresso_curso', 'periodo_ingresso', 
+    'identif', 'curso', 'curso_nivel', 'curso_atual_nome', 'ano_ingresso_curso', 'periodo_ingresso', 
     'tipo_periodo_ingresso', 'cod_tipo_ingresso', 'tipo_ingresso', 'ano_saida', 
     'periodo_saida', 'tipo_periodo_saida', 'cod_motivo_saida', 'motivo_saida', 
     'cr', 'cr_padrao', 'cr_medio_turma', 'insc_vest', 'opcao_vest', 'chamada_vest', 'aa', 
@@ -24,7 +21,7 @@ vida_academica_cols = [
 
 historico_escolar_cols = [
     'identif','periodo','ano','dt_inicio','dt_fim','cod_curricularidade','curricularidade',
-    'disc','turma','cod_situacao','situacao','nota','frequencia']
+    'disc','turma','cod_situacao_disciplina','situacao','nota','frequencia']
 
 credito_columns = ['periodo', 'ano', 'disc', 'creditos']
 
@@ -34,8 +31,8 @@ resumo_por_periodo_cols = ['identif', 'curso_atual', 'curso_nivel', 'cod_espec_h
             'aprov_proficiencia', 'disc_aproveitadas', 'desistencias', 'creditos_periodo', 'bolsa_moradia', 'bolsa_auxilio', 'bolsa_transporte', 
             'bolsa_alimentacao', 'bolsa_pesquisa', 'bolsas_outras', 'estag_obrig',	'estagio_opcion']
 
-cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
-            'tp_integralizacao_max', 'ano_ingresso']
+cursos_habilitacoes_cols = ['curso', 'NIVEL', 'NOME CURSO', 'ano_ingresso', 'codigo_habilitacao', 'NOME HABILITACAO', 'total_creditos_curso_hab', 'total_horas_curso_hab', 'tp_integralizacao_sugerido',
+            'tp_integralizacao_max']
 
 vida_academica_habilitacao_cols = ['identif', 'ano_ingresso', 'periodo_ingresso', 'tipo_periodo_ingresso', 'ano_saida', 'periodo_saida', 'tipo_periodo_saida' ,
             'cod_motivo_saida', 'motivo_saida', 'curso', 'nivel_curso', 'codigo_habilitacao', 'nome_habilitacao', 'prioridade_habilitacao', 'situacao_habilitacao',

@@ -6,6 +6,12 @@ def log_cleaning_database(database):
 def log_cleaning_column(column):
     logging.debug(f'Cleaning column: {column}')
 
+def log_cleaning_file(path, file):
+    logging.info(f'Cleaning file: {file} in {path}')
+
+def log_reading_file_extraction(file):
+    logging.info(f'Reading file for extraction: {file}')
+
 def log_extracting_ids():
     logging.info(f'Creating sample with individuals from dac and comvest\n')
 

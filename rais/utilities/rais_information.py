@@ -46,14 +46,14 @@ def get_columns_info_rais():
         },
         'ano_nasc_r': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {},
             'clean_function': {},
             'check_function': verification_functions.dummy
         },
         'mun_estbl': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2002, 2010): 'MUNICIPIO',
                 (2011, 2018): 'Município'
@@ -63,7 +63,7 @@ def get_columns_info_rais():
         },
         'cnae95': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2002, 2009): 'CLAS CNAE 95',
                 (2011, 2018): 'CNAE 95 Classe'
@@ -106,7 +106,7 @@ def get_columns_info_rais():
         },
         'deslig_mes': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'MES DESLIG',
                 (2011, 2018): 'Mês Desligamento'
@@ -116,7 +116,7 @@ def get_columns_info_rais():
         },
         'admissao_tipo': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2003, 2010): 'TIPO ADM',
                 (2011, 2018): 'Tipo Admissão'
@@ -136,7 +136,7 @@ def get_columns_info_rais():
         },
         'cbo94': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2002, 2002): 'OCUPACAO',
                 (2003, 2009): 'OCUPACAO 94',
@@ -150,7 +150,7 @@ def get_columns_info_rais():
         },
         'escolaridade': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2006): 'GRAU INSTR',
                 (2007, 2010): 'GR INSTRUCAO',
@@ -185,7 +185,7 @@ def get_columns_info_rais():
         },
         'raca_r': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2003, 2010): 'RACA_COR',
                 (2011, 2018): 'Raça Cor'
@@ -201,7 +201,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2003, 2010): 'PORT DEFIC',
                 (2011, 2018): 'Ind Portador Defic'
@@ -284,7 +284,7 @@ def get_columns_info_rais():
         },
         'dta_admissao': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2002, 2010): 'DT ADMISSAO',
                 (2011, 2018): 'Data Admissão Declarada'
@@ -404,7 +404,7 @@ def get_columns_info_rais():
             'clean_function': {
                 (2002, 2005): cleaning_functions.get_pispasep
             },
-            'check_function': verification_functions.check_pispasep
+            'check_function': verification_functions.dummy #verification_functions.check_pispasep
         },
         'dta_nasc_r': {
             'tipo': 'object',
@@ -414,7 +414,7 @@ def get_columns_info_rais():
                 (2014, 2018): 'Data de Nascimento',
             },
             'clean_function': {},
-            'check_function': verification_functions.check_date
+            'check_function': verification_functions.dummy#verification_functions.check_date
         },
         'ctps': {
             'tipo': 'object',
@@ -428,7 +428,7 @@ def get_columns_info_rais():
                 (2002, 2010): cleaning_functions.get_ctps,
                 (2011, 2018): cleaning_functions.get_ctps_valid
             },
-            'check_function': verification_functions.check_ctps
+            'check_function': verification_functions.dummy#verification_functions.check_ctps
         },
         'cpf_r': {
             'tipo': 'object',
@@ -437,11 +437,11 @@ def get_columns_info_rais():
                 (2002, 2018): 'CPF'
             },
             'clean_function': {},
-            'check_function': verification_functions.check_cpf
+            'check_function': verification_functions.dummy#verification_functions.check_cpf
         },
         'cei_vinc': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2002, 2010): 'CEI VINC',
                 (2011, 2018): 'CEI Vinculado'
@@ -479,7 +479,7 @@ def get_columns_info_rais():
         },
         'cbo02': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2003, 2010): 'OCUP 2002',
                 (2011, 2018): 'CBO Ocupação 2002'
@@ -492,7 +492,7 @@ def get_columns_info_rais():
         },
         'cnae_20_classe': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2006, 2009): 'CLAS CNAE 20',
                 (2011, 2018): 'CNAE 2.0 Classe'
@@ -504,7 +504,7 @@ def get_columns_info_rais():
         },
         'cnae_20_subclasse': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2006, 2010): 'SB CLAS 20',
                 (2011, 2018): 'CNAE 2.0 Subclasse'
@@ -520,7 +520,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'CAUS AFAST 1',
                 (2011, 2018): 'Causa Afastamento 1'
@@ -533,7 +533,7 @@ def get_columns_info_rais():
         },
         'afast1_inic_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA INI AF 1',
                 (2011, 2018): 'Dia Ini AF1'
@@ -549,7 +549,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES INI AF 1',
                 (2011, 2018): 'Mês Ini AF1'
@@ -562,7 +562,7 @@ def get_columns_info_rais():
         },
         'afast1_fim_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA FIM AF 1',
                 (2011, 2018): 'Dia Fim AF1'
@@ -578,7 +578,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES FIM AF 1',
                 (2011, 2017): 'Mês Fim AF1'
@@ -595,7 +595,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'CAUS AFAST 2',
                 (2011, 2018): 'Causa Afastamento 2'
@@ -608,7 +608,7 @@ def get_columns_info_rais():
         },
         'afast2_inic_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA INI AF 2',
                 (2011, 2018): 'Dia Ini AF2'
@@ -624,7 +624,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES INI AF 2',
                 (2011, 2018): 'Mês Ini AF2'
@@ -637,7 +637,7 @@ def get_columns_info_rais():
         },
         'afast2_fim_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA FIM AF 2',
                 (2011, 2018): 'Dia Fim AF2'
@@ -653,7 +653,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES FIM AF 2',
                 (2011, 2018): 'Mês Fim AF2'
@@ -670,7 +670,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'CAUS AFAST 3',
                 (2011, 2018): 'Causa Afastamento 3'
@@ -683,7 +683,7 @@ def get_columns_info_rais():
         },
         'afast3_inic_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA INI AF 3',
                 (2011, 2018): 'Dia Ini AF3'
@@ -699,7 +699,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES INI AF 3',
                 (2011, 2018): 'Mês Ini AF3'
@@ -712,7 +712,7 @@ def get_columns_info_rais():
         },
         'afast3_fim_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'DIA FIM AF 3',
                 (2011, 2018): 'Dia Fim AF3'
@@ -728,7 +728,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES FIM AF 3',
                 (2011, 2018): 'Mês Fim AF3'
@@ -745,7 +745,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'QT DIAS AFAS',
                 (2011, 2018): 'Qtd Dias Afastamento'
@@ -758,7 +758,7 @@ def get_columns_info_rais():
         },
         'idade': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2011, 2018): 'Idade'
             },
@@ -769,7 +769,7 @@ def get_columns_info_rais():
         },
         'deslig_dia': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2003, 2010): 'DIA DESL',
                 (2014, 2018): 'Dia de Desligamento'
@@ -782,7 +782,7 @@ def get_columns_info_rais():
         },
         'ibge_subsetor': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2015, 2018): 'IBGE Subsetor'
             },
@@ -791,7 +791,7 @@ def get_columns_info_rais():
         },
         'estbl_cep': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2015, 2018): 'CEP Estab'
             },
@@ -800,7 +800,7 @@ def get_columns_info_rais():
         },
         'mun_trab': {
             'tipo': 'object',
-            'tipo_limpo': 'object',
+            'tipo_limpo': str,
             'campo': {
                 (2015, 2018): 'Mun Trab'
             },
@@ -943,7 +943,7 @@ def get_columns_info_rais():
         },
         'trab_interm': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2017, 2018): 'Ind Trab Intermitente'
             },
@@ -952,7 +952,7 @@ def get_columns_info_rais():
         },
         'trab_parcial': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2017, 2018): 'Ind Trab Parcial'
             },
@@ -961,7 +961,7 @@ def get_columns_info_rais():
         },
         'ind_sindical': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2017, 2017): 'Ind Sindical'
             },
@@ -976,6 +976,6 @@ def get_columns_info_rais():
                 (2011, 2018): 'Nome Trabalhador',
             },
             'clean_function': {},
-            'check_function': verification_functions.check_name
+            'check_function': verification_functions.dummy#verification_functions.check_name
         }
     }

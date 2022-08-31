@@ -48,10 +48,12 @@ def fill_doc(docs, len):
     return normalizar(docs.values.astype(str))
 
 def padronize_dates(df, date_columns):
-    reset_dates = np.vectorize(lambda s : ('' if s =='NaT' else s).zfill(8))
     for c in date_columns:
-        df[c] = reset_dates(pd.to_datetime(df[c]).dt.strftime("%d%m%Y"))
-        df[c] = df[c].astype("string")
+        df[c] = pd.to_datetime(df[c]).dt.strftime("%d%m%Y")
+        df[c] = df[c].apply(lambda x: x if not pd.isnull(x) else '')
+        df[c] = df[c].astype(str)
+        df[c] = df[c].str.zfill(8)
+
 
 def calc_cr_periodo(df, column):
     df['nota_credito'] =  df['nota'] * df['creditos']
