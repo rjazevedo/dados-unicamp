@@ -1,4 +1,4 @@
-from comvest.clear_dados import limpeza_dados, validacao_mun
+from comvest.clear_dados import limpeza_dados
 from comvest.clear_perfil import limpeza_perfil
 from comvest.clear_notas import limpeza_notas, presenca
 from comvest.extract_enrolled import extrair_matriculados, extrair_convocados
@@ -12,8 +12,9 @@ def extraction():
     dict_cursos.get()
     extrair_matriculados.extraction()
     extrair_convocados.extraction()
-    # limpeza_dados.extraction()
+    limpeza_dados.extraction()
     # validacao_mun.validation()
+    # validacao_esc.validation()
     limpeza_perfil.extraction()
     limpeza_notas.extraction()
     presenca.get()

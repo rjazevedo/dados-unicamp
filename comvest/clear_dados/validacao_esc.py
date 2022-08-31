@@ -145,18 +145,14 @@ def standardize_str(s, type):
 
 def standardize_key(i, type):
     if type == "seq":
-        return (
-            standardize_str(i["escola"], type=type)
-            + re.sub(r"[^\w]", "", unidecode(str(i["municipio"])).upper())
-            + i["UF"]
+        return standardize_str(i["escola"], type=type) + re.sub(
+            r"[^\w]", "", unidecode(str(i["municipio"])).upper()
         )
     elif type == "tok":
         return (
             standardize_str(i["escola"], type=type)
             + " "
             + re.sub(r"[^\w\s]", "", unidecode(str(i["municipio"])).upper())
-            + " "
-            + i["UF"]
         )
 
 
@@ -171,7 +167,9 @@ def get_match(i, escolas, by, cutoff):
     if by == "seq":
         return (
             difflib.get_close_matches(
-                i["chave_seq"], escolas[i["UF"]]["chave_seq"], cutoff=cutoff
+                i["chave_seq"],
+                escolas[i["UF"]]["chave_seq"],
+                cutoff=cutoff,
             )[:1]
             or [None]
         )[0]
@@ -179,10 +177,9 @@ def get_match(i, escolas, by, cutoff):
         # para o matching por tokens, escolas é uma tupla contendo (chave original e chave tokenizada)
         best_match = 0
         best_key = pd.NA
+        tokens_src = get_tokens(i["chave_tok"])
 
         for tok_key in escolas[i["UF"]]:
-            tokens_src = get_tokens(i["chave_tok"])
-
             similarity = textdistance.sorensen(tokens_src, tok_key[1])
             if similarity > best_match and similarity >= cutoff:
                 best_match = similarity
@@ -289,7 +286,7 @@ def validation():
     base_escolas.drop_duplicates(subset="chave_tok", inplace=True)
 
     # Sample para teste
-    comvest_esc = comvest_esc.sample(frac=0.05)
+    # comvest_esc = comvest_esc.sample(frac=0.2)
 
     escolas = {
         uf: base_escolas[base_escolas["UF"] == uf][["chave_seq", "chave_tok"]]
@@ -297,7 +294,7 @@ def validation():
     }
 
     comvest_esc["chave_seq"] = comvest_esc.apply(
-        lambda k: get_match(k, escolas, by="seq", cutoff=0.85), axis=1
+        lambda k: get_match(k, escolas, by="seq", cutoff=0.7), axis=1
     )
     """
     dac_esc["chave_seq"] = dac_esc.apply(
@@ -313,7 +310,6 @@ def validation():
         for key in escolas[uf]["chave_tok"]:
             escolas_triplets[uf].append((key, get_tokens(key)))
 
-    print(escolas_triplets["SP"])
     """
     dac_etapaTokens["chave_tok"] = dac_etapaTokens.apply(
         lambda k: get_match(k, escolas_triplets, by="tok", cutoff=0.7), axis=1
@@ -338,6 +334,6 @@ def validation():
     # res['confianca'] = res.apply(get_ratio, axis=1)
     # res.sort_values(by=['confianca'], ascending=False, inplace=True)
 
-    res.to_csv("comvest_inep_test.csv", index=False)
-    sem_match.to_csv("comvest_inep_test_null.csv", index=False)
+    res.to_csv("sample_test.csv", index=False)
+    sem_match.to_csv("sample_test_null.csv", index=False)
     # merged_dados.to_csv('teste_dados_dac-co80.csv', index=False)

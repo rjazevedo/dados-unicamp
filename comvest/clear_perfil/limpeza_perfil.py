@@ -21,6 +21,9 @@ def validacao_cidade(df, date):
 
     try:
         df["cid_inscricao"] = validar_cidade(df["cid_inscricao"])
+        df["cid_inscricao"] = df["cid_inscricao"].map(
+            lambda cid: unidecode(str(cid).upper().strip())
+        )
     except:
         # logging.debug('Comvest {} file doesn\'t have a \'cid_inscricao\' column'.format(date))
         print("Comvest {} file doesn't have a 'cid_inscricao' column".format(date))
@@ -109,6 +112,8 @@ def extraction():
         "isento",
         "paais",
         "cid_inscricao",
+        "grpcota",
+        "cotista",
     ]
 
     for path, date in files.items():
@@ -141,6 +146,8 @@ def extraction():
                 "est_civil_c",
                 "local_resid",
                 "reg_campinas",
+                "cotista",
+                "grpcota",
                 "isento",
                 "paais",
                 "paais_a",
@@ -151,6 +158,7 @@ def extraction():
                 "tipo_esc_ef_1",
                 "tipo_esc_ef_2",
                 "tipo_esc_em",
+                "em_exterior",
                 "coltec_tipo",
                 "interromp_estudos",
                 "interromp_estudos_motivo",

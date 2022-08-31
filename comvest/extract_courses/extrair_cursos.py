@@ -22,14 +22,24 @@ def extraction():
 
 	for path, date in files.items():
 		courses = read_from_db(path, sheet_name='cursos')
+		courses = cleandata(courses, date)
+
+		try:
+			courses_vi = read_from_db(path, sheet_name='vi_cursos')
+			courses_vi = cleandata(courses_vi, date)
+		except:
+			print(f'{date} doesn\'t have a "vi_cursos" sheet')
+			courses_vi = None
+		
 		progresslog('cursos', date)
 
-		courses = cleandata(courses, date)
 		courses_frames.append(courses)
+		courses_frames.append(courses_vi)
 
 	# Export CSV
 	all_courses = pd.concat(courses_frames)
 	all_courses.sort_values(by='ano_vest', ascending=False, inplace=True)
+	all_courses.drop_duplicates(subset=['ano_vest','cod_curso'], inplace=True)
 
 	FILE_NAME = 'cursos_comvest.csv'
 	write_result(all_courses, FILE_NAME)
