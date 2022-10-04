@@ -7,6 +7,7 @@ from comvest.utilities.io import read_result as read_result_comvest
 from dac.utilities.io import write_result
 from dac.utilities.io import read_result as read_result_dac, write_output
 
+
 def validar_CPF(cpf_dac, cpf_comvest):
     if cpf_dac != '-':
         filled_cpf = str(cpf_dac).zfill(11)

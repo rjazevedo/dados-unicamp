@@ -128,7 +128,6 @@ def create_dictonary_ufs(df):
         dict[value] = df_uf
         df = df[~filter_condition]
     dict[''] = df
-    write_result(dict[''], "essememe.csv")
     return dict
 
 

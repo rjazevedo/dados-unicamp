@@ -22,6 +22,9 @@ def read_from_db(PATH, sheet_name=None, dtype=None):
 def read_auxiliary(FILE_NAME, dtype=None, sep=',', encoding=None):
     return pd.read_excel(AUXILIARY_PATH + FILE_NAME, dtype=dtype) if '.xls' in FILE_NAME else pd.read_csv(AUXILIARY_PATH + FILE_NAME, dtype=dtype, sep=sep, encoding=encoding)
 
+def write_auxiliary(df, FILE_NAME):
+    df.to_csv(AUXILIARY_PATH + FILE_NAME, index=False)
+
 def read_result(FILE_NAME, dtype=None):
     return pd.read_csv(RESULT_PATH + FILE_NAME, dtype=dtype)
 
