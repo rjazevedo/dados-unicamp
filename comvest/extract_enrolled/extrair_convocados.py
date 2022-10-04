@@ -20,7 +20,7 @@ def extraction():
 
     convocados_file = read_auxiliary(
         "ConvocadosMatriculadosLista87a21.xlsx",
-        dtype={"ano": "Int64", "insc": str, "curso": "Int64", "lista": "Int64"},
+        dtype={"ano": "Int64", "insc": "Int64", "curso": "Int64", "lista": "Int64"},
     )
 
     convocados_frames.append(convocados_file)
@@ -42,19 +42,12 @@ def extraction():
         },
         inplace=True,
     )
-    convocados["insc_vest"] = convocados.apply(
-        lambda row: str(row["ano_vest"])[-2:] + row["insc_vest"]
-        if row["ano_vest"] in [2002, 2003]
-        else row["insc_vest"],
-        axis=1,
-    )
-    convocados["insc_vest"] = pd.to_numeric(
-        convocados["insc_vest"], errors="coerce", downcast="integer"
-    ).astype("Int64")
+
     convocados = convocados.merge(
-        matriculados, on=["ano_vest", "insc_vest"], how="outer"
+        matriculados, on=["ano_vest", "insc_vest"], how="left"
     )
     convocados.sort_values(by="ano_vest", ascending=False, inplace=True)
+    convocados.drop_duplicates(subset=["ano_vest", "insc_vest"], inplace=True)
 
     FILE_NAME = "matriculados_comvest.csv"
     write_result(convocados, FILE_NAME)

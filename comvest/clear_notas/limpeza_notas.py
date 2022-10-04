@@ -313,6 +313,7 @@ def tratar_notas_enem(notas_enem, inscritos, date):
         "grupo2_ve",
         "clas_opc1_ve",
         "clas_opc2_ve",
+        "ano_enem",
     ]
 
     if notas_enem.empty:
@@ -334,6 +335,7 @@ def tratar_notas_enem(notas_enem, inscritos, date):
             "grupo2": "grupo2_ve",
             "clas1": "clas_opc1_ve",
             "clas2": "clas_opc2_ve",
+            "anousado": "ano_enem",
         },
         axis=1,
         inplace=True,
@@ -433,6 +435,34 @@ def tratar_notas_vo(notas_vo, date):
     return notas_vo
 
 
+def tratar_notas_profis(notas_profis, date):
+    column_names = [
+        "insc",
+        "escola_profis",
+        "cod_esc_profis",
+        "nf_profis",
+        "clas_esc_profis",
+    ]
+
+    if notas_profis is None:
+        return pd.DataFrame(columns=column_names)
+
+    notas_profis.rename(
+        {
+            "insc_cand": "insc",
+            "nome_escola": "escola_profis",
+            "escola": "cod_esc_profis",
+            "nf": "nf_profis",
+            "clasescola": "clas_esc_profis",
+        },
+        axis=1,
+        inplace=True,
+    )
+    notas_profis = notas_profis.reindex(columns=column_names)
+
+    return notas_profis
+
+
 def extraction():
     notas_comvest = []
 
@@ -452,13 +482,15 @@ def extraction():
         notas_enem = tratar_notas_enem(notas_enem, notas_f1["insc"], date)
         notas_vi = tratar_notas_vi(notas_vi, date)
         notas_vo = tratar_notas_vo(notas_vo, date)
+        notas_profis = tratar_notas_profis(notas_profis, date)
 
         notas_vc = notas_f1.merge(
             notas_f2, how="left", on="insc", suffixes=("_f1", "_f2")
         )
         notas_vc_enem = notas_vc.merge(notas_enem, how="outer", on="insc")
         notas_vc_enem_vi = notas_vc_enem.merge(notas_vi, how="outer", on="insc")
-        notas_final = notas_vc_enem_vi.merge(notas_vo, how="outer", on="insc")
+        notas_vc_enem_vi_vo = notas_vc_enem_vi.merge(notas_vo, how="outer", on="insc")
+        notas_final = notas_vc_enem_vi_vo.merge(notas_profis, how="outer", on="insc")
 
         # Insere data (ano) no dataframe final
         notas_final.insert(loc=0, column="ano_vest", value=date)
