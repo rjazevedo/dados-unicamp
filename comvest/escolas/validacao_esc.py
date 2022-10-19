@@ -9,17 +9,14 @@ from comvest.utilities.io import read_auxiliary, write_auxiliary
 from comvest.utilities.io import read_result, read_output, write_result
 from comvest.escolas.inep_base import load_inep_base
 from comvest.escolas.escolas_base import load_esc_bases
-from comvest.escolas.utility import standardize_str
 from comvest.escolas.utility import get_match
 from collections import Counter
-
+import re
 
 def validation():
     inep = load_inep_base()
+    return
     escs = load_esc_bases()
-
-    escs["chave_seq"] = escs['escola'].apply(lambda r: standardize_str(r))
-    inep["chave_seq"] = inep['escola'].apply(lambda r: standardize_str(r))
 
     esc_dict = create_escs_dict(escs, inep)
     escs = get_closest_schools(esc_dict, inep)
@@ -45,7 +42,7 @@ def get_closest_schools(esc_dict, inep):
     for key, value in esc_dict.items():
         escolas = inep[inep['codigo_municipio'] == key]
         new_df = value.copy()
-        new_df["chave_seq"] = value['chave_seq'].apply(lambda k: get_match(k, escolas['chave_seq'], cutoff=0.65))
+        new_df["chave_seq"] = value['chave_seq'].apply(lambda k: get_match(k, escolas['chave_seq'], cutoff=0.67))
         dfs.append(new_df)
 
         if value.shape[0] > maior_comvest:
@@ -74,3 +71,27 @@ def create_escs_dict(esc, inep):
         dict[code] = escolas[filt]
 
     return dict
+
+
+def extracao_fernanda():
+    a = read_auxiliary('escs_tudo_junto.csv')
+    b = read_auxiliary('escolas_sem_match.csv')
+
+    print(a.columns)
+    print(b.columns)
+
+    a['escola_inep'] = a['escola_inep'].astype(str)
+    b['escola_inep'] = b['escola_inep'].astype(str)
+
+    a['escola_base'] = a['escola_base'].map(lambda x: re.sub(r'[^\w\s]', '', x))
+    a['escola_inep'] = a['escola_inep'].map(lambda x: re.sub(r'[^\w\s]', '', x))
+    b['escola_base'] = b['escola_base'].map(lambda x: re.sub(r'[^\w\s]', '', x))
+    b['escola_inep'] = b['escola_inep'].map(lambda x: re.sub(r'[^\w\s]', '', x))
+
+    #a = a.drop_duplicates(subset=['escola_base'])
+    #b = b.drop_duplicates(subset=['escola_base'])
+
+    print(a.shape)
+    print(b.shape)
+    write_auxiliary(a, 'vjunto.csv')
+    write_auxiliary(b, 'vsem.csv')

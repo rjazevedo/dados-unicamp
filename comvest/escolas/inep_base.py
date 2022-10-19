@@ -3,6 +3,8 @@ import difflib as dff
 from comvest.utilities.io import read_auxiliary, write_auxiliary
 from comvest.escolas.utility import merge_inep_ibge
 from comvest.escolas.utility import concat_and_drop_duplicates
+from comvest.escolas.utility import standardize_str
+from comvest.escolas.utility import remove_countie_name_from_school
 from unidecode import unidecode
 
 
@@ -21,6 +23,12 @@ def load_inep_base():
     result = result[['escola', 'Código INEP', 'codigo_municipio', 'uf', 'municipio']]
     result.columns = ['escola', 'Código INEP', 'codigo_municipio', 'uf_novo', 'municipio_novo']
     result = result.sort_values(by=['codigo_municipio'], ascending=True)
+
+    result = remove_countie_name_from_school(result, 'municipio_novo')
+
+    result["chave_seq"] = result['chave_seq'].apply(lambda r: standardize_str(r))
+    result["chave_seq_inep"] = result['chave_seq']
+
     return result
 
 
@@ -44,6 +52,11 @@ def load_schools():
     new_esc = concat_and_drop_duplicates([wrong, correcto])
 
     new_esc = new_esc.drop(['municipio_novo'], axis=1)
+
+    
+    filt = new_esc["Etapas e Modalidade de Ensino Oferecidas"].isin(["Educação Infantil, Ensino Fundamental", 
+                                                            "Educação Infantil",  "Ensino Fundamental"])
+
     return new_esc
 
 
