@@ -14,12 +14,6 @@ def replicate_ids_dac():
     historico_escolar = read_result('historico_escolar_aluno.csv')
     resumo_por_periodo = read_result('resumo_periodo_cr.csv')
 
-    print(vida_academica.shape)
-    #vida_academica = vida_academica.drop_duplicates(subset=["identif"])
-    vida_academica = vida_academica[vida_academica.duplicated(subset=['identif'])]
-    write_result(vida_academica, "ccccccc.csv")
-    return 
-
     dados_cadastrais["identif"] = dados_cadastrais["identif"].astype(str)
     dados_cadastrais = pd.merge(dados_cadastrais, ids, on=["identif"], how="left").drop(['insc_vest','identif', 'cpf', 'doc', 'nome','dta_nasc', 'origem', "ano_ingresso_curso"], axis=1, errors='ignore')
     
