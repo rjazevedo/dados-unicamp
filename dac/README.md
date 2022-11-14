@@ -15,14 +15,6 @@ Além disso temos o arquivo configuration_example.yaml que deve ser renomeado pa
 ## Execução
 Para executar primeiramente coloque os arquivos .xlsx da base de dados no diretório input do projeto e preencha as configurações em configuration.yaml.
 
-Arquivos necessários:
-Create_ufs_code
-    RELATORIO_DTB_BRASIL_MUNICIPIO.xls
-    dados_comvest.csv
-    RELATORIO_DTB_BRASIL_MUNICIPIO.XLS
-    Rodolfo_Complementacao.xlsx
-
-
 Para executar a limpeza completa da base execute:
 ```
 python3 -m dac.extract_database
