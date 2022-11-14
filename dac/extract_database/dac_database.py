@@ -19,4 +19,4 @@ def extract():
     dados_ingressantes.generate()
     habilitacao.generate()
     uniao_dac_comvest.generate()
-    identificadores.create_ids()
+    #identificadores.create_ids()
