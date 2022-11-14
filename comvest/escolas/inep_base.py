@@ -29,16 +29,21 @@ def load_inep_base():
     result["chave_seq"] = result['chave_seq'].apply(lambda r: standardize_str(r))
     result["chave_seq_inep"] = result['chave_seq']
 
+    result = get_smallest_INEP_code(result)
     return result
 
 
 def load_schools():
     open_schools = read_auxiliary("INEP data.csv", dtype=object, sep=";").loc[:,["Escola", "Código INEP", "UF", "Município", "Etapas e Modalidade de Ensino Oferecidas"]]
-    closed_schools = read_auxiliary("cadescfechadassh19952021.csv", dtype=object, sep=";", encoding="latin1").loc[:, ["NO_ENTIDADE", "CO_ENTIDADE", "SG_UF", "NO_MUNICIPIO"]]
+    closed_schools = read_auxiliary("cadescfechadassh19952021.csv", dtype=object, sep=";", encoding="latin1").loc[:, ["NU_ANO_CENSO", "NO_ENTIDADE", "CO_ENTIDADE", "SG_UF", "NO_MUNICIPIO"]]
+    closed_schools = keep_last_ocurrence_of_closed_school(closed_schools)
     closed_schools.insert(loc=len(closed_schools.columns), column="Etapas e Modalidade de Ensino Oferecidas", value="Médio")
-    closed_schools.columns = open_schools.columns
 
-    base_escolas = pd.concat([open_schools, closed_schools])
+    closed_schools.columns = open_schools.columns
+    
+    base_escolas = pd.concat([closed_schools, open_schools])
+    base_escolas = base_escolas.drop_duplicates(subset=["Código INEP"], keep="last")
+
     base_escolas.columns = ["escola", "Código INEP", "uf", "municipio", "Etapas e Modalidade de Ensino Oferecidas"]
     base_escolas['municipio'] = base_escolas['municipio'].map(lambda x: unidecode(x).upper())
     
@@ -52,11 +57,10 @@ def load_schools():
     new_esc = concat_and_drop_duplicates([wrong, correcto])
 
     new_esc = new_esc.drop(['municipio_novo'], axis=1)
-
-    
-    filt = new_esc["Etapas e Modalidade de Ensino Oferecidas"].isin(["Educação Infantil, Ensino Fundamental", 
-                                                            "Educação Infantil",  "Ensino Fundamental"])
-
+    filt = new_esc["Etapas e Modalidade de Ensino Oferecidas"].isin(["Educação Infantil",
+    "Educação Infantil, Ensino Fundamental",  "Ensino Fundamental"])        
+                                       
+    new_esc = new_esc[~filt]
     return new_esc
 
 
@@ -75,6 +79,21 @@ def load_alteracoes():
     alteracoes['municipio'] = alteracoes['municipio'].map(lambda x: unidecode(x).upper())
     alteracoes['municipio_novo'] = alteracoes['municipio_novo'].map(lambda x: unidecode(x).upper())
     return alteracoes
+
+
+# Existe escolas com mesmo nome no mesmo município, para esses casos convencionamos utilizar
+# A que apresena o menor código do INEP
+def get_smallest_INEP_code(df):
+    df = df.sort_values('Código INEP')
+    df = df.drop_duplicates(subset=['escola', 'codigo_municipio'], keep='first')
+    return df
+
+
+def keep_last_ocurrence_of_closed_school(df):
+    df = df.sort_values("NU_ANO_CENSO")
+    df = df.drop_duplicates(subset="CO_ENTIDADE", keep="last")
+    df = df.drop(columns=["NU_ANO_CENSO"])
+    return df
 
 
 def remove_school_duplicated_by_counties(df):

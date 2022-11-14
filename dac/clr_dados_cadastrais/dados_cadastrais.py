@@ -2,6 +2,8 @@ from dac.utilities.io import read_from_database
 from dac.utilities.io import read_result
 from dac.utilities.io import write_output
 from dac.utilities.io import write_result
+from dac.utilities.io import read_from_external
+from dac.utilities.io import read_csv_from_database
 from dac.utilities.columns import dados_cadastrais_cols
 from dac.utilities.columns import dados_cadastrais_final_cols
 from dac.utilities.format import str_to_upper_ascii
@@ -26,6 +28,7 @@ DADOS_SHEET_NAME = 'Dados Cadastrais'
 
 RESULT_NAME = 'dados_cadastrais.csv'
 UF_CODE_NAME = 'final_counties.csv'
+SCHOOL_CODES = "escola_codigo_inep.csv"
 
 def generate_clean_data():
     dados_cadastrais = load_dados_cadastais()
@@ -33,7 +36,7 @@ def generate_clean_data():
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
     unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
     'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nac_d', 'naturalizado',
-    'escola_em_d', 'pais_esc_form_em']
+    'escola_em_d','pais_esc_form_em'] 
     
     dados_cadastrais.cpf = fill_doc(dados_cadastrais.cpf, 11)
     dados_cadastrais.doc = fill_doc(dados_cadastrais.doc, 15)
@@ -60,16 +63,17 @@ def generate_clean_data():
     padronize_int_miss(dados_cadastrais, ['ano_conclu_em'], 0)
 
     dados_cadastrais.drop_duplicates(subset=['identif'], keep='last', inplace=True)
-    generate_uf_code(dados_cadastrais)
+    dados_with_code = generate_uf_code(dados_cadastrais)
+    dados_with_school_code = generate_school_codes(dados_with_code)
+    write_result(dados_with_school_code, RESULT_NAME)
 
 
 def load_dados_cadastais():
     dados_cadastrais_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=DADOS_SHEET_NAME, names=dados_cadastrais_cols)
     dados_cadastrais_pos_99 = read_from_database(POS_99_BASE_NAME, names=dados_cadastrais_cols)
-   
+
     dados_cadastrais = pd.concat([dados_cadastrais_pre_99, dados_cadastrais_pos_99])
     dados_cadastrais = clear_dados_cadastrais_pre_99(dados_cadastrais)
-
     return dados_cadastrais
 
 
@@ -101,4 +105,14 @@ def generate_uf_code(dados_cadastrais):
     mun_nasc_d_merge = pd.merge(mun_nasc_d_merge, final_counties, how='left')
     
     mun_nasc_d_merge = mun_nasc_d_merge.reindex(columns= dados_cadastrais_final_cols)
-    write_result(mun_nasc_d_merge, RESULT_NAME)
+    return mun_nasc_d_merge
+
+
+# Atribui códigos das escolas 
+def generate_school_codes(dados_cadastrais):
+    code_schools = read_csv_from_database(SCHOOL_CODES).loc[:, ["escola_base", "Código INEP", "escola_inep", "codigo_municipio"]]
+    code_schools = code_schools.drop_duplicates(subset=["escola_base", "codigo_municipio"])
+
+    code_schools.columns = ["escola_em_d", "cod_escola_em_inep", "escola_em_inep", "cod_mun_form_em"]
+    result = pd.merge(dados_cadastrais, code_schools, how="left", on=["escola_em_d", "cod_mun_form_em"])
+    return result

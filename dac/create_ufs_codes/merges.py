@@ -1,15 +1,15 @@
 import pandas as pd
 from dac.utilities.io import write_result
-from dac.new_create_ufs_codes.utilities import get_wrong_and_right
-from dac.new_create_ufs_codes.utilities import merge_by_uf
-from dac.new_create_ufs_codes.utilities import create_key_for_merge
-from dac.new_create_ufs_codes.utilities import create_concat_key_for_merge
-from dac.new_create_ufs_codes.utilities import create_dictonary_ufs
-from dac.new_create_ufs_codes.utilities import merge_by_concat_key
-from dac.new_create_ufs_codes.utilities import merge_by_counties
-from dac.new_create_ufs_codes.utilities import give_trust
-from dac.new_create_ufs_codes.utilities import concat_and_drop_duplicates
-from dac.new_create_ufs_codes.utilities import copy_columns_for_perfect_merge
+from dac.create_ufs_codes.utilities import get_wrong_and_right
+from dac.create_ufs_codes.utilities import merge_by_uf
+from dac.create_ufs_codes.utilities import create_key_for_merge
+from dac.create_ufs_codes.utilities import create_concat_key_for_merge
+from dac.create_ufs_codes.utilities import create_dictonary_ufs
+from dac.create_ufs_codes.utilities import merge_by_concat_key
+from dac.create_ufs_codes.utilities import merge_by_counties
+from dac.create_ufs_codes.utilities import give_trust
+from dac.create_ufs_codes.utilities import concat_and_drop_duplicates
+from dac.create_ufs_codes.utilities import copy_columns_for_perfect_merge
 
 
 def probabilist_merge_by_counties(counties, ibge_data, correct_list):

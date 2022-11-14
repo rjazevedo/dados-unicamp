@@ -21,7 +21,6 @@ def standardize_str(s):
         .replace("EE 2 GRAU", "E")
         .replace("EE 1 E 2GRAU", "E")
         .replace("1 E 2 GRAUS", "E")
-        
         .replace("EDUCACAO INFANTIL", "EI")
         .replace("ENSINO FUNDAMENTAL", "EF")
         .replace("TEMPO INTEGRAL", "TI")
@@ -124,7 +123,6 @@ def standardize_str(s):
         .replace('EXTERNATO', "")
         .replace('ZONA', "")
         .replace('NHN', "")
-
         #.replace('EF', "") 
         #.replace("CEES", "")
         #.replace("EEIEEF", "")
@@ -172,7 +170,6 @@ def standardize_str(s):
         #.replace("LTDA", "")
         #.replace('IFSP', "")
         #.replace('EIFM', "")
-
         .replace("COL.", "")
         .replace("COL", "")
         .replace("RONDONIA", "RO")
@@ -202,7 +199,6 @@ def standardize_str(s):
         .replace("MATO GROSSO", " MT")
         .replace("GOIAS", "GO")
         .replace("DISTRITO FEDERAL", "DF")
-
         .replace(' E ', "")
         .replace(' DE ', "")
         .replace(' DA ', "")
@@ -282,7 +278,8 @@ def remove_countie_name_from_school(df, column):
     for countie in counties:
         filt = (df[column] == countie)
         df_countie = df[filt].copy()
-        df_countie['chave_seq'] = df_countie['escola'].map(lambda x: x.replace(countie, ""))
+        df_dummy = df_countie['escola']
+        df_countie['chave_seq'] = df_dummy.map(lambda x: x.replace(countie, ""))
         correct.append(df_countie)
 
     result = pd.concat(correct)

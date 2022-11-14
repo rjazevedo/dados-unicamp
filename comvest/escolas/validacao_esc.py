@@ -15,7 +15,6 @@ import re
 
 def validation():
     inep = load_inep_base()
-    return
     escs = load_esc_bases()
 
     esc_dict = create_escs_dict(escs, inep)
@@ -26,11 +25,9 @@ def validation():
     print(result[~filt].shape[0] / result.shape[0])
     #result = result.sort_values(by=['codigo_municipio'], ascending=True)
 
-    no_match = result[filt]
+    result = result.drop_duplicates(subset=["escola_base", "codigo_municipio"])
+    write_auxiliary(result, "escola_codigo_inep.csv")
 
-    write_auxiliary(no_match, "escolas_sem_match.csv")
-    write_auxiliary(result, "escs_tudo_junto.csv")
-    
 
 def get_closest_schools(esc_dict, inep):
     dfs = []
@@ -52,9 +49,6 @@ def get_closest_schools(esc_dict, inep):
         if (soma % 100) == 0:
             print(f'{soma}/5541 -> code:{key} /// {maior_comvest} escolas com {maior_inep} inep') 
             maior_comvest = 0
-
-        #if (soma == 1000):
-        #    break
 
         soma += 1
 
