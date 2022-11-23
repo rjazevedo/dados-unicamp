@@ -4,7 +4,7 @@ from dac.utilities.io import read_from_external
 from dac.utilities.io import write_output
 import pandas as pd
 
-def replicate_ids_dac():
+def create_ids():
     ids = read_from_external('dac_comvest_ids.csv', dtype=str).loc[:, ["id", "identif"]]
     ids = ids.drop_duplicates(subset=["id", "identif"])
 

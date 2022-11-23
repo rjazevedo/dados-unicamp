@@ -1,7 +1,7 @@
 from dac.create_ids import identificadores
 
 def main():
-    identificadores.replicate_ids_dac()
+    identificadores.create_ids()
 
 if __name__ == '__main__':
     main()
