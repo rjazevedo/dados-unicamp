@@ -13,6 +13,7 @@ from rais.utilities.logging import log_recover_cpf_exact_match
 from rais.utilities.logging import log_recover_cpf_probabilistic_match
 from rais.utilities.logging import log_recover_from_year
 from rais.utilities.logging import log_filter_results
+from unidecode import unidecode
 
 #------------------------------------------------------------------------------------------------
 
@@ -21,8 +22,8 @@ HOMONIMO = 4
 HIGH_SIMILARITY = 5
 MEDIUM_SIMILARITY = 6
 
-MIN_MEDIUM_SIMILARITY = 0.7
-MIN_HIGH_SIMILARITY = 0.8
+MIN_MEDIUM_SIMILARITY = 0.8
+MIN_HIGH_SIMILARITY = 0.85
 
 #------------------------------------------------------------------------------------------------
 # Uses initial union dac/comvest to recover missing cpfs in rais and generate a new file with cpfs recovered
@@ -44,30 +45,36 @@ def recover_cpf_dac_comvest():
 #------------------------------------------------------------------------------------------------
 # Return df with only the lines with cpf missing or cpf from parents
 def get_cpf_missing_dac_comvest(df):
-    cpf_missing = df[df.apply(lambda x: x['cpf'] == '-', axis=1)]
+    cpf_missing = df[df.cpf == '-']
     cpf_missing = cpf_missing.drop_duplicates()
     return cpf_missing
 
 # Return df with matches made with name and birthdate equal
 def recover_cpf_exact_match(df):
-    prepare_df_dac_comvest_exact_match(df)
-    df_recovered = merge_with_rais(df, False)
-    log_filter_results()
+    # TODO
+    # prepare_df_dac_comvest_exact_match(df)
+    # df_recovered = merge_with_rais(df, False)
+    # log_filter_results()
+    # df_recovered.to_pickle("/home/luisfelipe/dados-unicamp/recover_cpf_exact_match.pkl") # TODO REMOVER
+    df_recovered = pd.read_pickle("/home/luisfelipe/dados-unicamp/recover_cpf_exact_match.pkl")
     df_recovered = remove_invalid_cpf(df_recovered)
     df_recovered = fix_duplicated_rows_exact_match(df_recovered)
     return df_recovered
 
 # Return df with missing cpfs after first recover
 def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
-    columns = ['insc_vest', 'ano_ingresso_curso']
+    columns = ['merge_id']
     updated_cpf_missing = subtract(df_cpf_missing, df_cpf_recovered, columns)
     return updated_cpf_missing
 
 # Return df with matches made with first name, birthdate equal and high similarity between names
 def recover_cpf_probabilistic_match(df):
-    prepare_df_dac_comvest_probabilistic_match(df)
-    df_merged = merge_with_rais(df, True)
-    log_filter_results()
+    # TODO
+    # prepare_df_dac_comvest_probabilistic_match(df)
+    # df_merged = merge_with_rais(df, True)
+    # log_filter_results()
+    # df_merged.to_pickle("/home/luisfelipe/dados-unicamp/recover_cpf_probabilistic_match.pkl")  # TODO REMOVER
+    df_merged = pd.read_pickle("/home/luisfelipe/dados-unicamp/recover_cpf_probabilistic_match.pkl")
     df_recovered = remove_invalid_cpf(df_merged)
     df_recovered = fix_duplicated_rows_probabilistic_match(df_recovered)
     return df_recovered
@@ -82,6 +89,7 @@ def join_cpf_recovered(df_dac_comvest, df_cpf_recovered_exact_match, df_cpf_reco
 #------------------------------------------------------------------------------------------------
 # Rename columns to use in merge
 def prepare_df_dac_comvest_exact_match(df):
+    df.nome = df.nome.apply(clean_name)
     del df['cpf']
 
 # Rename columns to use in merge
@@ -89,6 +97,7 @@ def prepare_df_rais_exact_match(df):
     df.rename(columns={'cpf_r': 'cpf'}, inplace=True)
     df.rename(columns={'dta_nasc_r': 'dta_nasc'}, inplace=True)
     df.rename(columns={'nome_r': 'nome'}, inplace=True)
+    df.nome = df.nome.apply(clean_name)
 
 # Rename columns and get first name to use in merge
 def prepare_df_dac_comvest_probabilistic_match(df):
@@ -202,7 +211,7 @@ def fix_duplicated_rows_exact_match(df):
     df = order_by_priority(df)
     get_origem_cpf_column_exact_match(df)
     df = get_dac_information_exact_match(df)
-    columns = ['insc_vest', 'ano_ingresso_curso']
+    columns = ['merge_id']
     df = remove_duplicated_rows(df, columns)
     return df
 
@@ -211,7 +220,7 @@ def fix_duplicated_rows_probabilistic_match(df):
     get_origem_cpf_column_probabilistic_match(df)
     df = order_by_similarity(df)
     df = get_dac_information_probabilistic_match(df)
-    columns = ['insc_vest', 'ano_ingresso_curso']
+    columns = ['merge_id']
     df = remove_duplicated_rows(df, columns)
     return df
 
@@ -258,7 +267,7 @@ def get_priority_mun(mun):
 #------------------------------------------------------------------------------------------------
 # Create origem_cpf column
 def get_origem_cpf_column_exact_match(df):
-    columns = ['insc_vest', 'ano_ingresso_curso']
+    columns = ['merge_id']
     df['duplicado'] = df.duplicated(subset=columns, keep=False)
     df['origem_cpf'] = df.apply(lambda x: get_origem_cpf_exact_match(x['duplicado']), axis=1)
     del df['duplicado']
@@ -295,7 +304,7 @@ def get_dac_information_probabilistic_match(df):
 
 # Filter only columns that appear in dac/comvest
 def filter_columns_dac_comvest(df):
-    columns = ['insc_vest', 'nome', 'origem_cpf', 'dta_nasc', 'ano_ingresso_curso', 'cpf']
+    columns = ['insc_vest', 'nome', 'origem_cpf', 'dta_nasc', 'ano_ingresso_curso', 'cpf', 'merge_id', 'invalid']
     df = df.loc[:, columns]
     df = df.drop_duplicates()
     return df
@@ -303,12 +312,12 @@ def filter_columns_dac_comvest(df):
 #------------------------------------------------------------------------------------------------
 # Update initial dataframe with recovered cpfs and return resultant dataframe
 def update_cpf_dac_comvest(df_cpf_recovered, df_uniao_dac_comvest):
-    df_cpf_recovered = df_cpf_recovered.loc[:,['insc_vest', 'ano_ingresso_curso', 'cpf', 'origem_cpf']]
+    df_cpf_recovered = df_cpf_recovered.loc[:, ['cpf', 'origem_cpf', 'merge_id']]
     df_cpf_recovered.rename(columns={'cpf': 'cpf_recovered'}, inplace=True)
     df_cpf_recovered.rename(columns={'origem_cpf': 'origem_cpf_recovered'}, inplace=True)
     df_cpf_recovered['recovered'] = True
 
-    result = df_uniao_dac_comvest.merge(df_cpf_recovered, on=['insc_vest', 'ano_ingresso_curso'], how='left')
+    result = df_uniao_dac_comvest.merge(df_cpf_recovered, on=['merge_id'], how='left')
     result['cpf'] = result.apply(lambda x: get_cpf(x['recovered'], x['cpf'], x['cpf_recovered']), axis=1)
     result['origem_cpf'] = result.apply(lambda x: int(get_cpf(x['recovered'], x['origem_cpf'], x['origem_cpf_recovered'])), axis=1)
 
@@ -323,3 +332,10 @@ def get_cpf(was_recovered, value1, value2):
     if was_recovered == True:
         return value2
     return value1
+
+def clean_name(name):
+    if pd.isnull(name):
+        return ""
+    else:
+        s = unidecode(name).upper().strip()
+        return " ".join(s.split())

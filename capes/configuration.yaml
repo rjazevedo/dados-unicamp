@@ -1,0 +1,4 @@
+# Put the path to directory with input data and the path to directory where the clean files will be created
+path_input:        /home/input/capes/
+path_output:       /home/output/capes/
+database_ids:      /home/luisfelipe/dados-unicamp/output/rais/dac_comvest_ids.csv
