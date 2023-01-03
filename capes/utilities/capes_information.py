@@ -11,8 +11,8 @@ def get_columns_info_capes():
         },
         'ano_nasc_a': {
             'old_names': ['AN_NASCIMENTO_DISCENTE'],
-            'clean_type': str,
-            'cleaning_function': cleaning_functions.clean_ano_str
+            'clean_type': "Int64",
+            'cleaning_function': cleaning_functions.clean_ano
 
         },
         'ano_matr_discente': {

@@ -6,7 +6,6 @@ from capes.utilities.io import (
     list_dirs_capes_tmp,
     read_capes_clean,
     read_ids,
-    create_folder,
     write_sample,
 )
 from capes.utilities.io import get_all_files
@@ -78,14 +77,6 @@ def extract_date_capes(path_folder, dac_comvest_ids, merge_year_list):
     else:
         result = extract_date_capes_post2013(path_folder, dac_comvest_ids)
 
-    create_folder(
-        "/home/luisfelipe/dados-unicamp/output/capes/", "merge"
-    )  # TODO REMOVER
-    result.to_pickle(
-        "/home/luisfelipe/dados-unicamp/output/capes/merge/"
-        + date
-        + "merged_result.pkl"
-    )  # TODO REMOVER
     merge_year_list.append(result)
 
 

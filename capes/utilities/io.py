@@ -76,5 +76,5 @@ def write_database(df, file, date):
 
 
 def write_sample(df):
-    path = config["path_output"] + 'capes_amostra.csv'
+    path = config["path_output"] + "capes_amostra.csv"
     df.to_csv(path, sep=";", index=False)
