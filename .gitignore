@@ -11,6 +11,7 @@ input/rais
 .vscode/*
 dac/configuration.yaml
 comvest/configuration.yaml
+comvest/filters/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

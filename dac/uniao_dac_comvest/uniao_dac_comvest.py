@@ -66,6 +66,9 @@ def generate():
 
     concat = concat_dac_comvest(correct_merge_list, dados_comvest)
     final_df = padronize_colums(concat)
+
+    filt = (final_df['origem_cpf'] == 1)
+    final_df = final_df[filt]
     write_result(final_df, "uniao_dac_comvest.csv")
 
 

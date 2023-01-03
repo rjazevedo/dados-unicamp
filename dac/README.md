@@ -15,7 +15,6 @@ Além disso temos o arquivo configuration_example.yaml que deve ser renomeado pa
 ## Execução
 Para executar primeiramente coloque os arquivos .xlsx da base de dados no diretório input do projeto e preencha as configurações em configuration.yaml.
 
-
 Para executar a limpeza completa da base execute:
 ```
 python3 -m dac.extract_database
