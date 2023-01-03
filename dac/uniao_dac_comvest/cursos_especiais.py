@@ -26,7 +26,7 @@ def tecnology_students(df, correct_special_list):
 
     unknow_students = df[course_filt]
     normal_students = df[~course_filt]
-    unknow_students = create_colums_for_concat(unknow_students)
+    unknow_students = create_colums_for_concat(unknow_students, False)
     correct_special_list.append(unknow_students)
     return normal_students
 
@@ -40,7 +40,7 @@ def pedagogy_students(df, correct_special_list):
     pedagogy_students = df[courses_filt]
     normal_students = df[~courses_filt]    
 
-    pedagogy_students = create_colums_for_concat(pedagogy_students)
+    pedagogy_students = create_colums_for_concat(pedagogy_students, False)
     correct_special_list.append(pedagogy_students)
     return normal_students
 
@@ -55,7 +55,7 @@ def profis_students(df, correct_special_list):
     normal_students = df[~courses_filt]    
 
     #testar_profis(profis_students)
-    profis_students = create_colums_for_concat(profis_students)
+    profis_students = create_colums_for_concat(profis_students, False)
     correct_special_list.append(profis_students)
     return normal_students
 
@@ -68,7 +68,7 @@ def adm_students(df, correct_special_list):
     adm_students = df[ingresso_filt]
     normal_students = df[~ingresso_filt]    
 
-    adm_students = create_colums_for_concat(adm_students)
+    adm_students = create_colums_for_concat(adm_students, False)
     correct_special_list.append(adm_students)
 
     # find_entry_109_110_students(df[ingresso_filt])
