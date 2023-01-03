@@ -14,8 +14,8 @@ CODE_UF_EQUIV = { 11: 'RO', 12: 'AC', 13: 'AM', 14: 'RR', 15: 'PA', 16: 'AP', 17
 
 
 def load_inep_base():
-    uf_codes = load_counties()
     escolas = load_schools()
+    uf_codes = load_counties()
 
     merged = merge_inep_ibge(escolas, uf_codes)
     result = remove_school_duplicated_by_counties(merged)
@@ -30,6 +30,7 @@ def load_inep_base():
     result["chave_seq_inep"] = result['chave_seq']
 
     result = get_smallest_INEP_code(result)
+    
     return result
 
 

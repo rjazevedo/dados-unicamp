@@ -7,7 +7,6 @@ import pandas as pd
 def create_ids():
     ids = read_from_external('dac_comvest_ids.csv', dtype=str).loc[:, ["id", "identif"]]
     ids = ids.drop_duplicates(subset=["id", "identif"])
-
     dados_cadastrais = read_result('dados_cadastrais.csv')
     vida_academica = read_result('vida_academica.csv')
     vida_academica_habilitacao = read_result('vida_academica_habilitacao.csv', dtype=str)

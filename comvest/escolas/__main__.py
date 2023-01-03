@@ -1,4 +1,5 @@
 from comvest.escolas import validacao_esc
+from comvest.escolas import testes
 
 
 def main():

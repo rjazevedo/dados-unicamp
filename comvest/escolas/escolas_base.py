@@ -29,8 +29,6 @@ def load_esc_bases():
     escs = escs[~escs["codigo_municipio"].isin(["NAN", ""])]
 
     escs = remove_countie_name_from_school(escs, 'municipio_original')
-    escs = escs.drop_duplicates(subset=["escola", "codigo_municipio"])
-    
     escs["chave_seq"] = escs['chave_seq'].apply(lambda r: standardize_str(r))
     escs["chave_seq_escs"] = escs['chave_seq']
     

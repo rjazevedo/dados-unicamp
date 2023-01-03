@@ -14,13 +14,15 @@ from collections import Counter
 import re
 
 def validation():
-    inep = load_inep_base()
     escs = load_esc_bases()
+    inep = load_inep_base()
 
     esc_dict = create_escs_dict(escs, inep)
     escs = get_closest_schools(esc_dict, inep)
-    result = pd.merge(escs, inep, on=['codigo_municipio', 'chave_seq'], how='left', suffixes=("_base", "_inep"))
+    # até aqui tudo certo
 
+    result = pd.merge(escs, inep, on=['codigo_municipio', 'chave_seq'], how='left', suffixes=("_base", "_inep"))
+    # possível meme 
     filt = result['escola_inep'].isnull()
     print(result[~filt].shape[0] / result.shape[0])
     #result = result.sort_values(by=['codigo_municipio'], ascending=True)
