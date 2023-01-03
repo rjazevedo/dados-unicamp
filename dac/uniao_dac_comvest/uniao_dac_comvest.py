@@ -1,13 +1,15 @@
 import pandas as pd
 import numpy as np
-import difflib as dff
-import matplotlib.pyplot as plt
 from dac.utilities.io import write_result
-from dac.utilities.io import read_result as read_result_dac, write_output
-from dac.utilities.io import read_from_external
 from dac.uniao_dac_comvest.cursos_especiais import deal_special_students
 from dac.uniao_dac_comvest.doc_part import merge_by_doc_part
-from dac.uniao_dac_comvest.utilities import get_wrong_and_right, select_doc, select_dta, select_insc_vest, select_name
+from dac.uniao_dac_comvest.utilities import (
+    get_wrong_and_right,
+    select_doc,
+    select_dta,
+    select_insc_vest,
+    select_name,
+)
 from dac.uniao_dac_comvest.utilities import concat_dac_comvest
 from dac.uniao_dac_comvest.utilities import validar_CPF
 from dac.uniao_dac_comvest.utilities import select_CPF
@@ -67,7 +69,7 @@ def generate():
     concat = concat_dac_comvest(correct_merge_list, dados_comvest)
     final_df = padronize_colums(concat)
 
-    filt = (final_df['origem_cpf'] == 1)
+    filt = final_df["origem_cpf"] == 1
     final_df = final_df[filt]
     write_result(final_df, "uniao_dac_comvest.csv")
 
@@ -120,7 +122,7 @@ def padronize_colums(df):
     df["nome_dac"].fillna("-", inplace=True)
     df["nome_comvest"].fillna("-", inplace=True)
     select_name_v = np.vectorize(select_name)
-    df['nome'] = select_name_v(df.nome_dac, df.nome_comvest)
+    df["nome"] = select_name_v(df.nome_dac, df.nome_comvest)
     # Coloca a coluna 'nome' ao lado das outras 2 colunas de nome
     nome_column = df.pop("nome")
     df.insert(13, "nome", nome_column)
@@ -128,7 +130,7 @@ def padronize_colums(df):
     df["doc_dac"].fillna("-", inplace=True)
     df["doc_comvest"].fillna("-", inplace=True)
     select_doc_v = np.vectorize(select_doc)
-    df['doc'] = select_doc_v(df.doc_dac, df.doc_comvest)
+    df["doc"] = select_doc_v(df.doc_dac, df.doc_comvest)
     # Coloca a coluna 'doc' ao lado das outras 2 colunas de doc
     doc_column = df.pop("doc")
     df.insert(6, "doc", doc_column)
@@ -136,7 +138,7 @@ def padronize_colums(df):
     df["dta_nasc_dac"].fillna("-", inplace=True)
     df["dta_nasc_comvest"].fillna("-", inplace=True)
     select_dta_v = np.vectorize(select_dta)
-    df['dta_nasc'] = select_dta_v(df.dta_nasc_dac, df.dta_nasc_comvest)
+    df["dta_nasc"] = select_dta_v(df.dta_nasc_dac, df.dta_nasc_comvest)
     df.dta_nasc = df.dta_nasc.replace("00000nan", "-")
     # Coloca a coluna 'dta' ao lado das outras 2 colunas de dta
     dta_nasc_column = df.pop("dta_nasc")
@@ -144,11 +146,9 @@ def padronize_colums(df):
 
     df.insc_vest_comvest = df.insc_vest_comvest.replace(r"", np.nan)
     select_insc_vest_v = np.vectorize(select_insc_vest)
-    df['insc_vest'] = select_insc_vest_v(df.insc_vest_dac, df.insc_vest_comvest)
+    df["insc_vest"] = select_insc_vest_v(df.insc_vest_dac, df.insc_vest_comvest)
 
     origem_cpf = np.vectorize(set_origemCPF)
     df["origem_cpf"] = origem_cpf(df["cpf_dac"], df["cpf_comvest"])
-
-    #df = df.drop(columns="merge_id")
 
     return df

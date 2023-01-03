@@ -1,11 +1,8 @@
 import pandas as pd
-import re
 import numpy as np
 from dac.utilities.format import fill_doc
 from dac.utilities.io import read_result as read_result_dac
 from comvest.utilities.io import read_result as read_result_comvest
-from dac.utilities.io import write_result
-from dac.utilities.io import read_result as read_result_dac, write_output
 
 
 def validar_CPF(cpf: str) -> str:
@@ -86,6 +83,7 @@ def select_dta(dta_dac, dta_comvest):
         return dta_comvest
     else:
         return "-"
+
 
 def select_insc_vest(insc_vest_dac, insc_vest_comvest):
     if not pd.isnull(insc_vest_dac):
