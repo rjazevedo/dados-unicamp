@@ -12,6 +12,8 @@ def clean_name(name):
 
 
 def clean_emec(emec):
+    if pd.isna(emec):
+        return np.nan
     if emec == "NI":
         return np.nan
     else:
@@ -19,6 +21,16 @@ def clean_emec(emec):
 
 
 def clean_ano(ano):
+    if pd.isna(ano):
+        return np.nan
+    if ano < 1900 or ano > 2020:
+        return np.nan
+    else:
+        return ano
+
+
+def clean_ano_str(ano):
+    ano = int(ano)
     if ano < 1900 or ano > 2020:
         return np.nan
     else:
@@ -26,6 +38,8 @@ def clean_ano(ano):
 
 
 def clean_mes(mes):
+    if pd.isna(mes):
+        return np.nan
     if mes < 1 or mes > 12:
         return np.nan
     else:

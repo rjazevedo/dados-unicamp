@@ -11,8 +11,8 @@ def get_columns_info_capes():
         },
         'ano_nasc_a': {
             'old_names': ['AN_NASCIMENTO_DISCENTE'],
-            'clean_type': 'Int64',
-            'cleaning_function': cleaning_functions.clean_ano
+            'clean_type': str,
+            'cleaning_function': cleaning_functions.clean_ano_str
 
         },
         'ano_matr_discente': {
@@ -96,13 +96,13 @@ def get_columns_info_capes():
         'cs_status_juridico': {
             'old_names': ['CS_STATUS_JURIDICO'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'ds_depend_adm': {
             'old_names': ['DS_DEPENDENCIA_ADMINISTRATIVA'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'ds_faixa_etaria': {
@@ -114,7 +114,7 @@ def get_columns_info_capes():
         'ds_grau_acad_discente': {
             'old_names': ['DS_GRAU_ACADEMICO_DISCENTE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'ds_tipo_nacionalidade': {
@@ -180,7 +180,7 @@ def get_columns_info_capes():
         'nm_municipio_programa_ies': {
             'old_names': ['NM_MUNICIPIO_PROGRAMA_IES'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_nivel_conclusao_discente': {
@@ -190,6 +190,7 @@ def get_columns_info_capes():
 
         },
         'nm_nivel_programa': {
+
             'old_names': ['NM_NIVEL_PROGRAMA'],
             'clean_type': 'str',
             'cleaning_function': cleaning_functions.clean_name
@@ -198,7 +199,7 @@ def get_columns_info_capes():
         'nm_nivel_titulacao_discente': {
             'old_names': ['NM_NIVEL_TITULACAO_DISCENTE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_orientador': {
@@ -216,25 +217,25 @@ def get_columns_info_capes():
         'pais_nac_a': {
             'old_names': ['NM_PAIS_NACIONALIDADE_DISCENTE', 'NM_PAIS_ORIGEM_DISCENTE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_programa_ies': {
             'old_names': ['NM_PROGRAMA_IES'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_regiao': {
             'old_names': ['NM_REGIAO', 'NM_REGIAO_ENTIDADE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_situacao_discente': {
             'old_names': ['NM_SITUACAO_DISCENTE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'nm_tese_dissertacao': {
@@ -294,7 +295,7 @@ def get_columns_info_capes():
         'st_ingressante': {
             'old_names': ['ST_INGRESSANTE'],
             'clean_type': 'str',
-            'cleaning_function': None
+            'cleaning_function': cleaning_functions.clean_name
 
         },
         'tp_documento_discente': {

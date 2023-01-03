@@ -10,6 +10,7 @@ from capes.utilities.io import (
     write_sample,
 )
 from capes.utilities.io import get_all_files
+from capes.cleaning.clean import clean_columns
 
 from capes.utilities.logging import log_cleaning_database
 from capes.utilities.logging import log_cleaning_column
@@ -41,6 +42,29 @@ def extract_ids():
         extract_date_capes(folder, dac_comvest_ids, merge_year_list)
 
     result = pd.concat(merge_year_list)
+
+    string_cols = [
+        "nm_grande_area",
+        "nm_entidade_ensino",
+        "cs_status_juridico",
+        "nm_regiao",
+        "nm_programa_ies",
+        "nm_modalidade_programa",
+        "nm_nivel_programa",
+        "nm_area_avaliacao",
+        "pais_nac_a",
+        "nm_situacao_discente",
+        "nm_nivel_titulacao_discente",
+        "nm_nivel_conclusao_discente",
+        "nm_grande_area",
+        "ds_depend_adm",
+        "nm_municipio_programa_ies",
+        "ds_grau_acad_discente",
+        "st_ingressante",
+        "nm_grau_programa",
+    ]
+
+    result = clean_columns(result, string_cols)
     result = remove_columns(result)
     write_sample(result)
 

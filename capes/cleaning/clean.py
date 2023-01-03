@@ -1,12 +1,10 @@
-import pandas as pd
-
 from capes.utilities.io import (
     create_folder_capes_tmp_date,
     create_folder_capes_tmp,
     read_capes_original,
 )
 from capes.utilities.io import list_dirs_capes_input, get_all_files
-from capes.utilities.io import read_database, write_database
+from capes.utilities.io import write_database
 
 from capes.utilities.logging import log_cleaning_database
 from capes.utilities.logging import log_cleaning_column
@@ -32,10 +30,15 @@ def clean_date_capes(path_folder):
 
     for file in files:
         print(f'Limpando: {file.split("/")[-1]}')
-        df = read_capes_original(file)
+
+        if int(date) == 2020:
+            df = read_capes_original(file, "ascii")
+        else:
+            df = read_capes_original(file, "latin-1")
+
         df = rename_columns(df)
         df = clean_columns(df)
-        df = remove_columns(df)
+
         print(f'Escrevendo: {file.split("/")[-1]}')
         write_database(df, file, date)
 
@@ -45,9 +48,10 @@ def rename_columns(df):
     return df.rename(columns=new_names)
 
 
-def clean_columns(df):
+def clean_columns(df, columns=None):
     columns_info = get_columns_info_capes()
-    columns = list(df.columns)
+    if columns is None:
+        columns = list(df.columns)
 
     for column in columns:
         function = columns_info[column]["cleaning_function"]
@@ -61,24 +65,6 @@ def clean_columns(df):
             df[column] = df[column].astype(clean_type)
 
     return df
-
-
-def remove_columns(df):
-    return df.drop(
-        [
-            "id_add_foto_programa",
-            "id_add_foto_programa_ies",
-            "id_pessoa",
-            "nm_orientador",
-            "nm_tese_dissertacao",
-            "nm_tipo_orientador",
-            "nr_seq_orientador",
-            "nr_seq_discente",
-            "nr_seq_tese",
-        ],
-        axis=1,
-        errors="ignore",
-    )
 
 
 def bug_pandas(old_type, new_type):

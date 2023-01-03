@@ -60,7 +60,7 @@ def read_capes_clean(file):
     return read_database(file, dtype=dtype)
 
 
-def read_capes_original(file):
+def read_capes_original(file, encoding):
     df = pd.read_csv(file, sep=";", encoding="latin-1", low_memory=False)
     return df
 
@@ -76,5 +76,5 @@ def write_database(df, file, date):
 
 
 def write_sample(df):
-    path = config["path_output"]
+    path = config["path_output"] + 'capes_amostra.csv'
     df.to_csv(path, sep=";", index=False)
