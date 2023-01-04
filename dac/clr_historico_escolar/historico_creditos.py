@@ -5,6 +5,7 @@ from dac.utilities.io import write_result
 HISTORICO_RESULT = 'historico_escolar_aluno.csv'
 CREDITOS_RESULT = 'creditos.csv'
 CLEAN_FILE = 'historico_creditos.csv'
+
 def merge():
     historico = read_result(HISTORICO_RESULT, dtype={
         'identif' : str,

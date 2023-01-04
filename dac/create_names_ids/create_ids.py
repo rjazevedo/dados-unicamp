@@ -1,6 +1,5 @@
 from dac.utilities.io import write_output
 from dac.utilities.io import read_result
-from comvest.utilities.io import read_result as read_result_comvest
 from dac.utilities.io import write_result
 from dac.utilities.io import Bases
 import pandas as pd

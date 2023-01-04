@@ -25,6 +25,7 @@ UF_CODE_NAME = 'final_counties.csv'
 SCHOOL_CODES = "escola_codigo_inep.csv"
 ID_NAMES = "ids_of_names.csv"
 
+
 def generate_clean_data():
     dados_cadastrais = read_result("dados_cadastrais_intermediario.csv")
     dados_cadastrais = generate_id_names(dados_cadastrais)
