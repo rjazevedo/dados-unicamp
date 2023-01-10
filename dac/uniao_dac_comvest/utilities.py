@@ -104,7 +104,7 @@ def setup_comvest():
     ]
     curso.columns = ["ano_ingresso_curso", "insc_vest", "curso"]
 
-    comvest = read_result_comvest(COMVEST, base=Bases.RESULT_COMVEST, dtype=str).loc[
+    comvest = read_result(COMVEST, base=Bases.RESULT_COMVEST, dtype=str).loc[
         :,
         [
             "nome_c",
@@ -140,7 +140,7 @@ def setup_comvest():
 
 
 def setup_dac():
-    df = read_result_dac(DADOS_INGRESSANTE, dtype=str).loc[
+    df = read_result(DADOS_INGRESSANTE, dtype=str).loc[
         :,
         [
             "identif",
