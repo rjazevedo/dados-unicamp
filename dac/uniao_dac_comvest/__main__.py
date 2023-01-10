@@ -6,11 +6,9 @@ from dac.uniao_dac_comvest.utilities import COMVEST
 from dac.utilities.io import Bases
 import os
 
-
 def main():
     pre_processing()
     uniao_dac_comvest.generate()
-
 
 def pre_processing():
     if not(os.path.exists(Bases.RESULT_DAC.value + DADOS_INGRESSANTE)):    
