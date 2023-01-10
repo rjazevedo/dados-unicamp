@@ -10,7 +10,6 @@ UF_CODE_NAME = 'final_counties.csv'
 SCHOOL_CODES = "escola_codigo_inep.csv"
 ID_NAMES = "ids_of_names.csv"
 
-
 def main():
     pre_processing()
     dados_cadastrais.generate_clean_data()
@@ -20,7 +19,6 @@ def pre_processing():
         dados_pre_and_pos.load_dados_cadastais()
 
     if not(os.path.exists(Bases.RESULT_DAC.value + UF_CODE_NAME)):    
-        print("create uf codes")
         create_ufs_codes.main()
     
     if not(os.path.exists(Bases.RESULT_COMVEST.value + SCHOOL_CODES)):    
@@ -28,7 +26,6 @@ def pre_processing():
         print("Sem base da comvest")
 
     if not(os.path.exists(Bases.RESULT_DAC.value + ID_NAMES)):    
-        print("create ids")
         create_names_ids.main()
 
 

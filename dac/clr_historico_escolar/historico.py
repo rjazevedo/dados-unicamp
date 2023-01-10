@@ -6,7 +6,7 @@ from dac.utilities.format import str_to_upper_ascii
 from dac.utilities.format import padronize_dates
 
 
-DATABASE_FILES = ['HistoricoEscolar.xlsx', 'HistoricoEscolar1.xlsx', 'HistoricoEscolar2.xlsx', 'HistoricoEscolar3.xlsx']
+DATABASE_FILES = ['Rodolfo_HistoricoEscolar.xlsx', 'Rodolfo_HistoricoEscolar1.xlsx', 'Rodolfo_HistoricoEscolar2.xlsx', 'Rodolfo_HistoricoEscolar3.xlsx']
 CLEAN_FILE = 'historico_escolar_aluno.csv'
 
 def generate_clean_data():

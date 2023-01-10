@@ -6,9 +6,12 @@ class Bases(Enum):
     MUNICIPIOS = "/home/input/municipios/"
     COMVEST = "/home/input/COMVEST/"
 
-    RESULT_DAC = "/home/output/DAC_RESULT/"
-    RESULT_COMVEST = "/home/output/COMVEST_RESULT/"
-    OUTPUT = "/home/output/DAC_OUTUPUT/"
+    RESULT_DAC = "/home/output/dac_tmp/"
+    RESULT_COMVEST = "/home/output/comvest_tmp/"
+    RESULT_RAIS = "/home/output/rais_tmp/"
+    OUTPUT = "/home/output/dac/"
+
+    TESTE = "/home/fernando/dados-unicamp/dac/results/"
 
 class DfType(Enum):
     XLS = ".xls"
@@ -29,5 +32,5 @@ def write_output(df, FILE_NAME):
 def read_result(FILE_NAME, base=Bases.RESULT_DAC, dtype=None, sep=','):
     return pd.read_csv(base.value + FILE_NAME, dtype=dtype, sep=sep)
 
-def write_result(df, FILE_NAME):
-    df.to_csv(Bases.RESULT_DAC.value + FILE_NAME, index=False)
+def write_result(df, FILE_NAME, base=Bases.RESULT_DAC):
+    df.to_csv(base.value + FILE_NAME, index=False)

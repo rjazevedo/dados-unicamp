@@ -1,9 +1,13 @@
 import pandas as pd
 import numpy as np
 from dac.utilities.format import fill_doc
-from dac.utilities.io import read_result as read_result_dac
-from comvest.utilities.io import read_result as read_result_comvest
+from dac.utilities.io import Bases
+from dac.utilities.io import write_result
+from dac.utilities.io import read_result 
 
+DADOS_INGRESSANTE = 'dados_ingressante.csv'
+MATRICULADOS = 'matriculados_comvest.csv'
+COMVEST = 'dados_comvest.csv'
 
 def validar_CPF(cpf: str) -> str:
     """
@@ -95,12 +99,12 @@ def select_insc_vest(insc_vest_dac, insc_vest_comvest):
 
 
 def setup_comvest():
-    curso = read_result_comvest("matriculados_comvest.csv", dtype=str).loc[
+    curso = read_result(MATRICULADOS, base=Bases.RESULT_COMVEST, dtype=str).loc[
         :, ["ano_vest", "insc_vest", "curso_matric"]
     ]
     curso.columns = ["ano_ingresso_curso", "insc_vest", "curso"]
 
-    comvest = read_result_comvest("dados_comvest.csv", dtype=str).loc[
+    comvest = read_result_comvest(COMVEST, base=Bases.RESULT_COMVEST, dtype=str).loc[
         :,
         [
             "nome_c",
@@ -136,7 +140,7 @@ def setup_comvest():
 
 
 def setup_dac():
-    df = read_result_dac("dados_ingressante.csv", dtype=str).loc[
+    df = read_result_dac(DADOS_INGRESSANTE, dtype=str).loc[
         :,
         [
             "identif",
