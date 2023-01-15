@@ -1,30 +1,36 @@
 import pandas as pd
-import yaml
+from enum import Enum
 
-stream = open('dac/configuration.yaml')
-config = yaml.safe_load(stream)
+class Bases(Enum):
+    DAC = "/home/input/DAC/"
+    MUNICIPIOS = "/home/input/municipios/"
+    COMVEST = "/home/input/COMVEST/"
 
-DATABASE_PATH = config['database']
-RESULT_PATH = config['results']
-EXTERNAL_OUTPUT = config['external']
+    RESULT_DAC = "/home/output/dac_tmp/"
+    RESULT_COMVEST = "/home/output/comvest_tmp/"
+    RESULT_RAIS = "/home/output/rais_tmp/"
+    OUTPUT = "/home/output/dac/"
 
-def read_from_database(FILE_NAME, converters=None, sheet_name=0, names=None, dtype=None):
-    return pd.read_excel(DATABASE_PATH + FILE_NAME, converters=converters, sheet_name=sheet_name, names= names, dtype=dtype)
+    TESTE = "/home/fernando/dados-unicamp/dac/results/"
 
-def read_from_external(FILE_NAME, dtype=None, sep=','):
-    return pd.read_csv(EXTERNAL_OUTPUT + FILE_NAME, dtype=dtype, sep=sep)
+class DfType(Enum):
+    XLS = ".xls"
+    CSV = ".csv"
+
+def read_input(FILE_NAME, base=Bases.DAC, dftype=DfType.XLS, converters=None, sheet_name=0, names=None, dtype=None,  sep=','):
+    if dftype == DfType.XLS:
+        return pd.read_excel(base.value + FILE_NAME, converters=converters, sheet_name=sheet_name, names= names, dtype=dtype)
+    else:
+        return pd.read_csv(base.value + FILE_NAME, dtype=dtype, sep=sep)
+
+def read_multiple_from_input(FILE_NAMES, base=Bases.DAC, dftype=DfType.XLS, converters=None):
+    return pd.concat([read_input(f, base=base, dftype=dftype, converters=converters) for f in FILE_NAMES])
 
 def write_output(df, FILE_NAME):
-    df.to_csv(EXTERNAL_OUTPUT + FILE_NAME, index=False)
+    df.to_csv(Bases.OUTPUT.value + FILE_NAME, index=False)
 
-def read_multiple_from_database(FILE_NAMES, converters=None):
-    return pd.concat([read_from_database(f, converters) for f in FILE_NAMES])
+def read_result(FILE_NAME, base=Bases.RESULT_DAC, dtype=None, sep=','):
+    return pd.read_csv(base.value + FILE_NAME, dtype=dtype, sep=sep)
 
-def read_result(FILE_NAME, dtype=None, sep=','):
-    return pd.read_csv(RESULT_PATH + FILE_NAME, dtype=dtype, sep=sep)
-
-def read_from(FILENAME, dtype=None, sep=','):
-    return pd.read_csv(FILENAME, dtype=dtype, sep=sep)
-
-def write_result(df, FILE_NAME):
-    df.to_csv(RESULT_PATH + FILE_NAME, index=False)
+def write_result(df, FILE_NAME, base=Bases.RESULT_DAC):
+    df.to_csv(base.value + FILE_NAME, index=False)

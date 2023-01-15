@@ -109,7 +109,7 @@ def get_the_closest_matche(name, name_serie, cutoff, first_name):
 
 
 def setup_comvest(comvest):
-    comvest = comvest[(comvest['ano_ingresso_curso'] < '1999')]
+    comvest = comvest[(comvest['ano_ingresso_curso'] < '1999')].copy()
 
     # Padoniza cursos da Musica
     filt = comvest['curso'].isin(['93', '92', '91', '90'])

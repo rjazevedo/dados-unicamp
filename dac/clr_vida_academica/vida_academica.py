@@ -1,4 +1,4 @@
-from dac.utilities.io import read_from_database
+from dac.utilities.io import read_input
 from dac.utilities.io import write_result
 from dac.utilities.io import write_output
 from dac.utilities.dtypes import dtypes_vida_academica
@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 PRE_99_BASE_NAME = 'Rodolfo_Complementacao.xlsx'
-POS_99_BASE_NAME = 'VidaAcademicaCurso.xlsx'
+POS_99_BASE_NAME = 'Rodolfo_VidaAcademicaCurso.xlsx'
 VIDA_ACADEMICA_SHEET_NAME = 'Vida Academica Curso'
 
 RESULT_NAME = 'vida_academica.csv'
@@ -36,8 +36,8 @@ def generate_clean_data():
 
 
 def load_vida_academica():
-    vida_academica_pre_99 = read_from_database(PRE_99_BASE_NAME, sheet_name=VIDA_ACADEMICA_SHEET_NAME, names=vida_academica_cols)
-    vida_academica_pos_99 = read_from_database(POS_99_BASE_NAME, names=vida_academica_cols)
+    vida_academica_pre_99 = read_input(PRE_99_BASE_NAME, sheet_name=VIDA_ACADEMICA_SHEET_NAME, names=vida_academica_cols)
+    vida_academica_pos_99 = read_input(POS_99_BASE_NAME, names=vida_academica_cols)
 
     vida_academica = pd.concat([vida_academica_pre_99, vida_academica_pos_99])
     clear_columns(vida_academica)

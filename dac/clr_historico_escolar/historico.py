@@ -1,16 +1,16 @@
 import numpy as np
-from dac.utilities.io import read_multiple_from_database
+from dac.utilities.io import read_multiple_from_input
 from dac.utilities.io import write_result
 from dac.utilities.columns import historico_escolar_cols
 from dac.utilities.format import str_to_upper_ascii
 from dac.utilities.format import padronize_dates
 
 
-DATABASE_FILES = ['HistoricoEscolar.xlsx', 'HistoricoEscolar1.xlsx', 'HistoricoEscolar2.xlsx', 'HistoricoEscolar.xlsx']
+DATABASE_FILES = ['Rodolfo_HistoricoEscolar.xlsx', 'Rodolfo_HistoricoEscolar1.xlsx', 'Rodolfo_HistoricoEscolar2.xlsx', 'Rodolfo_HistoricoEscolar3.xlsx']
 CLEAN_FILE = 'historico_escolar_aluno.csv'
 
 def generate_clean_data():
-    historico_escolar = read_multiple_from_database(DATABASE_FILES)
+    historico_escolar = read_multiple_from_input(DATABASE_FILES)
     historico_escolar.columns = historico_escolar_cols
     
     padronize_dates(historico_escolar, ['dt_inicio','dt_fim'])

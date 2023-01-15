@@ -1,5 +1,5 @@
 #TODO: merge com vida academica leva em conta o ano de ingresso e identificação /s curso
-from dac.utilities.io import read_from_database
+from dac.utilities.io import read_input
 from dac.utilities.io import write_result
 from dac.utilities.io import write_output
 from dac.utilities.columns import resumo_por_periodo_cols
@@ -9,12 +9,12 @@ from dac.utilities.format import padronize_string_miss
 from dac.utilities.format import padronize_int_miss
 import pandas as pd
 
-DATABASE_FILE = 'ResumoPorPeriodo.xlsx'
+DATABASE_FILE = 'Rodolfo_ResumoPorPeriodo.xlsx'
 RESULT_FILE = 'resumo_por_periodo.csv'
 
 drop = ['cod_espec_hab', 'aproveitamentos', 'motivo']
 def generate_clean_data():
-    resumo_por_periodo = read_from_database(DATABASE_FILE)
+    resumo_por_periodo = read_input(DATABASE_FILE)
     resumo_por_periodo.columns = resumo_por_periodo_cols
     
     for col in drop:
