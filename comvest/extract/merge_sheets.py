@@ -17,9 +17,6 @@ def merge(
         "dta_nasc_c",
         "nome_pai_c",
         "nome_mae_c",
-        "mun_nasc_corrigido",
-        "mun_resid_corrigido",
-        "mun_esc_corrigido",
     ]
 ):
     dados = read_result("dados_comvest.csv", dtype=DTYPES_DADOS)

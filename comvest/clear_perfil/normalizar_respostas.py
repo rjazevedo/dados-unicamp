@@ -129,6 +129,15 @@ def periodo_em(df, ano):
     return df
 
 
+def reprovacao_em(df, ano):
+    if 1987 <= ano <= 2004:
+        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+
+        df["reprovacao_em"] = df["reprovacao_em"].map(validation)
+
+    return df
+
+
 def cursinho(df, ano):
     if 2013 <= ano:
         df["cursinho"] = df["cursinho"].map({0: 0, 1: 2, 2: 1, 3: 1, 4: 1, 5: 1})
@@ -155,6 +164,15 @@ def cursinho_tempo(df, ano):
     df["cursinho_tempo"] = df["cursinho_tempo"].map(
         lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
     )
+
+    return df
+
+
+def curso_interesse(df, ano):
+    if 1987 <= ano <= 1998:
+        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+
+        df["curso_interesse"] = df["curso_interesse"].map(validation)
 
     return df
 
@@ -265,11 +283,27 @@ def idiomas_familia(df, ano):
     return df
 
 
+def idioma_vest_escolha(df, ano):
+    if 1987 <= ano <= 2005:
+        validation = lambda x: x if x in {0, 1, 2} else pd.NA
+        df["idioma_vest_escolha"] = df["idioma_vest_escolha"].map(validation)
+
+    return df
+
+
 def situacao_pais(df, ano):
     if 1987 <= ano <= 1998:
         validation = lambda x: x if x in {0, 1, 2, 3, 4, 5, 6, 7, 8} else pd.NA
         df["situacao_pai"] = df["situacao_pai"].map(validation)
         df["situacao_mae"] = df["situacao_mae"].map(validation)
+
+    return df
+
+
+def subordinados_mae(df, ano):
+    if 1987 <= ano <= 1998:
+        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+        df["subordinados_mae"] = df["subordinados_mae"].map(validation)
 
     return df
 
@@ -306,6 +340,14 @@ def trabalha_pais(df, ano):
         df["trabalha_mae"] = df["trabalha_mae"].map(
             lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA
         )
+
+    return df
+
+
+def opiniao_pais(df, ano):
+    if 1987 <= ano <= 1998:
+        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+        df["opiniao_pais"] = df["opiniao_pais"].map(validation)
 
     return df
 
@@ -399,6 +441,14 @@ def leitura_tipo(df, ano):
         df["leitura_tipo"] = df["leitura_tipo"].map(
             {0: 0, 1: 1, 2: 1, 3: 3, 4: 1, 5: 3, 6: 2, 7: 2, 8: 4}
         )
+
+    return df
+
+
+def inform_meio(df, ano):
+    if 1987 <= ano <= 2004:
+        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5, 6} else pd.NA
+        df["inform_meio"] = df["inform_meio"].map(validation)
 
     return df
 
@@ -542,7 +592,7 @@ def aspirador(df, ano):
 
 def jornal_le(df, ano):
     if 1987 <= ano <= 2019:
-        validation = lambda x: x if x in {0, 1, 2, 3, 4, 5} else pd.NA
+        validation = lambda x: x if x in {0, 1, 2, 3, 4} else pd.NA
         df["jornal_le"] = df["jornal_le"].map(validation)
 
     return df
@@ -567,9 +617,11 @@ def normalizar(df, ano):
     df = tipo_esc_em(df, ano)
     df = tipo_curso_em(df, ano)
     df = periodo_em(df, ano)
+    df = reprovacao_em(df, ano)
     df = cursinho(df, ano)
     df = cursinho_motivo(df, ano)
     df = cursinho_tempo(df, ano)
+    df = curso_interesse(df, ano)
     df = vest_primeiro(df, ano)
     df = vest_qts_inst(df, ano)
     df = univ_outra(df, ano)
@@ -579,11 +631,14 @@ def normalizar(df, ano):
     df = unicamp_motivo(df, ano)
     df = idiomas(df, ano)
     df = idiomas_familia(df, ano)
+    df = idioma_vest_escolha(df, ano)
 
     df = situacao_pais(df, ano)
+    df = subordinados_mae(df, ano)
     df = educacao_pais(df, ano)
     df = ocupacao_pais(df, ano)
     df = trabalha_pais(df, ano)
+    df = opiniao_pais(df, ano)
 
     df = trabalha(df, ano)
     df = contribui_renda_fam(df, ano)
@@ -593,6 +648,7 @@ def normalizar(df, ano):
     df = ativ_extra_quais(df, ano)
     df = ativ_extra_principal(df, ano)
     df = leitura_tipo(df, ano)
+    df = inform_meio(df, ano)
     df = revistas_tipo(df, ano)
     df = geladeira(df, ano)
     df = freezer(df, ano)

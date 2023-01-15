@@ -28,7 +28,8 @@ def extraction():
     convocados = pd.concat(convocados_frames)
 
     matriculados = read_result(
-        "matriculados_comvest.csv", dtype={"curso_matric": "Int64"}
+        "matriculados_comvest.csv",
+        dtype={"curso_matric": "Int64", "insc_vest": "Int64"},
     )
 
     convocados.rename(
@@ -43,8 +44,15 @@ def extraction():
         inplace=True,
     )
 
+    convocados["insc_vest"] = convocados.apply(
+        lambda row: int(str(row["ano_vest"])[-1] + str(row["insc_vest"]))
+        if row["ano_vest"] in [2002, 2003]
+        else int(row["insc_vest"]),
+        axis=1,
+    )
+
     convocados = convocados.merge(
-        matriculados, on=["ano_vest", "insc_vest"], how="left"
+        matriculados, on=["ano_vest", "insc_vest"], how="outer"
     )
     convocados.sort_values(by="ano_vest", ascending=False, inplace=True)
     convocados.drop_duplicates(subset=["ano_vest", "insc_vest"], inplace=True)
