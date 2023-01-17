@@ -4,10 +4,7 @@ from dac.utilities.columns import cursos_habilitacoes_cols
 from dac.utilities.format import padronize_int_miss
 from dac.utilities.format import padronize_string_miss
 
-# Todo: Checar se o que o rodolfo transferiu é o atualizado
-#FILE_NAME = 'CursosHabilitacoesAtualizado.xlsx'
-FILE_NAME = 'Cursos_Habilitacoes.xlsx'
-RESULT_NAME = 'cursos_habilitacoes.csv'
+FILE_NAME = 'CursosHabilitacoesAtualizado.xlsx'
 
 drop_cols = ['NIVEL', 'NOME CURSO', 'NOME HABILITACAO']
 

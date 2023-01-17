@@ -1,7 +1,6 @@
 from dac.clr_vida_academica_habilitacao import habilitacao
 
-RESULT_NAME = 'vida_academica_habilitacao.csv'
-
+# No preprocessing needed
 def main():
     habilitacao.generate()
 

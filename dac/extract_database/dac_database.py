@@ -1,32 +1,16 @@
-from dac.create_ufs_codes import ufs_codes 
-from dac.clr_vida_academica import vida_academica
-from dac.clr_vida_academica import dados_ingressantes
-from dac.clr_dados_cadastrais import dados_cadastrais
-from dac.clr_dados_cadastrais import dados_pre_and_pos
-from dac.clr_historico_escolar import historico_escolar
-from dac.clr_resumo_por_periodo import resumo_por_periodo
-from dac.clr_resumo_por_periodo import resumo_periodo_cr
-from dac.create_names_ids import resumo_periodo_cr
-from dac.clr_vida_academica_habilitacao import habilitacao
-from dac.uniao_dac_comvest import uniao_dac_comvest
-from dac.create_ids import identificadores
+import dac.clr_dados_cadastrais.__main__ as dados_cadastrais
+import dac.clr_historico_escolar.__main__ as clr_historico_escolar
+import dac.clr_resumo_por_periodo.__main__ as clr_resumo_por_periodo
+import dac.clr_vida_academica.__main__ as clr_vida_academica
+import dac.clr_vida_academica_habilitacao.__main__ as clr_vida_academica_habilitacao
+import dac.uniao_dac_comvest.__main__ as uniao_dac_comvest
+import dac.create_ids.__main__ as create_ids
 
 def extract():
-    pre_processing()
-    generate_final_bases()
-
-# Gerando todos dataframes intermediários necessários para bases finais
-def pre_processing():
-    dados_pre_and_pos.load_dados_cadastais()
-    ufs_codes.generate_clean_data()
-
-def generate_final_bases():
-    dados_cadastrais.generate_clean_data()
-    historico_escolar.generate_clean_data()
-    resumo_por_periodo.generate_clean_data()
-    resumo_periodo_cr.generate_cr()
-    vida_academica.generate_clean_data()
-    dados_ingressantes.generate()
-    habilitacao.generate()
-    uniao_dac_comvest.generate()
-    identificadores.create_ids()
+    dados_cadastrais.main()
+    clr_historico_escolar.main()
+    clr_resumo_por_periodo.main()
+    clr_vida_academica.main()
+    clr_vida_academica_habilitacao.main()
+    uniao_dac_comvest.main()
+    create_ids.main()
