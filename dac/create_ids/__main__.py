@@ -10,34 +10,29 @@ from dac.create_ids.identificadores import VIDA_ACADEMICA_HABILITACAO
 from dac.create_ids.identificadores import HISTORICO_ESCOLAR
 from dac.create_ids.identificadores import RESUMO_POR_PERIODO
 from dac.create_ids.identificadores import DAC_COMVEST_IDS
-from dac.utilities.io import Bases
-import os
-
+from dac.utilities.io import check_if_need_result_file
 
 def main():
     preprocessing()
     identificadores.create_ids()
 
-
 def preprocessing():
-    if not(os.path.exists(Bases.RESULT_DAC.value + DADOS_CADASTRAIS)):    
+    if check_if_need_result_file(DADOS_CADASTRAIS):
         dados_cadastrais.main()
 
-    if not(os.path.exists(Bases.RESULT_DAC.value + VIDA_ACADEMICA)):    
+    if check_if_need_result_file(VIDA_ACADEMICA):
         vida_academica.main()
 
-    if not(os.path.exists(Bases.RESULT_COMVEST.value + VIDA_ACADEMICA_HABILITACAO)):    
-        #vida_academica_habilitacao.main()
-        #TODO: Preciso ver com o rodolfo se isso daqui ta certo
-        print("sem dados vida academica habilitação")
+    if check_if_need_result_file(VIDA_ACADEMICA_HABILITACAO):
+        vida_academica_habilitacao.main()
 
-    if not(os.path.exists(Bases.RESULT_DAC.value + HISTORICO_ESCOLAR)):   
+    if check_if_need_result_file(HISTORICO_ESCOLAR):   
         historico_escolar.main()
 
-    if not(os.path.exists(Bases.RESULT_DAC.value + RESUMO_POR_PERIODO)):    
+    if check_if_need_result_file(RESUMO_POR_PERIODO):   
         resumo_periodo.main()
     
-    if not(os.path.exists(Bases.RESULT_RAIS.value + DAC_COMVEST_IDS)):    
+    if check_if_need_result_file(DAC_COMVEST_IDS):   
         print("sem dados rais")
 
 

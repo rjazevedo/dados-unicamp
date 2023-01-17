@@ -1,13 +1,12 @@
 from dac.utilities.columns import dados_cadastrais_cols
 from dac.utilities.io import read_result
-from dac.utilities.io import Bases
 from dac.create_ufs_codes.utilities import concat_and_drop_duplicates
 import re
 
 DADOS_COMVEST = "dados_comvest.csv"
 
 def generate_comvest():
-    comvest = read_result(DADOS_COMVEST, base=Bases.RESULT_COMVEST)
+    comvest = read_result(DADOS_COMVEST)
 
     nasc = comvest[['mun_nasc_c', 'uf_nasc_c']]
     resid = comvest[['mun_resid_c', 'uf_resid']]

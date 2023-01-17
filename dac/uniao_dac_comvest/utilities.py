@@ -99,12 +99,12 @@ def select_insc_vest(insc_vest_dac, insc_vest_comvest):
 
 
 def setup_comvest():
-    curso = read_result(MATRICULADOS, base=Bases.RESULT_COMVEST, dtype=str).loc[
+    curso = read_result(MATRICULADOS, dtype=str).loc[
         :, ["ano_vest", "insc_vest", "curso_matric"]
     ]
     curso.columns = ["ano_ingresso_curso", "insc_vest", "curso"]
 
-    comvest = read_result(COMVEST, base=Bases.RESULT_COMVEST, dtype=str).loc[
+    comvest = read_result(COMVEST, dtype=str).loc[
         :,
         [
             "nome_c",
