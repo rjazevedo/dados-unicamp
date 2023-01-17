@@ -31,5 +31,4 @@ def assign_ids():
 
     comvest_with_ids.drop(columns=["insc_vest"], inplace=True)
 
-    write_output(comvest_without_ids, "sem_ids_comvest.csv")
     write_output(comvest_with_ids, "comvest_amostra.csv")
