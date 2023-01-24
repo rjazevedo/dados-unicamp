@@ -8,7 +8,7 @@ flowchart LR
     dados_cadastrais_pre_e_pos[(dados_cadastrais)]:::red
     dados_inep[(dados_inep)]:::purple
     resumo_por_periodo[(resumo_por_periodo)]:::cian
-    historico_escolar[(historico)]:::orange
+    historico_escolar[(historico_escolar)]:::orange
     creditos[(creditos)]:::black
     vida_academica[(vida_academica)]:::lima
     vida_academica_habilitacao[(vida_habilitacao)]:::gray
@@ -24,7 +24,7 @@ flowchart LR
     resumo_periodo_result[resumo_por_periodo]
     vida_academica_result[vida_academica]
     dados_ingressantes[dados_ingressantes]
-    vida_academica_habilitacao_result[vida_a_habilitacao]
+    vida_academica_habilitacao_result[vida_academica_habilitacao]
     uniao_dac_comvest[uniao_dac_comvest]
     end
     
@@ -36,6 +36,7 @@ flowchart LR
     vida_academica_habilitacao_output[vida_academica_habilitacao]
     end
 
+    %% dados_cadastrais
     dados_ibge --> ibge_uf_codes
     dados_comvest --> ibge_uf_codes & inep_school_codes & id_of_names
     dados_cadastrais_pre_e_pos --> ibge_uf_codes & inep_school_codes & id_of_names & dados_cadastrais & dados_ingressantes
@@ -44,8 +45,11 @@ flowchart LR
     inep_school_codes --> dados_cadastrais
     id_of_names --> dados_cadastrais
 
+    %% resumo por periodo
     resumo_por_periodo --> resumo_periodo_result
     resumo_periodo_result --> resumo_periodo_cr
+
+    %% historico escolar
     historico_escolar --> historico_creditos
     creditos --> historico_creditos
     historico_creditos --> historico_creditos_output
@@ -80,13 +84,13 @@ flowchart LR
     classDef brown fill: #691B00, stroke: #000, stroke-with: 2px, color: #fff
 
     %% Esquema de cores das setas
-    linkStyle 0 stroke : blue
-    linkStyle 1,2,3,27 stroke : green
-    linkStyle 4,5,6,7,8 stroke : red
-    linkStyle 9 stroke : purple
+    linkStyle 0 stroke :#2374f7
+    linkStyle 1,2,3,27 stroke :#1FBF00
+    linkStyle 4,5,6,7,8 stroke :#BF0000
+    linkStyle 9 stroke :#9800E1
     linkStyle 13 stroke :#00DFE1
     linkStyle 15 stroke :#FF7800
-    linkStyle 16 stroke :black
+    linkStyle 16 stroke :#000000
     linkStyle 19,21 stroke :#76FF00
     linkStyle 22 stroke :#606060
     linkStyle 23 stroke :#FF00F0
