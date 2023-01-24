@@ -10,7 +10,7 @@ class Bases(Enum):
     RESULT = "/home/output/tmp/"
     OUTPUT = "/home/output/dac/"
 
-    TESTE = "/home/fernando/dados-unicamp/dac/results/"
+    TESTE = "/home/fernando/dados-unicamp/output/"
 
 class DfType(Enum):
     XLS = ".xls"
@@ -31,8 +31,8 @@ def write_output(df, FILE_NAME):
 def read_result(FILE_NAME, dtype=None, sep=','):
     return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype, sep=sep)
 
-def write_result(df, FILE_NAME,):
-    df.to_csv(Bases.RESULT.value + FILE_NAME, index=False)
+def write_result(df, FILE_NAME, base=Bases.RESULT):
+    df.to_csv(base.value + FILE_NAME, index=False)
 
 def check_if_need_result_file(df):
     if os.path.exists(Bases.RESULT.value + df):    
