@@ -28,6 +28,7 @@ RESULT_NAME = 'dados_cadastrais.csv'
 def generate_clean_data():
     dados_cadastrais = read_result("dados_cadastrais_intermediario.csv")
     dados_cadastrais = generate_id_names(dados_cadastrais)
+
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
     unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
     'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nac_d', 'naturalizado',

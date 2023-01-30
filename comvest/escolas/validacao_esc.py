@@ -19,10 +19,8 @@ def validation():
 
     esc_dict = create_escs_dict(escs, inep)
     escs = get_closest_schools(esc_dict, inep)
-    # até aqui tudo certo
 
-    result = pd.merge(escs, inep, on=['codigo_municipio', 'chave_seq'], how='left', suffixes=("_base", "_inep"))
-    # possível meme 
+    result = pd.merge(escs, inep, on=['codigo_municipio', 'chave_seq'], how='left', suffixes=("_base", "_inep")) 
     filt = result['escola_inep'].isnull()
     print(result[~filt].shape[0] / result.shape[0])
     #result = result.sort_values(by=['codigo_municipio'], ascending=True)
