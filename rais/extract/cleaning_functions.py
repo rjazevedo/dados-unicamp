@@ -2,7 +2,7 @@ import numpy as np
 import re
 from unidecode import unidecode
 
-# ------------------------------------------------------------------------------------------------
+
 def clean_cpf_column(df):
     df["cpf_r"] = df.apply(lambda x: get_cpf(x["cpf_r"]), axis=1)
 
@@ -22,7 +22,7 @@ def clean_birthdate_column(df):
 # ------------------------------------------------------------------------------------------------
 def get_cpf(cpf):
     if type(cpf) != str:
-        return ''
+        return ""
 
     cpf = cpf.strip()
     if (
@@ -33,7 +33,7 @@ def get_cpf(cpf):
         or (cpf == "11111111111")
         or (cpf == "33333333333")
     ):
-        return ''
+        return ""
 
     return cpf.zfill(11)
 
@@ -41,7 +41,7 @@ def get_cpf(cpf):
 # Birthdates must have 8 digits
 def get_birthdate(value):
     if type(value) != str:
-        return ''
+        return ""
     return value.zfill(8)
 
 
@@ -63,7 +63,7 @@ def get_ano_nasc(birthdate):
 
 def get_mun(value):
     if value == "000000":
-        return ''
+        return ""
     return value
 
 
@@ -102,19 +102,19 @@ def fix_deslig(motivo, period):
 
 def get_cbo(value):
     if value == "{ñ cl" or value == "IGNORADO":
-        return ''
+        return ""
     return value
 
 
 def get_cbo_number(value):
     if value == "IGNORADO":
-        return ''
+        return ""
     return value[4:]
 
 
 def get_cbo_valid(value):
     if value == "0000-1":
-        return ''
+        return ""
     return value
 
 
@@ -155,7 +155,7 @@ def get_dta_admissao_valid(value):
     year = int(value[4:])
     is_year_valid = year >= 1900 and year <= 2018
     if not is_year_valid:
-        return ''
+        return ""
     return value
 
 
@@ -176,7 +176,7 @@ def get_horas_contr(value):
 
 def get_pispasep(value):
     if value == "0":
-        return ''
+        return ""
     return value
 
 
@@ -187,31 +187,31 @@ def get_ctps(value):
         or value == "99999990000"
         or value == "00000000"
     ):
-        return ''
+        return ""
     return value.zfill(8)
 
 
 def get_ctps_valid(value):
     if value == "00000000":
-        return ''
+        return ""
     return value
 
 
 def get_cei_vinc(value):
     if value == "0":
-        return ''
+        return ""
     return value.zfill(12)
 
 
 def get_cei_vinc_longer(value):
     if int(value) == 0:
-        return ''
+        return ""
     return value[2:]
 
 
 def get_cei_vinc_valid(value):
     if value == "000000000000":
-        return ''
+        return ""
     return value
 
 
@@ -239,7 +239,7 @@ def get_cnae_20_classe(value):
 
 def get_cnae_20_subclasse(value):
     if value == "-1":
-        return ''
+        return ""
     return value
 
 
@@ -301,13 +301,13 @@ def get_deslig_dia(value):
 
 def get_estbl_cep(value):
     if value == "99999999":
-        return ''
+        return ""
     return value
 
 
 def get_razao_social(value):
     if type(value) != str:
-        return ''
+        return ""
     new_string = re.sub(r"[^a-zA-Z0-9 ]", "", value)
     list_string = new_string.split()
     new_string = " ".join(list_string)
