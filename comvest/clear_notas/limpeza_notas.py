@@ -46,11 +46,16 @@ def leitura_notas(path, date):
     except:
         notas_profis = None
 
+    try:
+        notas_he = read_from_db(path, sheet_name="notashe")
+    except:
+        notas_he = None
+
     notas_f1.columns = notas_f1.columns.str.lower()
     notas_f2.columns = notas_f2.columns.str.lower()
     notas_enem.columns = notas_enem.columns.str.lower()
 
-    return (notas_f1, notas_f2, notas_enem, notas_vi, notas_vo, notas_profis)
+    return (notas_f1, notas_f2, notas_enem, notas_vi, notas_vo, notas_profis, notas_he)
 
 
 def tratar_notas_f1(notas_f1, date):
@@ -138,6 +143,7 @@ def tratar_notas_f2(notas_f2, date):
             "est": "not_est",
             "notpad_ing": "notpad_est",
             "presen_por": "ppor",
+            "presen_port": "ppor",
             "notpad1": "notpad_por",
             "por": "not_por_f2",
             "npor": "not_por_f2",
@@ -194,6 +200,11 @@ def tratar_notas_f2(notas_f2, date):
         )
     except:
         logging.debug("Comvest {} file doesn't have a 'pres_f2_d4' column".format(date))
+
+    try:
+        notas_f2["papt"] = notas_f2["papt"].map({"A": "A", "P": "P", "N": "A"})
+    except:
+        logging.debug("Comvest {} file doesn't have a 'papt' column".format(date))
 
     try:
         notas_f2["clas_opc1"] = notas_f2["clas_opc1"].replace(0, pd.NA).astype("Int64")
@@ -463,6 +474,54 @@ def tratar_notas_profis(notas_profis, date):
     return notas_profis
 
 
+def tratar_notas_he(notas_he, date):
+    column_names = [
+        "insc",
+        "he1_arquitetura",
+        "he2_arquitetura",
+        "he3_arquitetura",
+        "sala_cenicas",
+        "palco_cenicas",
+        "teorica_cenicas",
+        "tecnica_danca",
+        "criatividade_danca",
+        "nglobal_danca",
+        "historia_artes_visuais",
+        "desenho_artes_visuais",
+        "entrevista_artes_visuais",
+        "nf_he",
+    ]
+
+    if notas_he is None:
+        return pd.DataFrame(columns=column_names)
+
+    notas_he.rename(
+        {
+            "insc_cand": "insc",
+            "parte1": "he1_arquitetura",
+            "parte2": "he2_arquitetura",
+            "parte3": "he3_arquitetura",
+            "sala": "sala_cenicas",
+            "palco": "palco_cenicas",
+            "teorica": "teorica_cenicas",
+            "tecnica": "tecnica_danca",
+            "criatividade": "criatividade_danca",
+            "nglobal": "nglobal_danca",
+            "historia": "historia_artes_visuais",
+            "desenho": "desenho_artes_visuais",
+            "entrevista": "entrevista_artes_visuais",
+        },
+        axis=1,
+        inplace=True,
+    )
+
+    notas_he.replace(-1, pd.NA, inplace=True)
+
+    notas_he = notas_he.reindex(columns=column_names)
+
+    return notas_he
+
+
 def extraction():
     notas_comvest = []
 
@@ -474,6 +533,7 @@ def extraction():
             notas_vi,
             notas_vo,
             notas_profis,
+            notas_he,
         ) = leitura_notas(path, date)
         progresslog("notas", date)
 
@@ -483,6 +543,7 @@ def extraction():
         notas_vi = tratar_notas_vi(notas_vi, date)
         notas_vo = tratar_notas_vo(notas_vo, date)
         notas_profis = tratar_notas_profis(notas_profis, date)
+        notas_he = tratar_notas_he(notas_he, date)
 
         notas_vc = notas_f1.merge(
             notas_f2, how="left", on="insc", suffixes=("_f1", "_f2")
@@ -490,7 +551,10 @@ def extraction():
         notas_vc_enem = notas_vc.merge(notas_enem, how="outer", on="insc")
         notas_vc_enem_vi = notas_vc_enem.merge(notas_vi, how="outer", on="insc")
         notas_vc_enem_vi_vo = notas_vc_enem_vi.merge(notas_vo, how="outer", on="insc")
-        notas_final = notas_vc_enem_vi_vo.merge(notas_profis, how="outer", on="insc")
+        notas_vc_enem_vi_vo_he = notas_vc_enem_vi_vo.merge(
+            notas_he, how="outer", on="insc"
+        )
+        notas_final = notas_vc_enem_vi_vo_he.merge(notas_profis, how="outer", on="insc")
 
         # Insere data (ano) no dataframe final
         notas_final.insert(loc=0, column="ano_vest", value=date)

@@ -71,14 +71,25 @@ def get():
 
     df_notas = read_result("notas_comvest.csv", DTYPES_NOTAS)
 
-    vi_2019 = read_auxiliary("VI2019_DivulgaNotas.xlsx", dtype={"insc": "Int64"})
+    vi_2019 = read_auxiliary("VI2019_DivulgaNotas.xlsx", dtype={"insc": "Int64"}).loc[
+        :, ["insc", "sit"]
+    ]
     vi_2019.insert(0, "ano_vest", 2019)
 
-    vi_2020 = read_auxiliary("VI2020_DivulgaNotas.xlsx", dtype={"insc": "Int64"})
+    vi_2020 = read_auxiliary("VI2020_DivulgaNotas.xlsx", dtype={"insc": "Int64"}).loc[
+        :, ["insc", "sit"]
+    ]
     vi_2020.insert(0, "ano_vest", 2020)
 
-    vi_2021 = read_auxiliary("VI2021_DivulgaNotas.xlsx", dtype={"insc": "Int64"})
+    vi_2021 = read_auxiliary("VI2021_DivulgaNotas.xlsx", dtype={"insc": "Int64"}).loc[
+        :, ["insc", "sit"]
+    ]
     vi_2021.insert(0, "ano_vest", 2021)
+
+    vi_2022 = df_notas[df_notas["ano_vest"] == 2022].loc[
+        :, ["ano_vest", "insc_vest", "presente_vi"]
+    ]
+    vi_2022.rename(columns={"presente_vi": "sit", "insc_vest": "insc"}, inplace=True)
 
     com_presenca_f1 = df_notas[
         ~df_notas["ano_vest"].isin([i for i in range(2005, 2011)])
@@ -86,7 +97,7 @@ def get():
     f1.append(com_presenca_f1)
 
     com_presenca_f2 = df_notas[
-        df_notas["ano_vest"].isin([i for i in range(1987, 2005)])
+        df_notas["ano_vest"].isin([i for i in range(1987, 2005)] + [2022])
     ].loc[
         :,
         [
@@ -109,13 +120,13 @@ def get():
     f2.append(com_presenca_f2)
 
     pres_f1 = pd.concat(f1)
-
     pres_f2 = pd.concat(f2)
-
-    pres_vi = pd.concat([vi_2019, vi_2020, vi_2021]).loc[:, ["ano_vest", "insc", "sit"]]
+    pres_vi = pd.concat([vi_2019, vi_2020, vi_2021, vi_2022])
     pres_vi.columns = ["ano_vest", "insc_vest", "presente_vi"]
 
-    df_notas = df_notas.drop(columns="presente_f1").merge(pres_f1, how="left")
+    df_notas = df_notas.drop(columns="presente_f1").merge(
+        pres_f1, how="left", on=["ano_vest", "insc_vest"]
+    )
     df_notas = df_notas.drop(
         columns=[
             "ppor",
@@ -131,8 +142,10 @@ def get():
             "pcn",
             "pinter",
         ]
-    ).merge(pres_f2, how="left")
-    df_notas = df_notas.drop(columns="presente_vi").merge(pres_vi, how="left")
+    ).merge(pres_f2, how="left", on=["ano_vest", "insc_vest"])
+    df_notas = df_notas.drop(columns="presente_vi").merge(
+        pres_vi, how="left", on=["ano_vest", "insc_vest"]
+    )
 
     FILE_NAME = "notas_comvest.csv"
     write_result(df_notas, FILE_NAME)

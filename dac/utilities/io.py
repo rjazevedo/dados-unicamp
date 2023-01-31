@@ -1,17 +1,16 @@
 import pandas as pd
 from enum import Enum
+import os
 
 class Bases(Enum):
     DAC = "/home/input/DAC/"
     MUNICIPIOS = "/home/input/municipios/"
     COMVEST = "/home/input/COMVEST/"
 
-    RESULT_DAC = "/home/output/dac_tmp/"
-    RESULT_COMVEST = "/home/output/comvest_tmp/"
-    RESULT_RAIS = "/home/output/rais_tmp/"
+    RESULT = "/home/output/tmp/"
     OUTPUT = "/home/output/dac/"
 
-    TESTE = "/home/fernando/dados-unicamp/dac/results/"
+    TESTE = "/home/fernando/dados-unicamp/output/"
 
 class DfType(Enum):
     XLS = ".xls"
@@ -29,8 +28,14 @@ def read_multiple_from_input(FILE_NAMES, base=Bases.DAC, dftype=DfType.XLS, conv
 def write_output(df, FILE_NAME):
     df.to_csv(Bases.OUTPUT.value + FILE_NAME, index=False)
 
-def read_result(FILE_NAME, base=Bases.RESULT_DAC, dtype=None, sep=','):
-    return pd.read_csv(base.value + FILE_NAME, dtype=dtype, sep=sep)
+def read_result(FILE_NAME, dtype=None, sep=','):
+    return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype, sep=sep)
 
-def write_result(df, FILE_NAME, base=Bases.RESULT_DAC):
+def write_result(df, FILE_NAME, base=Bases.RESULT):
     df.to_csv(base.value + FILE_NAME, index=False)
+
+def check_if_need_result_file(df):
+    if os.path.exists(Bases.RESULT.value + df):    
+        return False
+    else: 
+        return True

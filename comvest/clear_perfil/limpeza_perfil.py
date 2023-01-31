@@ -126,7 +126,7 @@ def extraction():
 
         for col in df.columns:
             # Adiciona todas as colunas das perguntas do questionário
-            if "q" in col.lower() and col not in cols:
+            if col not in cols:
                 cols.append(col)
 
         final_cols = list(set(cols) & set(df.columns))
@@ -166,6 +166,8 @@ def extraction():
                 "tipo_curso_em",
                 "periodo_em",
                 "cursinho",
+                "cursinho_bolsa",
+                "cursinho_periodo",
                 "cursinho_motivo",
                 "cursinho_tempo",
                 "cursinho_tipo",

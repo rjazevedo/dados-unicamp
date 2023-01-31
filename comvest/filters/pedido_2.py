@@ -1,142 +1,153 @@
 import pandas as pd
 from comvest.utilities.io import read_output
-from comvest.utilities.dtypes import DTYPES_DADOS, DTYPES_PERFIL, DTYPES_MATRICULADOS, DTYPES_NOTAS
-import comvest.filters.filters as filter_db
+from comvest.utilities.dtypes import (
+    DTYPES_DADOS,
+    DTYPES_PERFIL,
+    DTYPES_MATRICULADOS,
+    DTYPES_NOTAS,
+)
+import filters.filters as filter_db
 
-''' Leitura das bases '''
-COMVEST_SAMPLE = read_output('comvest_amostra.csv', dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS})
-DAC_VACH_SAMPLE = read_output('vida_academica_habilitacao.csv')
-# DAC_DC_SAMPLE = read_output('dados_cadastrais.csv')
-# DAC_HE_SAMPLE = read_output('historico_escolar.csv')
-# DAC_RPP_SAMPLE = read_output('resumo_por_periodo.csv')
-SOCIO_SAMPLE = read_output('socio_amostra.csv')
-RAIS_SAMPLE = read_output('rais_amostra.csv', sep=';')
 
-x = set(filter_db.filterby_joindate(DAC_VACH_SAMPLE, year=2000, how='after'))
+def extract():
+    # Leitura das bases
+    COMVEST_SAMPLE = read_output(
+        "comvest_amostra.csv",
+        dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
+    )
+    DAC_VACH_SAMPLE = read_output("vida_academica_habilitacao.csv")
+    SOCIO_SAMPLE = read_output("socio_amostra.csv", sep=";")
+    RAIS_SAMPLE = read_output("rais_amostra.csv", sep=";")
+    CAPES_SAMPLE = read_output("capes_amostra.csv")
 
-y = set(filter_db.filterby_exitdate(DAC_VACH_SAMPLE, year=2018, how='before'))
+    x = set(filter_db.filterby_joindate(DAC_VACH_SAMPLE, year=2000, how="after"))
 
-filtered_ids = x.intersection(y)
+    y = set(filter_db.filterby_exitdate(DAC_VACH_SAMPLE, year=2018, how="before"))
 
-dac_cols = [
-	'id',
-	'ano_ingresso',
-	'periodo_ingresso',
-	'tipo_periodo_ingresso',
-	'ano_saida',
-	'periodo_saida',
-	'tipo_periodo_saida',
-	'cod_motivo_saida',
-	'motivo_saida',
-	'curso',
-	'nivel_curso',
-	'codigo_habilitacao',
-	'nome_habilitacao',
-	'prioridade_habilitacao',
-	'situacao_habilitacao',
-]
+    filtered_ids = x.intersection(y)
 
-DAC_VACH_FILTERED = DAC_VACH_SAMPLE[DAC_VACH_SAMPLE['id'].isin(filtered_ids)][dac_cols]
+    dac_cols = [
+        "id",
+        "ano_ingresso",
+        "periodo_ingresso",
+        "tipo_periodo_ingresso",
+        "ano_saida",
+        "periodo_saida",
+        "tipo_periodo_saida",
+        "cod_motivo_saida",
+        "motivo_saida",
+        "curso",
+        "nivel_curso",
+        "codigo_habilitacao",
+        "nome_habilitacao",
+        "prioridade_habilitacao",
+        "situacao_habilitacao",
+    ]
 
-comvest_cols = [
-	'id',
-	'ano_vest',
-	'tipo_ingresso_comvest',
-	'curso_matric',
-	'ano_nasc_c',
-	'nacionalidade_c',
-	'nat_esc_em_c',
-	'ano_conclu_em_c',
-	'sexo_c',
-	'est_civil_c',
-	'isento',
-	'paais',
-	'raca',
-	'tipo_esc_ef',
-	'tipo_esc_ef_1',
-	'tipo_esc_ef_2',
-	'tipo_esc_em',
-	'tipo_curso_em',
-	'periodo_em',
-	'cursinho',
-	'cursinho_tempo',
-	'renda_sm',
-	'renda_sm_a',
-	'renda_sm_b',
-	'renda_sm_c',
-	'renda_sm_d',
-	'renda_qtas',
-	'renda_contrib_qtas',
-	'moradia_situacao',
-	'ocup_pai',
-	'ocup_mae',
-	'educ_pai',
-	'educ_mae',
-	'trabalha',
-	'contribui_renda_fam'
-]
+    DAC_VACH_FILTERED = DAC_VACH_SAMPLE[DAC_VACH_SAMPLE["id"].isin(filtered_ids)][
+        dac_cols
+    ]
 
-COMVEST_FILTERED = COMVEST_SAMPLE[COMVEST_SAMPLE['id'].isin(filtered_ids)][comvest_cols]
+    comvest_cols = [
+        "id",
+        "ano_vest",
+        "tipo_ingresso_comvest",
+        "curso_matric",
+        "ano_nasc_c",
+        "nacionalidade_c",
+        "nat_esc_em_c",
+        "ano_conclu_em_c",
+        "sexo_c",
+        "est_civil_c",
+        "isento",
+        "paais",
+        "raca",
+        "tipo_esc_ef",
+        "tipo_esc_ef_1",
+        "tipo_esc_ef_2",
+        "tipo_esc_em",
+        "tipo_curso_em",
+        "periodo_em",
+        "cursinho",
+        "cursinho_tempo",
+        "renda_sm",
+        "renda_sm_a",
+        "renda_sm_b",
+        "renda_sm_c",
+        "renda_sm_d",
+        "renda_qtas",
+        "renda_contrib_qtas",
+        "moradia_situacao",
+        "ocup_pai",
+        "ocup_mae",
+        "educ_pai",
+        "educ_mae",
+        "trabalha",
+        "contribui_renda_fam",
+    ]
 
-COMVEST_FILTERED = COMVEST_FILTERED[~COMVEST_FILTERED['curso_matric'].isna()]
+    COMVEST_FILTERED = COMVEST_SAMPLE[COMVEST_SAMPLE["id"].isin(filtered_ids)][
+        comvest_cols
+    ]
 
-socio_cols = [
-	'id',
-	'cnpj',
-	'codigo_qualificacao_socio',
-	'ano_entrada_sociedade',
-]
+    COMVEST_FILTERED = COMVEST_FILTERED[~COMVEST_FILTERED['curso_matric'].isna()]
 
-SOCIO_FILTERED = SOCIO_SAMPLE[SOCIO_SAMPLE['id'].isin(filtered_ids)][socio_cols]
+    socio_cols = [
+        "id",
+        "cnpj",
+        "codigo_qualificacao_socio",
+        "data_entrada_sociedade",
+    ]
 
-rais_cols = [
-	'id',
-	'ano_base',
-	'mun_estbl',
-	'cnae95',
-	'vinculo_ativo',
-	'vinculo_tipo',
-	'deslig_motivo',
-	'deslig_mes',
-	'admissao_tipo',
-	'salario_tipo',
-	'cbo94',
-	'escolaridade',
-	'sexo_r',
-	'pais_nacionalidade_r',
-	'raca_r',
-	'ind_def',
-	'estbl_tamanho',
-	'nat_juridica',
-	'estbl_tipo',
-	'dta_admissao',
-	'rem_media',
-	'rem_media_sm',
-	'rem_dez',
-	'rem_dez_sm',
-	'vinculo_tempo',
-	'horas_contr',
-	'rem_ultima',
-	'sal_contr',
-	'cnpj',
-	'cbo02',
-	'cnae_20_classe',
-	'cnae_20_subclasse',
-	'afast1_causa',
-	'afast_dias_total',
-	'idade',
-	'ibge_subsetor',
-	'mun_trab'
-]
+    SOCIO_FILTERED = SOCIO_SAMPLE[SOCIO_SAMPLE["id"].isin(filtered_ids)][socio_cols]
 
-RAIS_FILTERED = RAIS_SAMPLE[RAIS_SAMPLE['id'].isin(filtered_ids)][rais_cols]
+    rais_cols = [
+        "id",
+        "ano_base",
+        "mun_estbl",
+        "cnae95",
+        "vinculo_ativo",
+        "vinculo_tipo",
+        "deslig_motivo",
+        "deslig_mes",
+        "admissao_tipo",
+        "salario_tipo",
+        "cbo94",
+        "escolaridade",
+        "sexo_r",
+        "pais_nacionalidade_r",
+        "raca_r",
+        "ind_def",
+        "estbl_tamanho",
+        "nat_juridica",
+        "estbl_tipo",
+        "dta_admissao",
+        "rem_media",
+        "rem_media_sm",
+        "rem_dez",
+        "rem_dez_sm",
+        "vinculo_tempo",
+        "horas_contr",
+        "rem_ultima",
+        "sal_contr",
+        "cnpj",
+        "cbo02",
+        "cnae_20_classe",
+        "cnae_20_subclasse",
+        "afast1_causa",
+        "afast_dias_total",
+        "idade",
+        "ibge_subsetor",
+        "mun_trab",
+    ]
 
-''' Escrita das bases filtradas conforme o pedido especifico '''
-COMVEST_FILTERED.to_csv('pedido_2/comvest_pedido2.csv', index=False)
-DAC_VACH_FILTERED.to_csv('pedido_2/dac_pedido2.csv', index=False)
-# DAC_VA_FILTERED.to_csv('pedido_2/vida_academica_pedido2.csv', index=False)
-# DAC_DC_FILTERED.to_csv('pedido_2/dados_cadastrais_pedido2.csv', index=False)
-# DAC_HE_FILTERED.to_csv('pedido_2/historico_escolar_pedido2.csv', index=False)
-# DAC_RPP_FILTERED.to_csv('pedido_2/resumo_por_periodo_pedido2.csv', index=False)
-SOCIO_FILTERED.to_csv('pedido_2/socios_pedido2.csv', index=False)
-RAIS_FILTERED.to_csv('pedido_2/rais_pedido2.csv', index=False)
+    RAIS_FILTERED = RAIS_SAMPLE[RAIS_SAMPLE["id"].isin(filtered_ids)][rais_cols]
+
+    CAPES_FILTERED = CAPES_SAMPLE[CAPES_SAMPLE["id"].isin(filtered_ids)]
+
+    """ Escrita das bases filtradas conforme o pedido especifico """
+    COMVEST_FILTERED.to_csv("pedido_2/comvest_pedido2.csv", index=False)
+    DAC_VACH_FILTERED.to_csv("pedido_2/dac_pedido2.csv", index=False)
+    SOCIO_FILTERED.to_csv("pedido_2/socios_pedido2.csv", index=False)
+    RAIS_FILTERED.to_csv("pedido_2/rais_pedido2.csv", index=False)
+    CAPES_FILTERED.to_csv("pedido_2/capes_amostra2.csv", index=False)

@@ -1,18 +1,14 @@
-import re
-from unidecode import unidecode
 import pandas as pd
-from dac.utilities.io import read_from_database
 from comvest.utilities.io import read_result, read_output, write_result
 from comvest.utilities.dtypes import DTYPES_DADOS
 
 
 def merge():
-    
     dados = read_result("dados_comvest.csv", DTYPES_DADOS)
-    tabela_mun = read_output("comvest_counties_df.csv")
+    tabela_mun = read_result("final_counties.csv", database="dac")
 
-    tabela_mun = tabela_mun[["municipio_x", "uf_y", "codigo_municipio", "municipio_y"]]
-    tabela_mun = tabela_mun.drop_duplicates(["municipio_x", "uf_y"])
+    tabela_mun = tabela_mun[["municipio", "uf", "codigo_municipio", "municipio_ibge"]]
+    tabela_mun = tabela_mun.drop_duplicates(["municipio", "uf"])
 
     tabela_mun.columns = [
         "mun_nasc_c",

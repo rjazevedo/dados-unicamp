@@ -3,22 +3,21 @@ import dac.clr_vida_academica.__main__ as clr_vida_academica
 from dac.uniao_dac_comvest.utilities import DADOS_INGRESSANTE
 from dac.uniao_dac_comvest.utilities import MATRICULADOS
 from dac.uniao_dac_comvest.utilities import COMVEST
-from dac.utilities.io import Bases
-import os
+from dac.utilities.io import check_if_need_result_file
 
 def main():
     pre_processing()
     uniao_dac_comvest.generate()
 
 def pre_processing():
-    if not(os.path.exists(Bases.RESULT_DAC.value + DADOS_INGRESSANTE)):    
+    if check_if_need_result_file(DADOS_INGRESSANTE):
         clr_vida_academica.main()
 
-    if not(os.path.exists(Bases.RESULT_COMVEST.value + MATRICULADOS)):    
+    if check_if_need_result_file(MATRICULADOS):
         # TODO: Rodar o código da comvest
         print("Sem base da comvest")
-    
-    if not(os.path.exists(Bases.RESULT_COMVEST.value + COMVEST)):    
+
+    if check_if_need_result_file(COMVEST):
         # TODO: Rodar o código da comvest
         print("Sem base da comvest")
 

@@ -20,15 +20,15 @@ drop_cols = ['nome_mae', 'nome_pai', 'idade_atual',
         'tipo_doc', 'dt_emissao_doc', 'orgao_emissor_doc', 'uf_emissor_doc', 'doc_tratado']
 
 DADOS_CADASTRAIS = "dados_cadastrais_intermediario.csv"
-RESULT_NAME = 'dados_cadastrais.csv'
 UF_CODE_NAME = 'final_counties.csv'
 SCHOOL_CODES = "escola_codigo_inep.csv"
 ID_NAMES = "ids_of_names.csv"
-
+RESULT_NAME = 'dados_cadastrais.csv'
 
 def generate_clean_data():
     dados_cadastrais = read_result("dados_cadastrais_intermediario.csv")
     dados_cadastrais = generate_id_names(dados_cadastrais)
+
     dados_cadastrais.drop(drop_cols, axis=1, inplace=True)
     unicode_cols = ['nome', 'mun_atual', 'mun_resid_d', 'mun_esc_form_em', 'tipo_esc_form_em', 
     'raca_descricao', 'mun_nasc_d', 'pais_nasc_d', 'nacionalidade_d', 'pais_nac_d', 'naturalizado',
@@ -83,7 +83,7 @@ def generate_uf_code(dados_cadastrais):
 
 # Atribui códigos das escolas 
 def generate_school_codes(dados_cadastrais):
-    code_schools = read_result(SCHOOL_CODES, base=Bases.RESULT_COMVEST).loc[:, ["escola_base", "Código INEP", "escola_inep", "codigo_municipio"]]
+    code_schools = read_result(SCHOOL_CODES).loc[:, ["escola_base", "Código INEP", "escola_inep", "codigo_municipio"]]
     code_schools.columns = ["escola_em_d", "cod_escola_em_inep", "escola_em_inep", "cod_mun_form_em"]
     result = pd.merge(dados_cadastrais, code_schools, how="left", on=["escola_em_d", "cod_mun_form_em"])
     return result

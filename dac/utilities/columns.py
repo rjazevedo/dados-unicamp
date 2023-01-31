@@ -5,12 +5,13 @@ dados_cadastrais_cols = [
     'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em', 'uf_esc_form_em', 'mun_esc_form_em', 'sigla_pais_esc_form_em', 'pais_esc_form_em', 
     'mun_atual', 'cep_atual', 'mun_resid_d', 'cep_resid_d']
     
-dados_cadastrais_final_cols = ['identif', 'nome', 'dta_nasc', 'ano_nasc_d', 'cpf', 'doc', 'sexo_d', 'est_civil_d', 
-        'raca_d', 'raca_descricao', 'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 'cod_mun_nasc_d', 'origem_cod_mun_nasc_d', 
-        'mun_nasc_ibge', 'uf_nasc_ibge', 'cod_pais_nascimento', 'pais_nasc_d', 'nacionalidade_d', 'cod_pais_nacionalidade',
-        'pais_nac_d', 'naturalizado', 'ano_conclu_em', 'escola_em_d', 'tipo_esc_form_em', 'cep_escola_em', 'mun_esc_form_em', 
-        'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em', 'mun_esc_form_em_ibge', 'uf_esc_form_em_ibge', 
-        'sigla_pais_esc_form_em', 'pais_esc_form_em', 'mun_atual', 'cep_atual', 'mun_resid_d', 'cep_resid_d']    
+dados_cadastrais_final_cols = ['identif', 'nome', 'nome_id', 'nome_pai_id', 'nome_mae_id','dta_nasc', 'ano_nasc_d',
+        'cpf', 'doc', 'sexo_d', 'est_civil_d', 'raca_d', 'raca_descricao', 'cep_nasc', 'mun_nasc_d', 'uf_nasc_d', 
+        'cod_mun_nasc_d', 'origem_cod_mun_nasc_d', 'mun_nasc_ibge', 'uf_nasc_ibge', 'cod_pais_nascimento', 'pais_nasc_d',
+        'nacionalidade_d', 'cod_pais_nacionalidade', 'pais_nac_d', 'naturalizado', 'ano_conclu_em', 'escola_em_d', 
+        'tipo_esc_form_em', 'cep_escola_em', 'mun_esc_form_em', 'uf_esc_form_em', 'cod_mun_form_em', 'origem_cod_mun_form_em',
+        'mun_esc_form_em_ibge', 'uf_esc_form_em_ibge', 'sigla_pais_esc_form_em', 'pais_esc_form_em', 'mun_atual', 'cep_atual',
+        'mun_resid_d', 'cep_resid_d']    
 
 vida_academica_cols = [
     'identif', 'curso', 'curso_nivel', 'curso_atual_nome', 'ano_ingresso_curso', 'periodo_ingresso', 

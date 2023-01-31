@@ -1,11 +1,11 @@
-from comvest.clear_dados import limpeza_dados, cod_ibge, validacao_esc, cod_inep
+from comvest.clear_dados import limpeza_dados, cod_ibge, cod_inep, ids_nomes
 
 
 def main():
     limpeza_dados.extraction()
     cod_ibge.merge()
-    # validacao_esc.validation()
     cod_inep.merge()
+    ids_nomes.merge()
 
 
 if __name__ == "__main__":

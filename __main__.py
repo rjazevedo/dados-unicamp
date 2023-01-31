@@ -1,6 +1,15 @@
+import pandas as pd
+
 from dac.extract_database import dac_database
 from dac.create_ids import identificadores
 
+from comvest.utilities.io import read_output
+from comvest.utilities.dtypes import (
+    DTYPES_DADOS,
+    DTYPES_PERFIL,
+    DTYPES_MATRICULADOS,
+    DTYPES_NOTAS
+)
 from comvest.assign_ids import comvest_ids
 import comvest.extract.__main__ as comvest_database
 
@@ -11,22 +20,34 @@ import rais.extract.__main__ as rais_database
 import socio.cleaning.__main__ as clear_socio
 import socio.extract.__main__ as extract_socio
 
+def exportar_comvest():
+    comvest = read_output(
+        "comvest_amostra.csv",
+        dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
+    )
+
+    comvest.to_csv('/home/processados/pedido_0/comvest_amostra.csv', index=False)
+
+def exportar_dac():
+    pass
+
+def exportar_rais():
+    pass
+
+def exportar_socios():
+    pass
+
+def exportar_pedido_0():
+    exportar_comvest()
+
+
 def main():
     comvest_database.extract()
-    dac_database.extract()
-    pre_process_rais.get_identification_data()
-    clear_socio.pre_process()
 
-    id_generation.generate_ids()
+    ''' Insert other database extractions here '''
 
-    extract_socio.extract_ids()
-    rais_database.clear_databse()
-
-    comvest_ids.assign_ids()
-
-    identificadores.generate_dac_ids()
-    identificadores.replicate_ids_dac()
+    exportar_pedido_0()
     
-# TODO: implement verbose option 
+
 if __name__ == '__main__':
     main()

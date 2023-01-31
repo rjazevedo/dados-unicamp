@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from dac.utilities.io import read_input
-from dac.utilities.io import write_result
 from dac.utilities.columns import vida_academica_habilitacao_cols
 from dac.utilities.format import padronize_dates
 from dac.utilities.format import dates_to_year
@@ -9,7 +8,6 @@ from dac.utilities.format import padronize_int_miss
 from dac.utilities.format import padronize_string_miss
 
 FILE_NAME = 'Rodolfo_VidaAcademicaCursoHabilitacao.xlsx'
-RESULT_NAME = 'vida_academica_habilitacao.csv'
 
 def generate():
     vida_academica_habilitacao = read_input(FILE_NAME)

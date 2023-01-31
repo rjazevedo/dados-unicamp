@@ -31,3 +31,25 @@ Ex.:
 ```
 python3 -m comvest.clear_perfil
 ```
+
+
+## Diagrama:
+```mermaid
+graph TD
+    A[cod_inep]
+    B[cod_ibge]
+    C[comvest_amostra]
+    D[dados_comvest]
+    U[uniao_dac_comvest]
+    I[dac_comvest_ids]
+    P[perfil_comvest]
+    N[notas_comvest]
+    M[matriculados_comvest]
+    D --> A --> D
+    D --> B --> D
+    D --> U --> I --> C
+    D --> C
+    P --> C
+    N --> C
+    M --> C
+```
