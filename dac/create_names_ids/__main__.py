@@ -3,6 +3,7 @@ from dac.create_names_ids.create_ids import DADOS_DAC
 from dac.create_names_ids.create_ids import DADOS_COMVEST
 from dac.clr_dados_cadastrais import dados_pre_and_pos
 from dac.utilities.io import check_if_need_result_file
+from comvest.clear_dados import limpeza_dados
 
 def main():
     pre_processing()
@@ -13,7 +14,7 @@ def pre_processing():
         dados_pre_and_pos.load_dados_cadastais()
     
     if check_if_need_result_file(DADOS_COMVEST):
-        print("sem dados da comvest")
+        limpeza_dados.extraction()
             
 if __name__ == '__main__':
     main()

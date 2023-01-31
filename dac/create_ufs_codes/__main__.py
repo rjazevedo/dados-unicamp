@@ -1,5 +1,6 @@
 from dac.create_ufs_codes import ufs_codes
 from dac.utilities.io import check_if_need_result_file
+from comvest.clear_dados import limpeza_dados
 
 DADOS_CADASTRAIS = "dados_cadastrais_intermediario.csv"
 DADOS_COMVEST = "dados_comvest.csv"
@@ -13,8 +14,7 @@ def pre_processing():
         dados_cadastrais.dados_pre_and_pos()
 
     if check_if_need_result_file(DADOS_COMVEST):
-        print("Sem base da comvest")
-        # TODO: implementar
+        limpeza_dados.extraction()
 
 
 if __name__ == '__main__':

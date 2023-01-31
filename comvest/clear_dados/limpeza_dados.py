@@ -4,11 +4,13 @@ import pandas as pd
 from unidecode import unidecode
 from comvest.utilities.io import files, read_from_db, write_result, read_result
 from comvest.utilities.logging import progresslog, resultlog
+import comvest.extract_courses.__main__ as extrair_cursos
+CURSOS = "cursos.csv"
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-
 def validacao_curso(df, col, date):
+    df_cursos = read_result("cursos.csv")
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
     # Codigos que nao constam na lista de cursos serao remapeados para missing
@@ -446,14 +448,10 @@ def tratar_dados(df, date, path, ingresso=1):
     return df
 
 
-# Leitura dos cursos p posterior validação
-try:
-    df_cursos = read_result("cursos.csv")
-except:
-    logging.warning('Couldn\'t find "cursos.csv"')
-
-
 def extraction():
+    if check_if_need_result_file(CURSOS):
+        extrair_cursos.main()
+
     dados_comvest = []
 
     for path, date in files.items():

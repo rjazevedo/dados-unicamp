@@ -18,6 +18,7 @@ def cleandata(df, date):
 
 
 def validacao_curso(df, date):
+    df_cursos = read_result("cursos.csv")
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
     # Codigos que nao constam na lista de cursos serao remapeados para missing
@@ -31,14 +32,6 @@ def validacao_curso(df, date):
     df.dropna(subset=["curso_matric"], inplace=True)
 
     return df
-
-
-# Leitura dos cursos p posterior validação
-try:
-    df_cursos = read_result("cursos.csv")
-except:
-    logging.warning('Couldn\'t find "cursos.csv"')
-
 
 def extraction():
     matriculados_frames = []

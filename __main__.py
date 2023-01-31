@@ -1,8 +1,15 @@
 import pandas as pd
-
 from dac.extract_database import dac_database
+import dac.clr_dados_cadastrais.dados_pre_and_pos as dados_pre_and_pos
+import dac.create_ufs_codes.__main__ as create_ufs_codes
+import dac.create_names_ids.__main__ as create_names_ids
 from dac.create_ids import identificadores
-
+from comvest.clear_dados import limpeza_dados, cod_ibge, cod_inep, ids_nomes
+from comvest.clear_perfil import limpeza_perfil
+from comvest.clear_notas import limpeza_notas, presenca
+import comvest.extract_enrolled.__main__ as extrair_enrolled
+import comvest.extract_cities.__main__ as extrair_cidades
+import comvest.extract_courses.__main__ as extrair_cursos
 from comvest.utilities.io import read_output
 from comvest.utilities.dtypes import (
     DTYPES_DADOS,
@@ -42,12 +49,33 @@ def exportar_pedido_0():
 
 
 def main():
-    comvest_database.extract()
+    #comvest_database.extract()
 
-    ''' Insert other database extractions here '''
+    #''' Insert other database extractions here '''
 
-    exportar_pedido_0()
+    #exportar_pedido_0()
+    rodar_base_inteira()
     
+
+def rodar_base_inteira():
+    extrair_cidades.main()
+    extrair_cursos.main()
+    extrair_enrolled.main()
+    limpeza_dados.extraction()
+    # OK
+    dados_pre_and_pos.load_dados_cadastais()
+    create_ufs_codes.main()
+    create_names_ids.main()
+    return 
+    escolas.main()
+    dados_cadastrais.main()
+    cod_ibge.merge()
+    cod_inep.merge()
+    ids_nomes.merge()
+    limpeza_perfil.extraction()
+    limpeza_notas.extraction()
+    presenca.get()
+
 
 if __name__ == '__main__':
     main()

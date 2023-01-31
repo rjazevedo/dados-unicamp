@@ -1,5 +1,7 @@
 from dac.uniao_dac_comvest import uniao_dac_comvest
 import dac.clr_vida_academica.__main__ as clr_vida_academica
+import comvest.extract_enrolled.__main__ as extrair_enrolled
+from comvest.clear_dados import limpeza_dados
 from dac.uniao_dac_comvest.utilities import DADOS_INGRESSANTE
 from dac.uniao_dac_comvest.utilities import MATRICULADOS
 from dac.uniao_dac_comvest.utilities import COMVEST
@@ -14,12 +16,10 @@ def pre_processing():
         clr_vida_academica.main()
 
     if check_if_need_result_file(MATRICULADOS):
-        # TODO: Rodar o código da comvest
-        print("Sem base da comvest")
+        extrair_enrolled.main()
 
     if check_if_need_result_file(COMVEST):
-        # TODO: Rodar o código da comvest
-        print("Sem base da comvest")
+        limpeza_dados.extraction()
 
 
 if __name__ == '__main__':
