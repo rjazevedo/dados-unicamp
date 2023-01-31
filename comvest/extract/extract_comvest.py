@@ -7,7 +7,9 @@ from comvest.extract_courses import extrair_cursos, dict_cursos
 
 
 def extraction():
+    print("1")
     extrair_cidades.extraction()
+    print("2")
     extrair_cursos.extraction()
     dict_cursos.get()
     extrair_matriculados.extraction()
