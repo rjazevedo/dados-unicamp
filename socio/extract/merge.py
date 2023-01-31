@@ -1,93 +1,188 @@
 import pandas as pd
 import numpy as np
-from socio.utilities.io import get_all_files
+from socio.utilities.io import (
+    get_all_files,
+    list_dirs_socio_output_merges,
+    write_socio_merges,
+)
 
 from socio.utilities.io import read_socio_clean
 from socio.utilities.io import read_ids
 from socio.utilities.io import write_socio_sample
 from socio.utilities.io import (
-    list_dirs_socio_output,
+    list_dirs_socio_output_tmp,
     create_folder_merges_date,
     create_folder_merges,
 )
 
-from socio.extract.standardization_functions import get_upper
 from socio.extract.standardization_functions import get_first_name
 from socio.extract.standardization_functions import get_reduced_cpf
 from socio.extract.standardization_functions import get_similarity
 
-from socio.utilities.logging import log_extracting_ids, log_reading_file_extraction
+from socio.utilities.logging import (
+    log_concatenating_ids,
+    log_extracting_ids,
+    log_reading_file_extraction,
+)
 
 
 def merge_socio_dac_comvest():
-    create_folder_merges()
-    socio_folders = list_dirs_socio_output()
 
-    dfs = []
-    for folder in socio_folders:
-        files = get_all_files(folder)
-        date = folder.split("/")[-1]
-        for file in files:
-            log_reading_file_extraction(file)
-            df = read_socio_clean(file)
-            dfs.append(df)
-
-    df_socio = pd.concat(dfs, sort=False)  # TODO talvez precisa fazer join='inner'
     log_extracting_ids()
-    prepare_socio(df_socio)
     df_dac_comvest = read_ids()
     df_dac_comvest = prepare_dac_comvest(df_dac_comvest)
-    df_merged = merge(df_socio, df_dac_comvest)
-    df_merged.drop_duplicates(inplace=True)
-    write_socio_sample(df_merged)
+
+    create_folder_merges()
+    merge_socio_individual_files(df_dac_comvest)
+
+    log_concatenating_ids()
+    merged_files = []
+    socio_folders = list_dirs_socio_output_merges()
+    for folder in socio_folders:
+        files = get_all_files(folder)
+        for file in files:
+            df = read_socio_clean(file)
+            merged_files.append(df)
+
+    sample = pd.concat(merged_files)
+    sample = sample.sort_values(by="data_coleta", ascending=False)
+    print(sample.shape)
+    cols = sample.columns.to_list()
+    cols.remove("data_coleta")
+    sample = sample.drop_duplicates(subset=cols, keep="first")
+    print(sample.shape)
+
+    write_socio_sample(sample)
 
 
-# ------------------------------------------------------------------------------------------------
+def merge_socio_individual_files(df_dac_comvest):
+    socio_folders = sorted(list_dirs_socio_output_tmp())
+
+    for folder in socio_folders:
+        date = folder.split("/")[-1]
+        create_folder_merges_date(date)
+        files = get_all_files(folder)
+        for file in files:
+            filename = file.split("/")[-1]
+            log_reading_file_extraction(file)
+            df = read_socio_clean(file)
+            df = prepare_socio(df)
+            df = merge(df, df_dac_comvest)
+            write_socio_merges(df, filename, date)
+
+
 def prepare_socio(df):
-    df["nome_socio"].replace("", np.nan, inplace=True)
-    df.dropna(subset=["nome_socio"], inplace=True)
-    df.sort_values(by="data_coleta", ascending=False, inplace=True)
-    print(df.shape)
-    df.drop_duplicates(
-        subset=[
-            "cnpj",
-            "identificador_de_socio",
-            "nome_socio",
-            "cnpj_cpf_do_socio",
-            "codigo_qualificacao_socio",
-            "data_entrada_sociedade",
-        ],
-        keep="first",
-        inplace=True,
-    )
-    print(df.shape)
-
-    df["nome_socio"] = df["nome_socio"].map(get_upper)
+    df = df.drop_duplicates()
+    df["nome_socio"] = df["nome_socio"].replace("", np.nan)
+    df = df.dropna(subset=["nome_socio"])
     df["primeiro_nome"] = df["nome_socio"].map(get_first_name)
-
-
-def prepare_dac_comvest(df):
-    df = df.loc[:, ["cpf", "nome", "id"]]
-    df["cnpj_cpf_do_socio"] = df["cpf"].map(get_reduced_cpf)
-    df["primeiro_nome"] = df["nome"].map(get_first_name)
     return df
 
 
-# ------------------------------------------------------------------------------------------------
-def merge(df_socio, df_dac_comvest):
-    df = df_dac_comvest.merge(df_socio, on=["cnpj_cpf_do_socio", "primeiro_nome"])
-    df["similaridade"] = df.apply(
-        lambda x: get_similarity(x["nome"], x["nome_socio"]), axis=1
+def prepare_dac_comvest(df):
+    df = df.loc[:, ["cpf", "nome", "id", "origem_cpf"]].drop_duplicates()
+    df["cnpj_cpf_do_socio"] = df["cpf"].map(get_reduced_cpf)
+    df["primeiro_nome"] = df["nome"].map(get_first_name)
+    df = df.drop(columns="cpf")
+
+    # Modifica o origem_cpf para que o sort funcione corretamente
+    # Isto é, para que o menor valor de origem_cpf seja sempre o mais desejável
+    df.origem_cpf = df.origem_cpf.replace(0, 11)
+    df = df.sort_values(
+        by=["cnpj_cpf_do_socio", "nome", "id", "origem_cpf"]
+    ).drop_duplicates(subset=["cnpj_cpf_do_socio", "nome", "id"], keep="first")
+
+    return df
+
+
+def merge(df, df_dac_comvest):
+    merges = []
+    socios_cols = list(df.columns)
+    merge_cols = list(df.columns) + ["id", "origem_cpf"]
+
+    # Vai ser utilizado para identificar qual o método usado no merge
+    df["origem_socios"] = 0
+
+    merged = df.merge(
+        df_dac_comvest,
+        how="left",
+        left_on=["cnpj_cpf_do_socio", "nome_socio"],
+        right_on=["cnpj_cpf_do_socio", "nome"],
+        indicator=True,
+        suffixes=(None, "_y"),
     )
-    same_person_df = df[df["similaridade"] > 0.5]
-    # filter_columns(same_person_df) TODO
-    return same_person_df
 
+    # Valor 1 indica que foi encontrada usando match-exato e nao possuía homonimos.
+    # Atribui inicialmente o valor 1 para todos os matches e em seguida corrige atribuindo 2
+    # para os casos com homonimos.
+    merged.loc[merged._merge == "both", "origem_socios"] = 1
 
-def filter_columns(df):
-    del df["cpf"]
-    del df["nome"]
-    del df["nome_socio"]
-    del df["cnpj_cpf_do_socio"]
-    del df["primeiro_nome"]
-    del df["similaridade"]
+    # Modificando o origem_capes dos casos com homonino para 2,
+    # ao final do merge esses casos serão dropados.
+    merged.loc[
+        (merged._merge == "both")
+        & (merged[merged._merge == "both"].duplicated(subset=socios_cols, keep=False)),
+        ["origem_socios"],
+    ] = 2
+    merges.append(merged.loc[merged.origem_socios == 1, merge_cols].copy())
+
+    df_fail_exact_match = merged.loc[merged._merge == "left_only", list(socios_cols)]
+
+    merged_approx = df_fail_exact_match.merge(
+        df_dac_comvest,
+        how="left",
+        on=["cnpj_cpf_do_socio", "primeiro_nome"],
+        indicator=True,
+    )
+
+    merged_approx = merged_approx.loc[
+        merged_approx._merge == "both", merge_cols + ["nome"]
+    ]
+    merged_approx["passou"] = False
+
+    if merged_approx.empty:
+        return pd.concat(merges)
+
+    merged_approx["similaridade"] = merged_approx.apply(
+        lambda x: get_similarity(x["nome_socio"], x["nome"]), axis=1
+    )
+
+    merged_approx.loc[merged_approx["similaridade"] >= 0.50, "passou"] = True
+    merged_approx_matches = merged_approx[merged_approx.passou].sort_values(
+        by=["similaridade", "origem_cpf"], ascending=[False, True]
+    )
+
+    # O valor origem_capes 3 é utilizado para os casos em que
+    # apenas 1 match aproximado teve similaridade acima do cutoff
+    merged_approx_matches.loc[
+        ~merged_approx_matches.duplicated(subset=socios_cols, keep=False),
+        ["origem_socios"],
+    ] = 3
+
+    # O valor origem_capes 4 é utilizado para os casos em que
+    # 1 linha da CAPES teve mais de 1 match com similaridade acima do cutoff.
+    #  Nesse caso foi mantido o match com a similaridade mais alta.
+    merged_approx_matches.loc[
+        (~merged_approx_matches.duplicated(subset=socios_cols, keep="first"))
+        & (merged_approx_matches.origem_socios == 0),
+        ["origem_socios"],
+    ] = 4
+
+    merges.append(
+        merged_approx_matches.loc[
+            merged_approx_matches.origem_socios != 0, merge_cols
+        ].copy()
+    )
+
+    final_merge = pd.concat(merges)
+    final_merge.origem_cpf = final_merge.origem_cpf.replace(11, 0)
+    final_merge.origem_cpf = final_merge.origem_cpf.astype("int64")
+    final_merge.id = final_merge.id.astype("int64")
+    final_merge = final_merge.drop(
+        columns=[
+            "nome_socio",
+            "primeiro_nome",
+            "cnpj_cpf_do_socio",
+        ]
+    )
+    return final_merge
