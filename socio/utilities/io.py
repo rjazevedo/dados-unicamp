@@ -1,13 +1,14 @@
+from pathlib import Path
 import pandas as pd
 import yaml
 import os
 import subprocess
-import glob
 
 from socio.utilities.dtype import get_dtype
 
 from socio.database_information.socio import get_columns_info_socio
 from socio.database_information.empresa import get_columns_info_empresa
+from socio.database_information.estabelecimento import get_columns_info_estabelecimento
 from socio.database_information.cnae_secundaria import get_columns_info_cnae_secundaria
 
 stream = open("socio/configuration.yaml")
@@ -17,14 +18,49 @@ config = yaml.safe_load(stream)
 def read_ids():
     file = config["database_ids"]
     dtype = {"nome": "object", "cpf": "object", "id": "Int64"}
-    df = pd.read_csv(file, dtype=dtype, sep=";", low_memory=False)
+    df = pd.read_csv(file, dtype=dtype, sep=",", low_memory=False)
     return df
 
 
 # ------------------------------------------------------------------------------------------------
-def read_socio_original(path):
+def read_socio_original(path, date=None):
     columns_info = get_columns_info_socio()
-    return read_database(path, columns_info)
+    if int(date[0:4]) >= 2022:
+        columns = [
+            "cnpj",
+            "codigo_tipo_socio",
+            "nome_socio",
+            "cnpj_cpf_do_socio",
+            "codigo_qualificacao_socio",
+            "data_entrada_sociedade",
+            "pais",
+            "cpf_representante_legal",
+            "nome_representante_legal",
+            "codigo_qualificacao_representante_legal",
+            "faixa_etaria",
+        ]
+        return read_database(
+            path, columns_info, cols=columns, sep=";", encoding="latin"
+        )
+    else:
+        return read_database(path, columns_info, date)
+
+
+def read_estabelecimento_original_novolayout(file):
+    columns_info = get_columns_info_estabelecimento()
+    dtype = get_dtype(columns_info, True)
+    columns_names = list(columns_info)
+    df = pd.read_csv(
+        file,
+        names=columns_names,
+        dtype=dtype,
+        low_memory=False,
+        sep=";",
+        encoding="latin",
+        warn_bad_lines=True,
+        error_bad_lines=False,
+    )
+    return df
 
 
 def read_empresa_original(file):
@@ -53,8 +89,7 @@ def read_cnae_original():
 
 # ------------------------------------------------------------------------------------------------
 def read_socio_clean(path):
-    columns_info = get_columns_info_socio()
-    return read_database(path, columns_info, is_original=False)
+    return pd.read_parquet(path)
 
 
 def read_empresa_clean():
@@ -93,21 +128,40 @@ def write_socio_sample(df):
 
 
 def write_socio_tmp(df, filename, date):
-    file = config["path_output"] + "tmp/" + date + "/" + filename
+    file = Path(config["path_output"] + "tmp/" + date + "/" + filename)
+    file = file.with_suffix(".parquet")
+    df.to_parquet(file, compression="brotli")
+
+
+def write_estabelecimento_tmp(df, filename, date):
+    file = config["database_output"] + "tmp/" + date + "/" + filename
     write_database(df, file)
 
 
 # ------------------------------------------------------------------------------------------------
-def read_database(file, columns_info, is_original=True, low_memory=True):
+def read_database(
+    file,
+    columns_info,
+    is_original=True,
+    low_memory=True,
+    sep=",",
+    cols=None,
+    encoding=None,
+    date=None,
+):
     dtype = get_dtype(columns_info, is_original=is_original)
+    dtype["cnpj_empresa"] = str
+    dtype["cpf_cnpj_socio"] = str
+
     df = pd.read_csv(
         file,
         dtype=dtype,
         low_memory=low_memory,
-        sep=";",
-        encoding="latin",
+        sep=sep,
+        encoding=encoding,
         warn_bad_lines=True,
         error_bad_lines=False,
+        names=cols,
     )
     return df
 

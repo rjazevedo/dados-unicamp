@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from unidecode import unidecode
 
 
 def clear_nome(value):
@@ -11,7 +12,8 @@ def clear_nome(value):
         or pd.isnull(value)
     ):
         return ""
-    return value
+    s = unidecode(value).upper().strip()
+    return " ".join(s.split())
 
 
 def clear_cnpj_cpf(value):
@@ -23,7 +25,7 @@ def clear_cnpj_cpf(value):
 def clean_cnpj(value):
     if pd.isnull(value):
         return ""
-    return value.zfill(14)
+    return value.ljust(14, "0")
 
 
 def clear_codigo_qualificacao(value):
@@ -33,7 +35,8 @@ def clear_codigo_qualificacao(value):
 
 
 def clear_data(value):
-    # Na tabela de 2022-03-12 os dados da coluna 'data_entrada_sociedade' são da forma YYYYMMDD enquanto pras outras datas
+    # Na tabela de 2022-03-12 os dados da coluna 'data_entrada_sociedade'
+    # são da forma YYYYMMDD enquanto pras outras datas
     # os dados são da forma YYYY-MM-DD
     return value.replace("-", "")
 

@@ -8,12 +8,14 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
                 "2019-06-10",
                 "2019-04-05",
                 "2018-11-08",
+                "2017-12-27",
             ],
             "cleaning_function": cleaning_functions.clean_cnpj,
             "verification_function": verification_functions.check_cnpj,
@@ -31,12 +33,14 @@ def get_columns_info_socio():
             "type": "Int64",
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
                 "2019-06-10",
                 "2019-04-05",
                 "2018-11-08",
+                "2017-12-27",
             ],
             "cleaning_function": None,
             "verification_function": verification_functions.check_identificador_de_socio,
@@ -46,6 +50,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -61,6 +66,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -76,6 +82,7 @@ def get_columns_info_socio():
             "type": "Int64",
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -99,7 +106,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [],
-            "cleaning_function": None,
+            "cleaning_function": cleaning_functions.clear_nome,
             "verification_function": None,
             "ferent_formats": False,
         },
@@ -107,7 +114,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [],
-            "cleaning_function": None,
+            "cleaning_function": cleaning_functions.clear_nome,
             "verification_function": None,
             "ferent_formats": False,
         },
@@ -115,6 +122,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -138,6 +146,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -153,6 +162,7 @@ def get_columns_info_socio():
             "type": str,
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -168,6 +178,7 @@ def get_columns_info_socio():
             "type": "Int64",
             "campo": {},
             "available_dates": [
+                "2022-08-13",
                 "2022-03-12",
                 "2019-08-14",
                 "2019-11-20",
@@ -182,7 +193,7 @@ def get_columns_info_socio():
         "faixa_etaria": {
             "type": "Int64",
             "campo": {},
-            "available_dates": ["2022-03-12"],
+            "available_dates": ["2022-08-13", "2022-03-12"],
             "cleaning_function": None,
             "verification_function": None,
             "ferent_formats": False,
@@ -190,7 +201,7 @@ def get_columns_info_socio():
         "pais": {
             "type": "Int64",
             "campo": {},
-            "available_dates": ["2022-03-12"],
+            "available_dates": ["2022-08-13", "2022-03-12"],
             "cleaning_function": None,
             "verification_function": None,
             "ferent_formats": False,

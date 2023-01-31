@@ -1,5 +1,6 @@
-import rais.utilities.rais_information
 import pandas as pd
+
+from rais.utilities.rais_information import get_columns_info_rais
 
 from rais.utilities.read import read_rais_sample
 from rais.utilities.read import read_database
@@ -22,9 +23,11 @@ def verify_output():
 
 # Verify all columns in df and print if any has an invalid value
 def verify_columns(df):
-    set_global_variables()
-    columns_info = rais.clean_module.rais_information.get_columns_info_rais()
+    #set_global_variables()
+    columns_info = get_columns_info_rais()
     for column in columns_info:
+        if column == 'pispasep' or column == 'cpf_r' or column == 'dta_nasc_r' or column == 'nome_r' or column == 'ctps':
+            continue
         verify_column(column, df)
     verify_cnpj_raiz(df)
     verify_deslig_info(df)
@@ -32,7 +35,7 @@ def verify_columns(df):
 # Verify column in df and print if it has an invalid value
 def verify_column(column, df):
     log_verifying_column(column)
-    columns_info = rais.clean_module.rais_information.get_columns_info_rais()
+    columns_info = get_columns_info_rais()
     function = columns_info[column]['check_function']
     missed = df[df.apply(lambda x: not function(x[column]), axis=1)]
     log_show_result(missed, [column])
@@ -51,37 +54,37 @@ def verify_deslig_info(df):
 #------------------------------------------------------------------------------------------------
 # Set global variables with all available codes to columns mun, cnae, cbo and nat_juridica
 def set_global_variables():
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/municipios.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/municipios.csv'
     dtype = {'municipio': 'object'}
     global municipios
     municipios = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/cnae95.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/cnae95.csv'
     dtype = {'cnae95': 'object'}
     global cnae95
     cnae95 = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/cbo94.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/cbo94.csv'
     dtype = {'cbo94': 'object'}
     global cbo94
     cbo94 = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/nat_juridica.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/nat_juridica.csv'
     dtype = {'nat_juridica': 'object'}
     global nat_juridica
     nat_juridica = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/cbo02.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/cbo02.csv'
     dtype = {'cbo02': 'object'}
     global cbo02
     cbo02 = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/cnae20classe.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/cnae20classe.csv'
     dtype = {'cnae20classe': 'object'}
     global cnae20classe
     cnae20classe = read_database(file, dtype, squeeze=True)
 
-    file = '/home/larissa/dados-unicamp/rais/clean_module/codes/cnae20subclasse.csv'
+    file = '/home/larissa/rais/scripts/clean_module/codes/cnae20subclasse.csv'
     dtype = {'cnae20subclasse': 'object'}
     global cnae20subclasse
     cnae20subclasse = read_database(file, dtype, squeeze=True)
