@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 from dac.utilities.io import write_result
-import difflib as dff
-import matplotlib.pyplot as plt
 from dac.uniao_dac_comvest.cursos_especiais import deal_special_students
 from dac.uniao_dac_comvest.doc_part import merge_by_doc_part
 from dac.uniao_dac_comvest.utilities import (
@@ -18,10 +16,10 @@ from dac.uniao_dac_comvest.utilities import select_CPF
 from dac.uniao_dac_comvest.utilities import setup_comvest
 from dac.uniao_dac_comvest.utilities import setup_dac
 from dac.uniao_dac_comvest.utilities import set_origemCPF
-from dac.utilities.io import write_result
 from dac.uniao_dac_comvest.closest_name import get_closest_name
 
 RESULT_NAME = "uniao_dac_comvest.csv"
+
 
 def generate():
     print("Lendo dados da Comvest")
