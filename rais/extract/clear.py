@@ -23,17 +23,20 @@ from rais.utilities.write import write_rais_sample
 from rais.utilities.logging import log_cleaning_year
 from rais.utilities.logging import log_cleaning_file
 
+
 def clear_all_years():
     for year in range(2002, 2019):
         log_cleaning_year(year)
         clear_year(year)
     join_all_years()
 
+
 def clear_year(year):
-    create_folder_inside_year(year, 'clean_data')
-    files = get_all_tmp_files(year, 'rais_dac_comvest', 'csv')
+    create_folder_inside_year(year, "clean_data")
+    files = get_all_tmp_files(year, "rais_dac_comvest", "csv")
     for file in files:
         clear_file(file, year)
+
 
 def clear_file(file, year):
     log_cleaning_file(file)
@@ -42,10 +45,11 @@ def clear_file(file, year):
     df_final = get_columns(df_clean, df_original, year, file)
     write_rais_clean(df_final, year, file)
 
+
 def join_all_years():
     dfs = []
     for year in range(2002, 2019):
-        files = get_all_tmp_files(year, 'clean_data', 'csv')
+        files = get_all_tmp_files(year, "clean_data", "csv")
         for file in files:
             df = read_rais_clean(file)
             dfs.append(df)
@@ -53,79 +57,115 @@ def join_all_years():
     anonymize_data(result)
     write_rais_sample(result)
 
-#------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------
 def get_columns(df_clean, df_original, year, file):
     df_merged = pd.merge(df_clean, df_original, left_index=True, right_index=True)
     df_merged = rename_all_columns(df_merged, year)
     df_clean = clean_columns(df_merged, year)
     columns = get_all_columns_rais()
-    df_clean = df_clean.loc[:, columns]
+    valid_cols = list(set(df_clean.columns).intersection(set(columns)))
+    df_clean = df_clean.loc[:, valid_cols]
     return df_clean
 
-#------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------
 def rename_all_columns(df, year):
     columns = get_all_columns_rais()
-    columns.remove('id')
-    columns.remove('nome_r')
-    columns.remove('dta_nasc_r')
-    columns.remove('cpf_r')
-    columns.remove('pispasep')
-    columns.remove('ano_base')
+    columns.remove("id")
+    columns.remove("nome_r")
+    columns.remove("dta_nasc_r")
+    columns.remove("cpf_r")
+    columns.remove("pispasep")
+    columns.remove("ano_base")
     df = rename_columns(df, year, columns)
     return df
 
-def rename_columns(df, year, columns):
-    dtypes = get_dtype_rais_clean()
-    column_names = df.columns
- 
-    for column in columns:
-        column_name = get_column(column, year)
-        if column_name != None and column_name in column_names:
-            df.rename(columns={column_name: column}, inplace=True)
+
+def rename_columns(df, year, new_columns_names):
+    clean_dtypes = get_dtype_rais_clean()
+    old_column_names = df.columns
+
+    for new_column_name in new_columns_names:
+        old_column_name = get_column(new_column_name, year)
+        if old_column_name is not None and old_column_name in old_column_names:
+            df.rename(columns={old_column_name: new_column_name}, inplace=True)
         else:
-            dtype = dtypes[column]
-            if dtype == 'object':
-                df[column] = np.nan
-                df = df.astype({column: 'object'})
-            elif dtype == 'int64':
-                df[column] = -1
-            elif dtype == 'float64':
-                df[column] = -1.0
+            clean_dtype = clean_dtypes[new_column_name]
+            if clean_dtype == "object":
+                df[new_column_name] = ""
+                df = df.astype({new_column_name: "object"})
+            elif clean_dtype == "Int64":
+                df[new_column_name] = np.nan
+            elif clean_dtype == "float64":
+                df[new_column_name] = np.nan
     return df
 
-#------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------
 def clean_columns(df, year):
+    if df.empty:
+        return df
     columns_info = get_columns_info_rais()
     for column in columns_info:
-        periods = columns_info[column]['clean_function']
+        periods = columns_info[column]["clean_function"]
         function = get_info_period(year, periods)
-        if function != None:
+        if function is not None:
             df[column] = df.apply(lambda x: function(x[column]), axis=1)
     recover_cnpj_raiz(df)
     get_ano_nasc(df)
     fix_deslig_info(df, year)
     return df
 
+
 def get_ano_nasc(df):
-    df['ano_nasc_r'] = df.apply(lambda x: cleaning_functions.get_ano_nasc(x['dta_nasc_r']), axis=1)
+    df["ano_nasc_r"] = df.apply(
+        lambda x: cleaning_functions.get_ano_nasc(x["dta_nasc_r"]), axis=1
+    )
+
 
 def recover_cnpj_raiz(df):
-    df['cnpj_raiz'] = df.apply(lambda x: cleaning_functions.recover_cnpj_raiz(x['cnpj'], x['cnpj_raiz']), axis=1)
+    df["cnpj_raiz"] = df.apply(
+        lambda x: cleaning_functions.recover_cnpj_raiz(x["cnpj"], x["cnpj_raiz"]),
+        axis=1,
+    )
+
 
 def fix_deslig_info(df, year):
     if year == 2010:
-        df['deslig_dia'] = df.apply(lambda x: cleaning_functions.fix_deslig(x['deslig_motivo'], x['deslig_dia']), axis=1)
+        df["deslig_dia"] = df.apply(
+            lambda x: cleaning_functions.fix_deslig(
+                x["deslig_motivo"], x["deslig_dia"]
+            ),
+            axis=1,
+        )
     elif year >= 2014:
-        df['deslig_dia'] = df.apply(lambda x: cleaning_functions.fix_deslig(x['deslig_motivo'], x['deslig_dia']), axis=1)
+        df["deslig_dia"] = df.apply(
+            lambda x: cleaning_functions.fix_deslig(
+                x["deslig_motivo"], x["deslig_dia"]
+            ),
+            axis=1,
+        )
     if year >= 2010 and year <= 2011:
-        df['deslig_mes'] = df.apply(lambda x: cleaning_functions.fix_deslig(x['deslig_motivo'], x['deslig_mes']), axis=1)
+        df["deslig_mes"] = df.apply(
+            lambda x: cleaning_functions.fix_deslig(
+                x["deslig_motivo"], x["deslig_mes"]
+            ),
+            axis=1,
+        )
     elif year >= 2013 and year <= 2018:
-        df['deslig_mes'] = df.apply(lambda x: cleaning_functions.fix_deslig(x['deslig_motivo'], x['deslig_mes']), axis=1)
+        df["deslig_mes"] = df.apply(
+            lambda x: cleaning_functions.fix_deslig(
+                x["deslig_motivo"], x["deslig_mes"]
+            ),
+            axis=1,
+        )
 
-#------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------
 def anonymize_data(df):
-    del df['nome_r']
-    del df['dta_nasc_r']
-    del df['cpf_r']
-    del df['pispasep']
-    del df['ctps']
+    del df["nome_r"]
+    del df["dta_nasc_r"]
+    del df["cpf_r"]
+    del df["pispasep"]
+    del df["ctps"]
