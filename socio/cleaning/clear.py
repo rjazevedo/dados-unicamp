@@ -107,7 +107,6 @@ def clear_file_estabelecimento(df):
 def clear_columns(df, columns_info):
     for column in columns_info:
         log_cleaning_column(column)
-        print(f"cleaning column: {column}")  # TODO remover
         clear_column(df, column, columns_info)
     return df
 
@@ -123,7 +122,12 @@ def filter_columns_socio(df):
     )
     columns_info = get_columns_info_socio()
     valid_cols = set(columns_info.keys()).intersection(set(df.columns))
-    df = df.loc[df.codigo_tipo_socio == 2, valid_cols]
+
+    if "codigo_tipo_socio" in valid_cols:
+        df = df.loc[df.codigo_tipo_socio == 2, valid_cols]
+    else:
+        df = df.loc[:, valid_cols]
+
     df.drop("nome_representante_legal", axis=1, inplace=True, errors="ignore")
     df.drop("cpf_representante_legal", axis=1, inplace=True, errors="ignore")
     df.drop(
