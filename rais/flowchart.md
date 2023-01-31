@@ -27,16 +27,17 @@ flowchart LR
     unesp_amostra[unesp_amostra]
     end
 
-    rais & uniao_dac_comvest --> dac_comvest_ids
-    rais --> rais_clean
-    socios --> socios_clean
-    capes --> capes_clean
-    fuvest --> fuvest_clean
-    unesp --> unesp_clean
+    rais & uniao_dac_comvest ---> dac_comvest_ids
+    rais ---> rais_clean
+    socios ---> socios_clean
+    capes ---> capes_clean
+    fuvest ---> fuvest_clean
+    unesp ---> unesp_clean
 
-    rais_clean & dac_comvest_ids --> rais_amostra
-    socios_clean & dac_comvest_ids --> socios_amostra
-    capes_clean & dac_comvest_ids --> capes_amostra
-    fuvest_clean & dac_comvest_ids --> fuvest_amostra
-    unesp_clean & dac_comvest_ids --> unesp_amostra
+    rais_clean & dac_comvest_ids ---> rais_amostra
+    socios_clean & dac_comvest_ids ---> socios_amostra
+    capes_clean & dac_comvest_ids ---> capes_amostra
+    fuvest_clean & dac_comvest_ids ---> fuvest_amostra
+    unesp_clean & dac_comvest_ids ---> unesp_amostra
+
 ```
