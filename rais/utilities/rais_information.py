@@ -1,6 +1,7 @@
 from rais.verification import verification_functions
 from rais.extract import cleaning_functions
 
+
 # Return extension of original rais files from specified year
 def get_extension(year):
     if year <= 2010:
@@ -8,17 +9,20 @@ def get_extension(year):
     else:
         return 'txt'
 
+
 # Return a list with all columns from clean rais files
 def get_all_columns_rais():
     columns = get_columns_info_rais()
     column_list = [column for column in columns.keys()]
     return column_list
 
+
 # Return name of some column in specified year
 def get_column(column_name, year):
     columns_info = get_columns_info_rais()
     periods = columns_info[column_name]['campo']
     return get_info_period(year, periods)
+
 
 def get_info_period(year, periods):
     for period in periods:
@@ -27,19 +31,20 @@ def get_info_period(year, periods):
             return periods[period]
     return None
 
+
 # Get information of columns from rais
 def get_columns_info_rais():
     return {
         'id': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {},
             'clean_function': {},
             'check_function': verification_functions.dummy
         },
         'ano_base': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {},
             'clean_function': {},
             'check_function': verification_functions.dummy
@@ -73,7 +78,7 @@ def get_columns_info_rais():
         },
         'vinculo_ativo': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'EMP EM 31/12',
                 (2011, 2018): 'Vínculo Ativo 31/12'
@@ -83,7 +88,7 @@ def get_columns_info_rais():
         },
         'vinculo_tipo': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2002): 'TP VINCL',
                 (2003, 2010): 'TP VINCULO',
@@ -96,7 +101,7 @@ def get_columns_info_rais():
         },
         'deslig_motivo': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'CAUSA DESLI',
                 (2011, 2018): 'Motivo Desligamento'
@@ -126,7 +131,7 @@ def get_columns_info_rais():
         },
         'salario_tipo': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'TIPO SAL',
                 (2011, 2018): 'Tipo Salário'
@@ -161,7 +166,7 @@ def get_columns_info_rais():
         },
         'sexo_r': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2004): 'SEXO',
                 (2005, 2010): 'GENERO',
@@ -175,7 +180,7 @@ def get_columns_info_rais():
         },
         'pais_nacionalidade_r': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'NACIONALIDAD',
                 (2011, 2018): 'Nacionalidade'
@@ -211,7 +216,7 @@ def get_columns_info_rais():
         },
         'estbl_tamanho': {
             'tipo': 'int64',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'TAMESTAB',
                 (2011, 2018): 'Tamanho Estabelecimento'
@@ -234,7 +239,7 @@ def get_columns_info_rais():
         },
         'ind_cei_vinc': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'IND CEI VINC',
                 (2011, 2018): 'Ind CEI Vinculado'
@@ -248,7 +253,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'TIPO ESTBL',
                 (2011, 2018): 'Tipo Estab'
@@ -264,7 +269,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'IND PAT',
                 (2011, 2018): 'Ind Estab Participa PAT'
@@ -274,7 +279,7 @@ def get_columns_info_rais():
         },
         'estbl_simples': {
             'tipo': 'object',
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'IND SIMPLES',
                 (2011, 2018): 'Ind Simples'
@@ -361,7 +366,7 @@ def get_columns_info_rais():
                 (2007, 2007): 'object',
                 (2008, 2018): 'int64'
             },
-            'tipo_limpo': 'int64',
+            'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'HORAS CONTR',
                 (2011, 2018): 'Qtd Hora Contr'
@@ -576,12 +581,12 @@ def get_columns_info_rais():
             'tipo': {
                 (2002, 2006): 'int64',
                 (2007, 2007): 'object',
-                (2008, 2018): 'int64'
+                (2008, 2018): 'Int64'
             },
             'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'MES FIM AF 1',
-                (2011, 2017): 'Mês Fim AF1'
+                (2011, 2018): 'Mês Fim AF1'
             },
             'clean_function': {
                 (2007, 2007): cleaning_functions.get_afast_mes_string,
