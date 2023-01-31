@@ -1,17 +1,17 @@
 from difflib import SequenceMatcher
 
-def get_upper(name):
-    return name.upper()
 
 def get_first_name(name):
     names = name.split()
     return names[0]
 
+
 def get_reduced_cpf(cpf):
-    if cpf == '-':
-        return '-'
-    reduced_cpf = '***' + cpf[3:-2] + '**'
+    if cpf == "-":
+        return "-"
+    reduced_cpf = "***" + cpf[3:-2] + "**"
     return reduced_cpf
+
 
 def get_similarity(name_a, name_b):
     last_name_a = name_a.split()[1:]
