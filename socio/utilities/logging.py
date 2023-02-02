@@ -21,6 +21,12 @@ def log_extracting_ids():
     logging.info("Creating sample with individuals from dac and comvest\n")
 
 
+def log_concatenating_ids():
+    logging.info(
+        "Reading individual merge files and concatenating them to form the sample.\n"
+    )
+
+
 def log_verifying_database(database):
     logging.info(f"Verifying {database} Database\n")
 
