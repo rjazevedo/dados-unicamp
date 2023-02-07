@@ -30,7 +30,7 @@ from comvest.utilities.dtypes import (
     DTYPES_DADOS,
     DTYPES_PERFIL,
     DTYPES_MATRICULADOS,
-    DTYPES_NOTAS
+    DTYPES_NOTAS,
 )
 from comvest.assign_ids import comvest_ids
 import comvest.extract.__main__ as comvest_database
@@ -42,34 +42,41 @@ import rais.extract.__main__ as rais_database
 import socio.cleaning.__main__ as clear_socio
 import socio.extract.__main__ as extract_socio
 
+
 def exportar_comvest():
     comvest = read_output(
         "comvest_amostra.csv",
         dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
     )
 
-    comvest.to_csv('/home/processados/pedido_0/comvest_amostra.csv', index=False)
+    comvest.to_csv("/home/processados/pedido_0/comvest_amostra.csv", index=False)
+
 
 def exportar_dac():
     pass
 
+
 def exportar_rais():
     pass
+
 
 def exportar_socios():
     pass
 
+
 def exportar_pedido_0():
     exportar_comvest()
 
+
 def main():
-    #comvest_database.extract()
+    # comvest_database.extract()
 
     #''' Insert other database extractions here '''
 
-    #exportar_pedido_0()
+    # exportar_pedido_0()
     rodar_base_inteira()
-    
+
+
 def rodar_base_inteira():
     extrair_cidades.main()
     extrair_cursos.main()
@@ -80,7 +87,7 @@ def rodar_base_inteira():
     create_names_ids.main()
     limpeza_dados_dac.generate_clean_data()
     uf_codes.generate_uf_code()
-    cod_ibge.merge() 
+    cod_ibge.merge()
     escolas.main()
     school_codes.generate_school_codes()
     cod_inep.merge()
@@ -95,5 +102,5 @@ def rodar_base_inteira():
     uniao_dac_comvest.main()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
