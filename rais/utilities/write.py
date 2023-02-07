@@ -44,7 +44,7 @@ def write_dac_comvest_recovered(df):
 
 
 def write_dac_comvest_ids(df):
-    file_out = config["path_output_data"] + "dac_comvest_ids.csv"
+    file_out = config["path_intermediario"] + "dac_comvest_ids.csv"
     df.to_csv(file_out, sep=",", index=False)
 
 

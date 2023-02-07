@@ -82,17 +82,9 @@ def read_dac_comvest_recovered():
 
 
 def read_ids():
-    file = config["path_output_data"] + "dac_comvest_ids.csv"
+    file = config["path_intermediario"] + "dac_comvest_ids.csv"
     dtype = get_dtype_dac_comvest()
     df = pd.read_csv(file, sep=",", dtype=dtype)
-    return df
-
-
-def read_ids_not_latin():
-    file = config["path_output_data"] + "dac_comvest_ids.csv"
-    dtype = get_dtype_dac_comvest()
-    df = read_database(file, dtype)
-    df = pd.read_csv(file, sep=";", dtype=dtype)
     return df
 
 
