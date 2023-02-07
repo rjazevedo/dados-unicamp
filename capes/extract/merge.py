@@ -11,13 +11,11 @@ from capes.utilities.io import (
 from capes.utilities.io import get_all_files
 from capes.cleaning.clean import clean_columns
 
-from capes.utilities.logging import log_cleaning_database
-from capes.utilities.logging import log_cleaning_column
-from capes.utilities.logging import log_cleaning_file
+from capes.utilities.logging import log_extracting_ids, log_reading_file_extraction
 
 
 def extract_ids():
-    log_cleaning_database("Capes")
+    log_extracting_ids()
     capes_folders = sorted(list_dirs_capes_tmp())
 
     dac_comvest_ids = read_ids()
@@ -72,6 +70,7 @@ def extract_ids():
 def extract_date_capes(path_folder, dac_comvest_ids, merge_year_list):
     date = path_folder.split("/")[-1]
     print(f"Extraindo ano {date}")
+    log_reading_file_extraction()
     if int(date) <= 2012:
         result = extract_date_capes_pre2013(path_folder, dac_comvest_ids)
     else:
