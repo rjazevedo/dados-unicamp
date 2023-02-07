@@ -1,4 +1,5 @@
 # Put the path to directory with input data, the path to directory where the clean files will be created and the path to uniao_dac_comvest database
-path_input_data:   # /PATH_TO_REPOSITORY/input/rais/'
-path_output_data:  # /PATH_TO_REPOSITORY/output/rais/'
-uniao_dac_comvest: # /PATH_TO_REPOSITORY/input/rais/uniao_dac_comvest.csv'
+path_input_data:    /home/input/rais/
+path_output_data:   /home/output/rais/
+path_intermediario: /home/output/intermediario/
+uniao_dac_comvest:  /home/input/uniao_dac_comvest.csv
