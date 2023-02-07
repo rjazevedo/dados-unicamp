@@ -5,7 +5,6 @@ import dac.clr_resumo_por_periodo.__main__ as clr_resumo_por_periodo
 import dac.clr_vida_academica.__main__ as clr_vida_academica
 import dac.clr_vida_academica_habilitacao.__main__ as clr_vida_academica_habilitacao
 import dac.uniao_dac_comvest.__main__ as uniao_dac_comvest
-import dac.create_ids.__main__ as create_ids
 
 from dac.clr_dados_cadastrais import school_codes
 from dac.clr_dados_cadastrais import uf_codes
@@ -13,7 +12,6 @@ import dac.clr_dados_cadastrais.limpeza_dados as limpeza_dados_dac
 import dac.clr_dados_cadastrais.setup_dados as setup_dados
 import dac.create_ufs_codes.__main__ as create_ufs_codes
 import dac.create_names_ids.__main__ as create_names_ids
-from dac.create_ids import identificadores
 
 import comvest.clear_dados.limpeza_dados as limpeza_dados_comvest
 from comvest.clear_dados import cod_ibge, cod_inep, ids_nomes
@@ -24,16 +22,6 @@ from comvest.clear_notas import limpeza_notas, presenca
 import comvest.extract_cities.__main__ as extrair_cidades
 import comvest.extract_courses.__main__ as extrair_cursos
 import comvest.extract_enrolled.__main__ as extrair_enrolled
-
-from comvest.utilities.io import read_output
-from comvest.utilities.dtypes import (
-    DTYPES_DADOS,
-    DTYPES_PERFIL,
-    DTYPES_MATRICULADOS,
-    DTYPES_NOTAS,
-)
-from comvest.assign_ids import comvest_ids
-import comvest.extract.__main__ as comvest_database
 
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
