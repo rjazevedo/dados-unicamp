@@ -54,37 +54,7 @@ from unesp.extract.extract import extract_unesp
 from fuvest.extract.extract import extract_fuvest
 
 
-def exportar_comvest():
-    comvest = read_output(
-        "comvest_amostra.csv",
-        dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
-    )
-
-    comvest.to_csv("/home/processados/pedido_0/comvest_amostra.csv", index=False)
-
-
-def exportar_dac():
-    pass
-
-
-def exportar_rais():
-    pass
-
-
-def exportar_socios():
-    pass
-
-
-def exportar_pedido_0():
-    exportar_comvest()
-
-
 def main():
-    # comvest_database.extract()
-
-    #''' Insert other database extractions here '''
-
-    # exportar_pedido_0()
 
     rodar_base_inteira()
 
