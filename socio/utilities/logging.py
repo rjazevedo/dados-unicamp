@@ -27,6 +27,10 @@ def log_concatenating_ids():
     )
 
 
+def log_reading_file(file):
+    logging.info(f"Reading file:  {file}")
+
+
 def log_verifying_database(database):
     logging.info(f"Verifying {database} Database\n")
 

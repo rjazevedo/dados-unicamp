@@ -23,8 +23,9 @@ def read_ids():
 
 
 # ------------------------------------------------------------------------------------------------
-def read_socio_original(path, date=None):
+def read_socio_original(path, date):
     columns_info = get_columns_info_socio()
+
     if int(date[0:4]) >= 2022:
         columns = [
             "cnpj",
@@ -42,8 +43,9 @@ def read_socio_original(path, date=None):
         return read_database(
             path, columns_info, cols=columns, sep=";", encoding="latin"
         )
+
     else:
-        return read_database(path, columns_info, date)
+        return read_database(path, columns_info)
 
 
 def read_estabelecimento_original_novolayout(file):
@@ -133,6 +135,12 @@ def write_socio_tmp(df, filename, date):
     df.to_parquet(file, compression="brotli")
 
 
+def write_socio_merges(df, filename, date):
+    file = Path(config["path_output"] + "merges/" + date + "/" + filename)
+    file = file.with_suffix(".parquet")
+    df.to_parquet(file, compression="brotli")
+
+
 def write_estabelecimento_tmp(df, filename, date):
     file = config["database_output"] + "tmp/" + date + "/" + filename
     write_database(df, file)
@@ -159,8 +167,7 @@ def read_database(
         low_memory=low_memory,
         sep=sep,
         encoding=encoding,
-        warn_bad_lines=True,
-        error_bad_lines=False,
+        on_bad_lines='warn',
         names=cols,
     )
     return df
@@ -203,9 +210,9 @@ def create_folder_merges():
     create_folder(path, "merges")
 
 
-def create_folder_merges_date(year):
+def create_folder_merges_date(date):
     path = config["path_output"] + "merges/"
-    create_folder(path, str(year))
+    create_folder(path, str(date))
 
 
 def create_folder(path, folder_name):
@@ -225,5 +232,9 @@ def list_dirs_empresa_input():
     return [f.path for f in os.scandir(config["path_socio"]) if f.is_dir()]
 
 
-def list_dirs_socio_output():
+def list_dirs_socio_output_tmp():
     return [f.path for f in os.scandir(config["path_output"] + "tmp/") if f.is_dir()]
+
+
+def list_dirs_socio_output_merges():
+    return [f.path for f in os.scandir(config["path_output"] + "merges/") if f.is_dir()]
