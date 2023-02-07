@@ -1,4 +1,4 @@
-import pandas as pd
+import logging
 
 import dac.clr_historico_escolar.__main__ as clr_historico_escolar
 import dac.clr_resumo_por_periodo.__main__ as clr_resumo_por_periodo
@@ -35,12 +35,23 @@ from comvest.utilities.dtypes import (
 from comvest.assign_ids import comvest_ids
 import comvest.extract.__main__ as comvest_database
 
-import rais.pre_processing.__main__ as pre_process_rais
-import rais.id_generation.__main__ as id_generation
-import rais.extract.__main__ as rais_database
+from rais.id_generation import cpf_verification
+from rais.id_generation import recover_cpf_dac_comvest
+from rais.id_generation import random_index
+from rais.pre_processing import identification
+from rais.extract import merge
+from rais.extract import recover_cpf_rais
+from rais.extract import clear
 
-import socio.cleaning.__main__ as clear_socio
-import socio.extract.__main__ as extract_socio
+from socio.cleaning import clear as clear_socio
+from socio.extract import merge as merge_socio
+
+from capes.cleaning import clean as clean_capes
+from capes.extract import merge as merge_capes
+
+from unesp.extract.extract import extract_unesp
+
+from fuvest.extract.extract import extract_fuvest
 
 
 def exportar_comvest():
@@ -74,6 +85,7 @@ def main():
     #''' Insert other database extractions here '''
 
     # exportar_pedido_0()
+
     rodar_base_inteira()
 
 
@@ -101,6 +113,28 @@ def rodar_base_inteira():
     clr_vida_academica_habilitacao.main()
     uniao_dac_comvest.main()
 
+    # Pre processamento rais
+    identification.get_identification_from_all_years()
+    # Geracao ids
+    cpf_verification.remove_invalid_cpf()
+    recover_cpf_dac_comvest.recover_cpf_dac_comvest()
+    random_index.generate_index()
+
+    # Merge rais com ids
+    merge.merge_all_years()
+    recover_cpf_rais.recover_cpf_all_years()
+    clear.clear_all_years()
+
+    clear_socio.clear_socio()
+    merge_socio.merge_socio_dac_comvest()
+
+    clean_capes.clean_capes()
+    merge_capes.extract_ids()
+
+    extract_unesp()
+    extract_fuvest()
+
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     main()
