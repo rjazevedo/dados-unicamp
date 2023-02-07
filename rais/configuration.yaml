@@ -2,4 +2,4 @@
 path_input_data:    /home/input/rais/
 path_output_data:   /home/output/rais/
 path_intermediario: /home/output/intermediario/
-uniao_dac_comvest:  /home/input/uniao_dac_comvest.csv
+uniao_dac_comvest:  /home/output/intermediario/uniao_dac_comvest.csv
