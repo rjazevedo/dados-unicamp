@@ -1,6 +1,6 @@
 import pandas as pd
 import difflib as dff
-from comvest.utilities.io import read_auxiliary, write_auxiliary
+from comvest.utilities.io import read_auxiliary
 from comvest.escolas.utility import merge_inep_ibge
 from comvest.escolas.utility import concat_and_drop_duplicates
 from comvest.escolas.utility import standardize_str

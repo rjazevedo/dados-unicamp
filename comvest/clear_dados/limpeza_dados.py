@@ -5,6 +5,7 @@ from unidecode import unidecode
 from comvest.utilities.io import files, read_from_db, write_result, read_result
 from comvest.utilities.logging import progresslog, resultlog
 import comvest.extract_courses.__main__ as extrair_cursos
+from dac.utilities.io import check_if_need_result_file
 CURSOS = "cursos.csv"
 
 pd.options.mode.chained_assignment = None  # default='warn'

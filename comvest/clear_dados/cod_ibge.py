@@ -5,7 +5,7 @@ from comvest.utilities.dtypes import DTYPES_DADOS
 
 def merge():
     dados = read_result("dados_comvest.csv", DTYPES_DADOS)
-    tabela_mun = read_result("final_counties.csv", database="dac")
+    tabela_mun = read_result("final_counties.csv")
 
     tabela_mun = tabela_mun[["municipio", "uf", "codigo_municipio", "municipio_ibge"]]
     tabela_mun = tabela_mun.drop_duplicates(["municipio", "uf"])
@@ -49,4 +49,4 @@ def merge():
         dados["cod_mun_esc_em_c"], errors="coerce", downcast="integer"
     ).astype("Int64")
 
-    write_result(dados, "dados_comvest.csv")
+    write_result(dados, "dados_comvest_com_uf.csv")

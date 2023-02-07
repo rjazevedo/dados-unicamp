@@ -5,7 +5,7 @@ import difflib
 import textdistance
 import re
 from unidecode import unidecode
-from comvest.utilities.io import read_auxiliary, write_auxiliary
+from comvest.utilities.io import read_auxiliary
 from comvest.utilities.io import read_result, read_output, write_result
 from comvest.escolas.inep_base import load_inep_base
 from comvest.escolas.escolas_base import load_esc_bases
@@ -26,7 +26,7 @@ def validation():
     #result = result.sort_values(by=['codigo_municipio'], ascending=True)
 
     result = result.drop_duplicates(subset=["escola_base", "codigo_municipio"])
-    write_auxiliary(result, "escola_codigo_inep.csv")
+    write_result(result, "escola_codigo_inep.csv")
 
 
 def get_closest_schools(esc_dict, inep):
@@ -65,27 +65,3 @@ def create_escs_dict(esc, inep):
         dict[code] = escolas[filt]
 
     return dict
-
-
-def extracao_fernanda():
-    a = read_auxiliary('escs_tudo_junto.csv')
-    b = read_auxiliary('escolas_sem_match.csv')
-
-    print(a.columns)
-    print(b.columns)
-
-    a['escola_inep'] = a['escola_inep'].astype(str)
-    b['escola_inep'] = b['escola_inep'].astype(str)
-
-    a['escola_base'] = a['escola_base'].map(lambda x: re.sub(r'[^\w\s]', '', x))
-    a['escola_inep'] = a['escola_inep'].map(lambda x: re.sub(r'[^\w\s]', '', x))
-    b['escola_base'] = b['escola_base'].map(lambda x: re.sub(r'[^\w\s]', '', x))
-    b['escola_inep'] = b['escola_inep'].map(lambda x: re.sub(r'[^\w\s]', '', x))
-
-    #a = a.drop_duplicates(subset=['escola_base'])
-    #b = b.drop_duplicates(subset=['escola_base'])
-
-    print(a.shape)
-    print(b.shape)
-    write_auxiliary(a, 'vjunto.csv')
-    write_auxiliary(b, 'vsem.csv')

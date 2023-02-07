@@ -1,7 +1,7 @@
 from dac.create_names_ids import create_ids
 from dac.create_names_ids.create_ids import DADOS_DAC
 from dac.create_names_ids.create_ids import DADOS_COMVEST
-from dac.clr_dados_cadastrais import dados_pre_and_pos
+from dac.clr_dados_cadastrais import setup_dados
 from dac.utilities.io import check_if_need_result_file
 from comvest.clear_dados import limpeza_dados
 
@@ -11,7 +11,7 @@ def main():
 
 def pre_processing():
     if check_if_need_result_file(DADOS_DAC):
-        dados_pre_and_pos.load_dados_cadastais()
+        setup_dados.load_dados_cadastais()
     
     if check_if_need_result_file(DADOS_COMVEST):
         limpeza_dados.extraction()

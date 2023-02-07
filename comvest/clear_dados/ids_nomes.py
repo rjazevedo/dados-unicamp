@@ -5,7 +5,7 @@ from comvest.utilities.dtypes import DTYPES_DADOS
 
 def merge():
     dados = read_result("dados_comvest.csv", DTYPES_DADOS)
-    tabela_nomes = read_result("ids_of_names.csv", database='dac')
+    tabela_nomes = read_result("ids_of_names.csv")
 
     tabela_nomes.columns = [
         'nome_c',

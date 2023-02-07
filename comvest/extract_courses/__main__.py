@@ -1,6 +1,7 @@
 from comvest.extract_courses import extrair_cursos
 from comvest.extract_courses import dict_cursos
 
+# No preprocessing needed
 def main():
     extrair_cursos.extraction()
     dict_cursos.get()

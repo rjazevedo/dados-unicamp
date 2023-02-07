@@ -6,10 +6,8 @@ class Bases(Enum):
     DAC = "/home/input/DAC/"
     MUNICIPIOS = "/home/input/municipios/"
     COMVEST = "/home/input/COMVEST/"
-
-    RESULT = "/home/output/tmp/"
+    RESULT = "/home/output/intermediario/"
     OUTPUT = "/home/output/dac/"
-
     TESTE = "/home/fernando/dados-unicamp/output/"
 
 class DfType(Enum):

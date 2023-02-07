@@ -4,7 +4,7 @@ from comvest.utilities.dtypes import DTYPES_DADOS
 
 
 def merge():
-    df_comvest = read_result("dados_comvest.csv", dtype=DTYPES_DADOS)
+    df_comvest = read_result("dados_comvest_com_uf.csv", dtype=DTYPES_DADOS)
     res = read_result("escola_codigo_inep.csv", dtype={"Código INEP": "Int64"})
 
     merged_dados = df_comvest.merge(

@@ -9,6 +9,7 @@ from comvest.clear_perfil import limpeza_questoes
 
 
 def validacao_cidade(df, date):
+    df_cidades = read_result("cidades_comvest.csv")
     cidades_ano = df_cidades[df_cidades["ano_vest"] == date]
 
     cidades = cidades_ano["cidades_vest"].tolist()
@@ -85,18 +86,6 @@ def cleandata(df, questoes, date):
     df = validacao_cidade(df, date)
 
     return df
-
-
-# Leitura das cidades e cursos p posterior validação
-try:
-    df_cidades = read_result("cidades_comvest.csv")
-except:
-    logging.warning('Couldn\'t find "cidades_comvest.csv"')
-
-try:
-    df_cursos = read_result("cursos.csv")
-except:
-    logging.warning('Couldn\'t find "cursos.csv"')
 
 
 def extraction():

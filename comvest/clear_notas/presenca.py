@@ -2,15 +2,12 @@ import pandas as pd
 import glob
 import yaml
 from comvest.utilities.io import read_auxiliary, read_result, write_result
+from comvest.utilities.io import Bases
 from comvest.utilities.dtypes import DTYPES_NOTAS
 
 
 def get():
-    stream = open("comvest/configuration.yaml")
-    config = yaml.safe_load(stream)
-    AUXILIARY_PATH = config["auxiliary"]
-
-    files_path = glob.glob(AUXILIARY_PATH + r"*sitF*")
+    files_path = glob.glob(Bases.AUXILIARY.value+ r"*sitF*")
     files = [file.split("/")[-1] for file in files_path]
 
     f1 = []
