@@ -3,6 +3,7 @@ import re
 import logging
 
 from rais.utilities.read import read_dac_comvest_recovered
+from rais.utilities.write import write_dac_comvest_ids
 from rais.utilities.logging import log_create_index
 
 
@@ -57,7 +58,6 @@ def generate_index():
         "doc_y",
     ]
 
-    print("Begin problem matches")
     problem_matches = (
         aux2[
             (aux2.origem_cpf_x != aux2.origem_cpf_y)
@@ -73,7 +73,6 @@ def generate_index():
 
     problem_matches.columns = problem_matches.columns.str.rstrip("_x")
 
-    print("Begin wrong matches")
     filter = ~problem_matches.duplicated(subset=["id"], keep="first")
     wrong_matches = problem_matches[~filter].copy()
     del wrong_matches["id"]
@@ -90,7 +89,6 @@ def generate_index():
     wrong_matches["wrong"] = True
     wrong_matches = wrong_matches.loc[:, ["id", "merge_id", "origem_cpf", "wrong"]]
 
-    print("Merge wrong matches")
     result = result.merge(
         wrong_matches, on=["merge_id"], how="left", suffixes=[None, "_y"]
     )
@@ -106,7 +104,7 @@ def generate_index():
     del result["id_y"]
     del result["origem_cpf_y"]
 
-    result.loc[
+    result = result.loc[
         :,
         [
             "id",
@@ -120,7 +118,8 @@ def generate_index():
             "identif",
             "origem_cpf",
         ],
-    ].to_csv("/home/output/rais/dac_comvest_ids.csv", index=False)
+    ]
+    write_dac_comvest_ids(result)
 
 
 # Gera id para linhas que não possuem CPF
