@@ -23,6 +23,7 @@ from socio.utilities.logging import (
     log_concatenating_ids,
     log_extracting_ids,
     log_reading_file_extraction,
+    log_reading_file,
 )
 
 
@@ -41,17 +42,48 @@ def merge_socio_dac_comvest():
     for folder in socio_folders:
         files = get_all_files(folder)
         for file in files:
+            log_reading_file(file)
             df = read_socio_clean(file)
             merged_files.append(df)
 
     sample = pd.concat(merged_files)
-    sample = sample.sort_values(by="data_coleta", ascending=False)
-    print(sample.shape)
-    cols = sample.columns.to_list()
-    cols.remove("data_coleta")
-    sample = sample.drop_duplicates(subset=cols, keep="first")
-    print(sample.shape)
-
+    sample = sample.drop(
+        columns=[
+            "codigo_tipo_socio",
+            "tipo_socio",
+            "identificador_de_socio",
+        ]
+    )
+    sample = (
+        sample.sort_values(by=["data_coleta"], ascending=False)
+        # Mantém apenas a linha com a coleta mais recente
+        .drop_duplicates(subset=[x for x in list(sample.columns) if x != "data_coleta"])
+        # Coloca linhas com mesmo id em ordem para facilitar analise visual
+        .sort_values(
+            by=[
+                "id",
+                "data_coleta",
+                "cnpj",
+            ],
+            ascending=False,
+        ).drop(columns="origem_socios")
+        # Muda a ordem das colunas para facilitar analise visual
+        .loc[
+            :,
+            [
+                "id",
+                "origem_cpf",
+                "cnpj",
+                "data_coleta",
+                "data_entrada_sociedade",
+                "razao_social",
+                "qualificacao_socio",
+                "codigo_qualificacao_socio",
+                "faixa_etaria",
+                "pais",
+            ],
+        ]
+    )
     write_socio_sample(sample)
 
 
@@ -96,12 +128,12 @@ def prepare_dac_comvest(df):
 
 
 def merge(df, df_dac_comvest):
+    # Vai ser utilizado para identificar qual o método usado no merge
+    df["origem_socios"] = 0
+
     merges = []
     socios_cols = list(df.columns)
     merge_cols = list(df.columns) + ["id", "origem_cpf"]
-
-    # Vai ser utilizado para identificar qual o método usado no merge
-    df["origem_socios"] = 0
 
     merged = df.merge(
         df_dac_comvest,
@@ -141,7 +173,7 @@ def merge(df, df_dac_comvest):
     merged_approx["passou"] = False
 
     if merged_approx.empty:
-        return pd.concat(merges)
+        return concat_merges(merges)
 
     merged_approx["similaridade"] = merged_approx.apply(
         lambda x: get_similarity(x["nome_socio"], x["nome"]), axis=1
@@ -174,6 +206,10 @@ def merge(df, df_dac_comvest):
         ].copy()
     )
 
+    return concat_merges(merges)
+
+
+def concat_merges(merges):
     final_merge = pd.concat(merges)
     final_merge.origem_cpf = final_merge.origem_cpf.replace(11, 0)
     final_merge.origem_cpf = final_merge.origem_cpf.astype("int64")
