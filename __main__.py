@@ -53,6 +53,10 @@ from unesp.extract.extract import extract_unesp
 
 from fuvest.extract.extract import extract_fuvest
 
+from empresa.extract import extract_empresa_amostra
+
+from estabelecimento.extract import extract_estabelecimento_amostra
+
 
 def main():
 
@@ -103,6 +107,10 @@ def rodar_base_inteira():
 
     extract_unesp()
     extract_fuvest()
+
+    extract_empresa_amostra()
+
+    extract_estabelecimento_amostra()
 
 
 if __name__ == "__main__":
