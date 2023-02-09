@@ -12,6 +12,7 @@ import dac.clr_dados_cadastrais.limpeza_dados as limpeza_dados_dac
 import dac.clr_dados_cadastrais.setup_dados as setup_dados
 import dac.create_ufs_codes.__main__ as create_ufs_codes
 import dac.create_names_ids.__main__ as create_names_ids
+import dac.create_ids.identificadores as identificadores
 
 import comvest.clear_dados.limpeza_dados as limpeza_dados_comvest
 from comvest.clear_dados import cod_ibge, cod_inep, ids_nomes
@@ -19,6 +20,8 @@ from comvest.clear_perfil import limpeza_perfil
 import comvest.escolas.__main__ as escolas
 from comvest.clear_notas import limpeza_notas, presenca
 
+import comvest.extract.merge_sheets as merge_sheets
+import comvest.assign_ids.comvest_ids as comvest_ids
 import comvest.extract_cities.__main__ as extrair_cidades
 import comvest.extract_courses.__main__ as extrair_cursos
 import comvest.extract_enrolled.__main__ as extrair_enrolled
@@ -47,7 +50,6 @@ from estabelecimento.extract import extract_estabelecimento_amostra
 
 
 def main():
-
     rodar_base_inteira()
 
 
@@ -97,8 +99,11 @@ def rodar_base_inteira():
     extract_fuvest()
 
     extract_empresa_amostra()
-
     extract_estabelecimento_amostra()
+
+    merge_sheets.merge()
+    comvest_ids.assign_ids()
+    identificadores.create_ids()
 
 
 if __name__ == "__main__":
