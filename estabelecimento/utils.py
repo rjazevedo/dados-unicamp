@@ -2,7 +2,7 @@ import yaml
 import pandas as pd
 from pathlib import Path
 
-stream = open("empresa/configuration.yaml")
+stream = open("estabelecimento/configuration.yaml")
 config = yaml.safe_load(stream)
 
 
