@@ -70,7 +70,6 @@ def extract_ids():
 def extract_date_capes(path_folder, dac_comvest_ids, merge_year_list):
     date = path_folder.split("/")[-1]
     print(f"Extraindo ano {date}")
-    log_reading_file_extraction()
     if int(date) <= 2012:
         result = extract_date_capes_pre2013(path_folder, dac_comvest_ids)
     else:
@@ -84,6 +83,7 @@ def extract_date_capes_pre2013(path_folder, dac_comvest_ids):
     files = get_all_files(path_folder)
 
     for file in files:
+        log_reading_file_extraction(file)
         df_clean = read_capes_clean(file)
         df_clean["ano_nasc_a"] = df_clean.ano_nasc_a.astype(str)
         df_clean["primeiro_nome_capes"] = df_clean.nm_discente.apply(
