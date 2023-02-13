@@ -1,5 +1,5 @@
 import pandas as pd
-from comvest.utilities.io import read_output, write_output
+from comvest.utilities.io import read_output, write_output, read_result
 from comvest.utilities.dtypes import (
     DTYPES_DADOS,
     DTYPES_PERFIL,
@@ -15,7 +15,7 @@ def assign_ids():
     )
 
     # 5 registros com número de inscrição igual a 'n'
-    ids = read_output(
+    ids = read_result(
         "dac_comvest_ids.csv",
         dtype={
             "id": "Int64",
