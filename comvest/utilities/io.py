@@ -27,8 +27,8 @@ def read_auxiliary(FILE_NAME, dtype=None, sep=',', encoding=None):
     auxiliary = Bases.AUXILIARY.value
     return pd.read_excel(auxiliary + FILE_NAME, dtype=dtype) if '.xls' in FILE_NAME else pd.read_csv(auxiliary + FILE_NAME, dtype=dtype, sep=sep, encoding=encoding)
 
-def read_result(FILE_NAME, dtype=None):
-    return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype)
+def read_result(FILE_NAME, dtype=None, na_values=None):
+    return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype, na_values=na_values)
 
 def read_output(FILE_NAME, database='comvest', dtype=None, sep=',', na_values=None):
     if database == 'dac':

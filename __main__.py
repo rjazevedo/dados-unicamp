@@ -54,16 +54,6 @@ def main():
 
 
 def rodar_base_inteira():
-    print(1)
-    merge_sheets.merge()
-    print(2)
-    comvest_ids.assign_ids()
-    print(3)
-    identificadores.create_ids()
-    print(4)
-
-
-def dummy():
     extrair_cidades.main()
     extrair_cursos.main()
     extrair_enrolled.main()
@@ -111,6 +101,10 @@ def dummy():
     extract_empresa_amostra()
     extract_estabelecimento_amostra()
 
+    merge_sheets.merge()
+    comvest_ids.assign_ids()
+    identificadores.create_ids()
+    
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
