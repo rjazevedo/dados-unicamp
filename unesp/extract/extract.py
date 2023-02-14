@@ -24,7 +24,7 @@ def extract_unesp():
         extract_unesp_year(dir, ids, merged_list)
 
     amostra = pd.concat(merged_list)
-    amostra = amostra.drop(columns=["nome", "_merge", "ano_ingresso_curso"])
+    amostra = amostra.drop(columns=["nome", "_merge", "ano_ingresso_curso", "nome_unesp"])
     amostra = amostra.drop_duplicates()
     amostra.id = amostra.id.astype("int64")
     amostra.origem_cpf = amostra.origem_cpf.astype("int64")
