@@ -24,7 +24,9 @@ def extract_fuvest():
         extract_fuvest_year(dir, ids, merged_list)
 
     amostra = pd.concat(merged_list)
-    amostra = amostra.drop(columns=["nome", "_merge", "ano_ingresso_curso"])
+    amostra = amostra.drop(
+        columns=["nome", "_merge", "ano_ingresso_curso", "nome_fuv", "numero_fuv"]
+    )
     amostra = amostra.drop_duplicates()
     amostra.id = amostra.id.astype("int64")
     amostra.origem_cpf = amostra.origem_cpf.astype("int64")
