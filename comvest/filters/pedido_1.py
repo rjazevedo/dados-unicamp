@@ -15,13 +15,19 @@ def extract():
         "comvest_amostra.csv",
         dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
     )
-    DAC_VA_SAMPLE = read_output("vida_academica.csv")
-    DAC_DC_SAMPLE = read_output("dados_cadastrais.csv")
-    DAC_HE_SAMPLE = read_output("historico_escolar.csv")
-    DAC_RPP_SAMPLE = read_output("resumo_por_periodo.csv")
-    SOCIO_SAMPLE = read_output("socio_amostra.csv", sep=";")
-    RAIS_SAMPLE = read_output("rais_amostra.csv", sep=";")
-    CAPES_SAMPLE = read_output("capes_amostra.csv")
+    DAC_VA_SAMPLE = read_output("vida_academica.csv", "dac")
+    DAC_DC_SAMPLE = read_output("dados_cadastrais.csv", "dac")
+    DAC_HE_SAMPLE = read_output("historico_escolar_aluno.csv", "dac")
+    DAC_RPP_SAMPLE = read_output("resumo_periodo_cr.csv", "dac")
+    SOCIO_SAMPLE = pd.read_csv(
+        "/home/output/socios/socio_amostra.csv", sep=";", low_memory=False
+    )
+    RAIS_SAMPLE = pd.read_csv(
+        "/home/output/rais/rais_amostra.csv", sep=";", low_memory=False
+    )
+    CAPES_SAMPLE = pd.read_csv(
+        "/home/output/capes/capes_amostra.csv", sep=";", low_memory=False
+    )
 
     # Filtragem de cursos na Comvest
     filteredIDs_comvest = set(

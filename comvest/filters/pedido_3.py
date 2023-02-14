@@ -16,16 +16,25 @@ def extract():
         "comvest_amostra.csv",
         dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
     )
-    DAC_VACH_SAMPLE = read_output("vida_academica_habilitacao.csv")
-    SOCIO_SAMPLE = read_output("socio_amostra.csv", sep=";")
-    RAIS_SAMPLE = read_output(
-        "rais_amostra.csv", dtype={"dta_admissao": object}, sep=";"
+    DAC_VACH_SAMPLE = read_output("vida_academica_habilitacao.csv", "dac")
+    SOCIO_SAMPLE = pd.read_csv(
+        "/home/output/socios/socio_amostra.csv", sep=";", low_memory=False
     )
-    CAPES_SAMPLE = read_output("capes_amostra.csv")
+    RAIS_SAMPLE = pd.read_csv(
+        "/home/output/rais/rais_amostra.csv", sep=";", low_memory=False
+    )
+    CAPES_SAMPLE = pd.read_csv(
+        "/home/output/capes/capes_amostra.csv", sep=";", low_memory=False
+    )
 
     courses = [12, 34, 10, 11, 41, 9, 39]
     years = [2003, 2004]
-    filtered_ids = set(DAC_VACH_SAMPLE[(DAC_VACH_SAMPLE["curso"].isin(courses)) & (DAC_VACH_SAMPLE["ano_ingresso"].isin(years))]["id"])
+    filtered_ids = set(
+        DAC_VACH_SAMPLE[
+            (DAC_VACH_SAMPLE["curso"].isin(courses))
+            & (DAC_VACH_SAMPLE["ano_ingresso"].isin(years))
+        ]["id"]
+    )
 
     comvest_cols = [
         "id",
@@ -98,9 +107,11 @@ def extract():
         "maq_louca",
     ]
 
-    COMVEST_FILTERED = COMVEST_SAMPLE[(COMVEST_SAMPLE["id"].isin(filtered_ids)) & (COMVEST_SAMPLE['ano_vest'].isin(years)) & (~COMVEST_SAMPLE['curso_matric'].isna())][
-        comvest_cols
-    ]
+    COMVEST_FILTERED = COMVEST_SAMPLE[
+        (COMVEST_SAMPLE["id"].isin(filtered_ids))
+        & (COMVEST_SAMPLE["ano_vest"].isin(years))
+        & (~COMVEST_SAMPLE["curso_matric"].isna())
+    ][comvest_cols]
 
     dac_cols = [
         "id",
@@ -110,9 +121,10 @@ def extract():
         "motivo_saida",
     ]
 
-    DAC_VACH_FILTERED = DAC_VACH_SAMPLE[(DAC_VACH_SAMPLE["id"].isin(filtered_ids)) & (DAC_VACH_SAMPLE['ano_ingresso'].isin(years))][
-        dac_cols
-    ]
+    DAC_VACH_FILTERED = DAC_VACH_SAMPLE[
+        (DAC_VACH_SAMPLE["id"].isin(filtered_ids))
+        & (DAC_VACH_SAMPLE["ano_ingresso"].isin(years))
+    ][dac_cols]
 
     rais_cols = [
         "id",

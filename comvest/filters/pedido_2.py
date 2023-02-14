@@ -15,10 +15,10 @@ def extract():
         "comvest_amostra.csv",
         dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
     )
-    DAC_VACH_SAMPLE = read_output("vida_academica_habilitacao.csv")
-    SOCIO_SAMPLE = read_output("socio_amostra.csv", sep=";")
-    RAIS_SAMPLE = read_output("rais_amostra.csv", sep=";")
-    CAPES_SAMPLE = read_output("capes_amostra.csv")
+    DAC_VACH_SAMPLE = read_output("vida_academica_habilitacao.csv", 'dac')
+    SOCIO_SAMPLE = pd.read_csv("/home/output/socios/socio_amostra.csv", sep=";", low_memory=False)
+    RAIS_SAMPLE = pd.read_csv("/home/output/rais/rais_amostra.csv", sep=";", low_memory=False)
+    CAPES_SAMPLE = pd.read_csv("/home/output/capes/capes_amostra.csv", sep=";", low_memory=False)
 
     x = set(filter_db.filterby_joindate(DAC_VACH_SAMPLE, year=2000, how="after"))
 
