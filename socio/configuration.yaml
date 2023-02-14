@@ -1,4 +1,4 @@
 # Put the path to each original file and the path to the directory where the clean files will be created
-path_socio:    /home/input/socios/
-database_ids:      /home/output/intermediario/dac_comvest_ids.csv
-path_output:       /home/output/socios/
+path_socio: /home/input/socios/
+database_ids: /home/output/intermediario/dac_comvest_ids.csv
+path_output: /home/output/socios/
