@@ -9,6 +9,7 @@ import pandas as pd
 
 def extract_empresa_amostra():
     empresa_folders = list_dirs_empresa_input()
+    # A extração é feita sempre com os dados mais recentes
     folder = sorted(empresa_folders)[-1]
 
     socio_amostra = read_socio_amostra()
