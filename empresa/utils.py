@@ -36,7 +36,7 @@ def read_empresa(path):
     cols = [
         "cnpj_basico",
         "razao_social",
-        "natureza_juridica",
+        "codigo_natureza_juridica",
         "qualificao_responsavel",
         "capital_social",
         "porte_empresa",
