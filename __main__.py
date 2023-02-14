@@ -104,7 +104,7 @@ def rodar_base_inteira():
     merge_sheets.merge()
     comvest_ids.assign_ids()
     identificadores.create_ids()
-    
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
