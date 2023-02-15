@@ -28,6 +28,7 @@ def extract_unesp():
     amostra = amostra.drop_duplicates()
     amostra.id = amostra.id.astype("int64")
     amostra.origem_cpf = amostra.origem_cpf.astype("int64")
+    amostra.aprovado_unesp = 1
     write_unesp_amostra(amostra)
 
 
