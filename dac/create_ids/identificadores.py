@@ -11,6 +11,13 @@ HISTORICO_ESCOLAR = 'historico_escolar_aluno.csv'
 RESUMO_POR_PERIODO = 'resumo_periodo_cr.csv'
 DAC_COMVEST_IDS = 'dac_comvest_ids.csv'
 
+DADOS_CADASTRAIS_AMOSTRA = 'dados_cadastrais_amostra.csv'
+VIDA_ACADEMICA_AMOSTRA = 'vida_academica_amostra.csv'
+VIDA_ACADEMICA_HABILITACAO_AMOSTRA = 'vida_academica_habilitacao_amostra.csv'
+HISTORICO_ESCOLAR_AMOSTRA = 'historico_escolar_aluno_amostra.csv'
+RESUMO_POR_PERIODO_AMOSTRA = 'resumo_periodo_cr_amostra.csv'
+DAC_COMVEST_IDS_AMOSTRA = 'dac_comvest_ids_amostra.csv'
+
 
 def create_ids():
     ids = read_result(DAC_COMVEST_IDS, dtype=str).loc[:, ["id", "identif"]]    
@@ -37,8 +44,8 @@ def create_ids():
     resumo_por_periodo["identif"] = resumo_por_periodo["identif"].astype(str)
     resumo_por_periodo = pd.merge(resumo_por_periodo, ids, on=["identif"], how="left").drop(['insc_vest','identif'], axis=1, errors='ignore')
 
-    write_output(dados_cadastrais, DADOS_CADASTRAIS)
-    write_output(vida_academica, VIDA_ACADEMICA)
-    write_output(vida_academica_habilitacao, VIDA_ACADEMICA_HABILITACAO)
-    write_output(historico_escolar, HISTORICO_ESCOLAR)
-    write_output(resumo_por_periodo, RESUMO_POR_PERIODO)
+    write_output(dados_cadastrais, DADOS_CADASTRAIS_AMOSTRA)
+    write_output(vida_academica, VIDA_ACADEMICA_AMOSTRA)
+    write_output(vida_academica_habilitacao, VIDA_ACADEMICA_HABILITACAO_AMOSTRA)
+    write_output(historico_escolar, HISTORICO_ESCOLAR_AMOSTRA)
+    write_output(resumo_por_periodo, RESUMO_POR_PERIODO_AMOSTRA)
