@@ -36,5 +36,22 @@ def merge(
     # Retira variáveis que não serão disponibilizadas na base final
     base_comvest.drop(columns=dropcolumns, errors="ignore", inplace=True)
 
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61079002),
+        "mun_esc_em_c",
+    ] = "UNAI-MG"
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61551889),
+        ["mun_nasc_c", "mun_resid_c"],
+    ] = "TABAPUA-SP"
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71108481),
+        ["mun_nasc_c", "mun_resid_c", "mun_esc_em_c"],
+    ] = "JACAREI-SP"
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71124054),
+        "esc_em_c",
+    ] = "MULTIRAO COTIA-SP"
+
     FILE_NAME = "comvest_amostra.csv"
     write_output(base_comvest, FILE_NAME)
