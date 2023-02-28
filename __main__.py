@@ -1,31 +1,31 @@
 import logging
 
-import dac.clr_historico_escolar.__main__ as clr_historico_escolar
-import dac.clr_resumo_por_periodo.__main__ as clr_resumo_por_periodo
-import dac.clr_vida_academica.__main__ as clr_vida_academica
-import dac.clr_vida_academica_habilitacao.__main__ as clr_vida_academica_habilitacao
-import dac.uniao_dac_comvest.__main__ as uniao_dac_comvest
-
-from dac.clr_dados_cadastrais import school_codes
-from dac.clr_dados_cadastrais import uf_codes
-import dac.clr_dados_cadastrais.limpeza_dados as limpeza_dados_dac
-import dac.clr_dados_cadastrais.setup_dados as setup_dados
-import dac.create_ufs_codes.__main__ as create_ufs_codes
-import dac.create_names_ids.__main__ as create_names_ids
-import dac.create_ids.identificadores as identificadores
-
+# COMVEST -=-=-=-=-=-=-=-=-=-=-=-
+from comvest.extract_cities import extrair_cidades
+from comvest.extract_courses import extrair_cursos, dict_cursos
+from comvest.extract_enrolled import extrair_matriculados, extrair_convocados
 import comvest.clear_dados.limpeza_dados as limpeza_dados_comvest
 from comvest.clear_dados import cod_ibge, cod_inep, ids_nomes
+from comvest.escolas import validacao_esc
 from comvest.clear_perfil import limpeza_perfil
-import comvest.escolas.__main__ as escolas
 from comvest.clear_notas import limpeza_notas, presenca
-
 import comvest.extract.merge_sheets as merge_sheets
 import comvest.assign_ids.comvest_ids as comvest_ids
-import comvest.extract_cities.__main__ as extrair_cidades
-import comvest.extract_courses.__main__ as extrair_cursos
-import comvest.extract_enrolled.__main__ as extrair_enrolled
 
+# DAC -=-=-=-=-=-=-=-=-=-=-=-=-=-
+import dac.clr_dados_cadastrais.setup_dados as setup_dados
+from dac.create_ufs_codes import ufs_codes
+from dac.create_names_ids import create_ids
+import dac.clr_dados_cadastrais.limpeza_dados as limpeza_dados_dac
+from dac.clr_dados_cadastrais import uf_codes, school_codes
+from dac.clr_historico_escolar import historico_escolar
+from dac.clr_resumo_por_periodo import resumo_por_periodo, resumo_periodo_cr
+from dac.clr_vida_academica import vida_academica, dados_ingressantes
+from dac.clr_vida_academica_habilitacao import habilitacao
+from dac.uniao_dac_comvest import uniao_dac_comvest
+import dac.create_ids.identificadores as identificadores
+
+# RAIS -=-=-=-=-=-=-=-=-=-=-=-=-=-
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
 from rais.id_generation import random_index
@@ -50,35 +50,44 @@ from estabelecimento.extract import extract_estabelecimento_amostra
 
 
 def main():
-    rodar_base_inteira()
-
-
-def rodar_base_inteira():
-    extrair_cidades.main()
-    extrair_cursos.main()
-    extrair_enrolled.main()
+    # Pre-processamento COMVEST
+    extrair_cidades.extraction()
+    extrair_cursos.extraction()
+    dict_cursos.get()
+    extrair_matriculados.extraction()
+    extrair_convocados.extraction()
     limpeza_dados_comvest.extraction()
+
+    # Pre-processamento DAC
     setup_dados.load_dados_cadastais()
-    create_ufs_codes.main()
-    create_names_ids.main()
+    ufs_codes.generate_clean_data()
+    create_ids.create_ids()
     limpeza_dados_dac.generate_clean_data()
     uf_codes.generate_uf_code()
+
+    # Base da COMVEST
     cod_ibge.merge()
-    escolas.main()
+    validacao_esc.validation()
+    # Gera códigos das escolas na DAC
     school_codes.generate_school_codes()
     cod_inep.merge()
     ids_nomes.merge()
     limpeza_perfil.extraction()
     limpeza_notas.extraction()
     presenca.get()
-    clr_historico_escolar.main()
-    clr_resumo_por_periodo.main()
-    clr_vida_academica.main()
-    clr_vida_academica_habilitacao.main()
-    uniao_dac_comvest.main()
+
+    # Base da DAC
+    historico_escolar.generate_clean_data()
+    resumo_por_periodo.generate_clean_data()
+    resumo_periodo_cr.generate_cr()   
+    vida_academica.generate_clean_data()
+    dados_ingressantes.generate()
+    habilitacao.generate()
+    uniao_dac_comvest.generate()
 
     # Pre processamento rais
     identification.get_identification_from_all_years()
+
     # Geracao ids
     cpf_verification.remove_invalid_cpf()
     recover_cpf_dac_comvest.recover_cpf_dac_comvest()
@@ -101,6 +110,7 @@ def rodar_base_inteira():
     extract_empresa_amostra()
     extract_estabelecimento_amostra()
 
+    # Atribuição de ids para DAC e COMVEST
     merge_sheets.merge()
     comvest_ids.assign_ids()
     identificadores.create_ids()

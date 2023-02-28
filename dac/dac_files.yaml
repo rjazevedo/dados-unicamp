@@ -1,0 +1,13 @@
+# Clr_dados_cadastrais
+ID_NAMES: "ids_of_names.csv"
+RESULT_NAME: 'dados_cadastrais.csv'
+DADOS_CADASTRAIS: "dados_cadastrais_intermediario.csv"
+
+# Clr_historico_escolar
+DATABASE_FILE = 'Rodolfo_Disciplina_Creditos.xlsx'
+RESULT_FILE = 'creditos.csv'
+HISTORICO_RESULT = 'historico_escolar_aluno.csv'
+CREDITOS_RESULT = 'creditos.csv'
+CLEAN_FILE = 'historico_creditos.csv'
+DATABASE_FILES = ['Rodolfo_HistoricoEscolar.xlsx', 'Rodolfo_HistoricoEscolar1.xlsx', 'Rodolfo_HistoricoEscolar2.xlsx', 'Rodolfo_HistoricoEscolar3.xlsx']
+CLEAN_FILE = 'historico_escolar_aluno.csv'
