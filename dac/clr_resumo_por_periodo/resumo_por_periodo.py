@@ -1,4 +1,3 @@
-#TODO: merge com vida academica leva em conta o ano de ingresso e identificação /s curso
 from dac.utilities.io import read_input
 from dac.utilities.io import write_result
 from dac.utilities.io import write_output
