@@ -107,6 +107,7 @@ def extraction():
 
     for path, date in files.items():
         df = read_from_db(path, sheet_name="perfil", dtype=object)
+        df.opcao1 = df.opcao1.astype(float).astype("Int32")
         progresslog("perfil", date)
 
         # Obtém dicionário com as perguntas do questionario devidamente renomeadas
