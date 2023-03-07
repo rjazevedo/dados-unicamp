@@ -48,6 +48,8 @@ from empresa.extract import extract_empresa_amostra
 
 from estabelecimento.extract import extract_estabelecimento_amostra
 
+from simples.extract import extract_simples_amostra
+
 
 def main():
     # Pre-processamento COMVEST
@@ -79,7 +81,7 @@ def main():
     # Base da DAC
     historico_escolar.generate_clean_data()
     resumo_por_periodo.generate_clean_data()
-    resumo_periodo_cr.generate_cr()   
+    resumo_periodo_cr.generate_cr()
     vida_academica.generate_clean_data()
     dados_ingressantes.generate()
     habilitacao.generate()
@@ -109,6 +111,7 @@ def main():
 
     extract_empresa_amostra()
     extract_estabelecimento_amostra()
+    extract_simples_amostra()
 
     # Atribuição de ids para DAC e COMVEST
     merge_sheets.merge()
