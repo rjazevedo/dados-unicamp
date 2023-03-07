@@ -36,22 +36,49 @@ def merge(
     # Retira variáveis que não serão disponibilizadas na base final
     base_comvest.drop(columns=dropcolumns, errors="ignore", inplace=True)
 
+    # Corrige manualmente casos com problemas nos dados originais.
     base_comvest.loc[
         (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61079002),
-        "mun_esc_em_c",
+        [
+            "mun_esc_em_c",
+            "mun_esc_corrigido",
+        ],
     ] = "UNAI-MG"
     base_comvest.loc[
+        (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61079002),
+        "cod_mun_esc_em_c",
+    ] = 3170404
+    base_comvest.loc[
         (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61551889),
-        ["mun_nasc_c", "mun_resid_c"],
+        ["mun_nasc_c", "mun_resid_c", "mun_nasc_corrigido", "mun_resid_corrigido"],
     ] = "TABAPUA-SP"
     base_comvest.loc[
+        (base_comvest.ano_vest == 2006) & (base_comvest.insc_vest == 61551889),
+        ["cod_mun_nasc_c", "cod_mun_resid_c"],
+    ] = 3552601
+    base_comvest.loc[
         (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71108481),
-        ["mun_nasc_c", "mun_resid_c", "mun_esc_em_c"],
+        [
+            "mun_nasc_c",
+            "mun_resid_c",
+            "mun_esc_em_c",
+            "mun_nasc_corrigido",
+            "mun_resid_corrigido",
+            "mun_esc_corrigido",
+        ],
     ] = "JACAREI-SP"
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71108481),
+        ["cod_mun_nasc_c", "cod_mun_resid_c", "cod_mun_esc_em_c"],
+    ] = 3524402
     base_comvest.loc[
         (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71124054),
         "esc_em_c",
     ] = "MULTIRAO COTIA-SP"
+    base_comvest.loc[
+        (base_comvest.ano_vest == 2007) & (base_comvest.insc_vest == 71124054),
+        "cod_mun_esc_em_c",
+    ] = 35109290
 
     FILE_NAME = "comvest_amostra.csv"
     write_output(base_comvest, FILE_NAME)
