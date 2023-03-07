@@ -70,11 +70,6 @@ def write_socio_merges(df, filename, date):
     df.to_parquet(file, compression="brotli")
 
 
-def write_estabelecimento_tmp(df, filename, date):
-    file = config["database_output"] + "tmp/" + date + "/" + filename
-    write_database(df, file)
-
-
 # ------------------------------------------------------------------------------------------------
 def read_database(
     file,

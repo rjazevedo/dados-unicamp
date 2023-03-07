@@ -2,6 +2,7 @@ import pandas as pd
 from enum import Enum
 import glob
 import re
+import os
 
 
 class Bases(Enum):
