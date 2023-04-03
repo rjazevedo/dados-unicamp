@@ -18,7 +18,7 @@ def log_reading_file_extraction(file):
 
 
 def log_extracting_ids():
-    logging.info("Creating sample with individuals from dac and comvest\n")
+    logging.info("Creating socios sample with individuals from dac and comvest\n")
 
 
 def log_concatenating_ids():

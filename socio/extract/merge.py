@@ -27,7 +27,7 @@ from socio.utilities.logging import (
 )
 
 
-def merge_socio_dac_comvest():
+def merge_socio_dac_comvest(tipo_extracao):
 
     log_extracting_ids()
     df_dac_comvest = read_ids()
@@ -74,6 +74,7 @@ def merge_socio_dac_comvest():
                 "id",
                 "origem_cpf",
                 "cnpj",
+                "cnpj_raiz",
                 "data_coleta",
                 "data_entrada_sociedade",
                 "razao_social",
@@ -84,6 +85,29 @@ def merge_socio_dac_comvest():
             ],
         ]
     )
+    sample["ano_entrada_sociedade"] = sample.data_entrada_sociedade.str[0:4].astype(
+        "Int16"
+    )
+    if tipo_extracao == "limitada":
+        sample.loc[:, ["id", "origem_cpf", "ano_entrada_sociedade", "data_coleta"]]
+    elif tipo_extracao == "completa":
+        sample.loc[
+            :,
+            [
+                "id",
+                "origem_cpf",
+                "cnpj",
+                "cnpj_raiz",
+                "data_coleta",
+                "data_entrada_sociedade",
+                "razao_social",
+                "qualificacao_socio",
+                "codigo_qualificacao_socio",
+                "faixa_etaria",
+                "pais",
+            ],
+        ]
+
     write_socio_sample(sample)
 
 
@@ -92,22 +116,26 @@ def merge_socio_individual_files(df_dac_comvest):
 
     for folder in socio_folders:
         date = folder.split("/")[-1]
+        year = int(date[0:4])
         create_folder_merges_date(date)
         files = get_all_files(folder)
         for file in files:
             filename = file.split("/")[-1]
             log_reading_file_extraction(file)
             df = read_socio_clean(file)
-            df = prepare_socio(df)
+            df = prepare_socio(df, year)
             df = merge(df, df_dac_comvest)
             write_socio_merges(df, filename, date)
 
 
-def prepare_socio(df):
+def prepare_socio(df, year):
     df = df.drop_duplicates()
     df["nome_socio"] = df["nome_socio"].replace("", np.nan)
     df = df.dropna(subset=["nome_socio"])
     df["primeiro_nome"] = df["nome_socio"].map(get_first_name)
+    if year > 2020:
+        df.cnpj = df.cnpj.str[0:8]
+        df = df.rename(columns={"cnpj": "cnpj_raiz"})
     return df
 
 

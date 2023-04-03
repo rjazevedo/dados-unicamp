@@ -24,11 +24,11 @@ from rais.utilities.logging import log_cleaning_year
 from rais.utilities.logging import log_cleaning_file
 
 
-def clear_all_years():
+def clear_all_years(tipo_extracao):
     for year in range(2002, 2019):
         log_cleaning_year(year)
         clear_year(year)
-    join_all_years()
+    join_all_years(tipo_extracao)
 
 
 def clear_year(year):
@@ -46,7 +46,7 @@ def clear_file(file, year):
     write_rais_clean(df_final, year, file)
 
 
-def join_all_years():
+def join_all_years(tipo_extracao):
     dfs = []
     for year in range(2002, 2019):
         files = get_all_tmp_files(year, "clean_data", "csv")
@@ -55,6 +55,12 @@ def join_all_years():
             dfs.append(df)
     result = pd.concat(dfs)
     anonymize_data(result)
+    if tipo_extracao == 'limitada':
+        del result['mun_etbl']
+        del result['cnae95']
+        del result['cnpj']
+        del result['mun_etbl']
+        del result['mun_etbl']
     write_rais_sample(result)
 
 

@@ -25,7 +25,9 @@ def clear_cnpj_cpf(value):
 def clean_cnpj(value):
     if pd.isnull(value):
         return ""
-    return value.ljust(14, "0")
+    else:
+        return value
+        # return value.ljust(14, "0")
 
 
 def clear_codigo_qualificacao(value):
@@ -65,6 +67,7 @@ def clear_cnae_fiscal(value):
     return value.zfill(7)
 
 
+# TODO Verificar se nao ta colocando None em todos os ceps
 def clear_cep(value):
     if value == "0":
         return ""
