@@ -55,12 +55,13 @@ def join_all_years(tipo_extracao):
             dfs.append(df)
     result = pd.concat(dfs)
     anonymize_data(result)
-    if tipo_extracao == 'limitada':
-        del result['mun_etbl']
-        del result['cnae95']
-        del result['cnpj']
-        del result['mun_etbl']
-        del result['mun_etbl']
+    if tipo_extracao == "limitada":
+        del result["mun_etbl"]
+        del result["cnae95"]
+        del result["cnpj"]
+        del result["mun_etbl"]
+        del result["mun_etbl"]
+    final_cleaning(result)
     write_rais_sample(result)
 
 
@@ -109,6 +110,31 @@ def rename_columns(df, year, new_columns_names):
 
 
 # ------------------------------------------------------------------------------------------------
+
+
+def final_cleaning(df):
+    df["ano_nasc_r"].replace(0, np.nan, inplace=True)
+    df["deslig_mes"].replace(-1, np.nan, inplace=True)
+    df["raca_r"].replace(0, np.nan, inplace=True)
+    df["afast1_causa"].replace(-1, np.nan, inplace=True)
+    df["afast1_inic_dia"].replace(-1, np.nan, inplace=True)
+    df["afast1_inic_mes"].replace(-1, np.nan, inplace=True)
+    df["afast1_fim_dia"].replace(-1, np.nan, inplace=True)
+    df["afast1_fim_mes"].replace(-1, np.nan, inplace=True)
+    df["afast2_causa"].replace(-1, np.nan, inplace=True)
+    df["afast2_inic_dia"].replace(-1, np.nan, inplace=True)
+    df["afast2_inic_mes"].replace(-1, np.nan, inplace=True)
+    df["afast2_fim_dia"].replace(-1, np.nan, inplace=True)
+    df["afast2_fim_mes"].replace(-1, np.nan, inplace=True)
+    df["afast3_causa"].replace(-1, np.nan, inplace=True)
+    df["afast3_inic_dia"].replace(-1, np.nan, inplace=True)
+    df["afast3_inic_mes"].replace(-1, np.nan, inplace=True)
+    df["afast3_fim_dia"].replace(-1, np.nan, inplace=True)
+    df["afast3_fim_mes"].replace(-1, np.nan, inplace=True)
+    df["afast_dias_total"].replace(-1, np.nan, inplace=True)
+    df["deslig_dia"].replace(-1, np.nan, inplace=True)
+
+
 def clean_columns(df, year):
     if df.empty:
         return df
