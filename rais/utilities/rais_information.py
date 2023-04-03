@@ -58,7 +58,7 @@ def get_columns_info_rais():
         },
         'mun_estbl': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2002, 2010): 'MUNICIPIO',
                 (2011, 2018): 'Município'
@@ -68,7 +68,7 @@ def get_columns_info_rais():
         },
         'cnae95': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2002, 2009): 'CLAS CNAE 95',
                 (2011, 2018): 'CNAE 95 Classe'
@@ -141,7 +141,7 @@ def get_columns_info_rais():
         },
         'cbo94': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2002, 2002): 'OCUPACAO',
                 (2003, 2009): 'OCUPACAO 94',
@@ -289,7 +289,7 @@ def get_columns_info_rais():
         },
         'dta_admissao': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2002, 2010): 'DT ADMISSAO',
                 (2011, 2018): 'Data Admissão Declarada'
@@ -446,7 +446,7 @@ def get_columns_info_rais():
         },
         'cei_vinc': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2002, 2010): 'CEI VINC',
                 (2011, 2018): 'CEI Vinculado'
@@ -484,7 +484,7 @@ def get_columns_info_rais():
         },
         'cbo02': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2003, 2010): 'OCUP 2002',
                 (2011, 2018): 'CBO Ocupação 2002'
@@ -497,7 +497,7 @@ def get_columns_info_rais():
         },
         'cnae_20_classe': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2006, 2009): 'CLAS CNAE 20',
                 (2011, 2018): 'CNAE 2.0 Classe'
@@ -509,7 +509,7 @@ def get_columns_info_rais():
         },
         'cnae_20_subclasse': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2006, 2010): 'SB CLAS 20',
                 (2011, 2018): 'CNAE 2.0 Subclasse'
@@ -796,7 +796,7 @@ def get_columns_info_rais():
         },
         'estbl_cep': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2015, 2018): 'CEP Estab'
             },
@@ -805,7 +805,7 @@ def get_columns_info_rais():
         },
         'mun_trab': {
             'tipo': 'object',
-            'tipo_limpo': str,
+            'tipo_limpo': "string",
             'campo': {
                 (2015, 2018): 'Mun Trab'
             },
