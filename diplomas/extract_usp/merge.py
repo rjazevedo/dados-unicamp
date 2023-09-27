@@ -1,7 +1,7 @@
 import pandas as pd
 
-
-FILE = 'usp-diplomados.csv'
+FILE_PATH = '/home/output/intermediario/'
+FILENAME = 'usp-diplomados.csv'
 
 tables = []
 
@@ -14,4 +14,4 @@ for i in range(1, 7):
 diplomados = pd.concat(tables)
 diplomados.drop_duplicates(inplace=True)
 
-diplomados.to_csv(FILE, index=False)
+diplomados.to_csv(FILENAME, index=False)
