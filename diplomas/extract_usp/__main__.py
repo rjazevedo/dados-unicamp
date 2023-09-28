@@ -5,7 +5,7 @@ from diplomas.utilities.io import usp_files
 
 def main():
     RESULT_FILES = []
-    OUTPUT_FILE = Bases.OUTPUT + "diplomas_usp.csv"
+    OUTPUT_FILE = Bases.OUTPUT.value + "diplomas_usp.csv"
 
     for i, f in enumerate(usp_files):
         SAVE_FILE = Bases.RESULT_USP + f"DIPLOMAs{i}" + ".csv"

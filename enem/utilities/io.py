@@ -6,7 +6,6 @@ import os
 
 
 class Bases(Enum):
-    IDS = ""
     RESULT = "/home/output/intermediario/"
     ENEM_COMVEST = "/home/output/intermediario/Enem_Comvest/"
 
