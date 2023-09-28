@@ -23,7 +23,8 @@ def retrieve_ids(comvest_ids_year, year):
 
     for i, ids in enumerate(comvest_enem_ids): ids.to_csv(RESULT_PATHS[i], index=False)
 
-def main():
+
+def retrieve():
     comvest_ids = pd.read_csv(COMVEST_IDS_PATH)
     comvest_ids = comvest_ids.loc[:, ['id', 'insc_vest_comvest', 'ano_ingresso_curso']]
 
@@ -32,7 +33,8 @@ def main():
         comvest_ids_year = comvest_ids[comvest_ids['ano_ingresso_curso'] == year]
         retrieve_ids(comvest_ids_year, year)
 
-
+def main():
+    retrieve()
 
 if __name__ == '__main__':
     main()

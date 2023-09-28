@@ -1,7 +1,7 @@
 import os 
 import pandas as pd
 import numpy as np
-from utilities.format import reading_parameters
+from enem.utilities.format import reading_parameters
 
 def retrieve_enem(YEAR, parameters):
     COMVEST_PATH_1 = f'/home/gsiqueira/dados-unicamp/output/ids_comvest_enem/insc{YEAR}_comv{YEAR + 1}_ids.csv'
@@ -62,10 +62,13 @@ def retrieve_enem(YEAR, parameters):
     print(f'Saving database into {OUTPUT_FILE}\n')
     enem_comvest.to_csv(OUTPUT_FILE, index=False)
 
-
-def main():
+def retrieve():
     for year in range(2020, 2021): 
         retrieve_enem(year, reading_parameters[year])
+    
+
+def main():
+    retrieve()
     
 if __name__ == '__main__':
     main()

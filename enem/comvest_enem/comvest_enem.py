@@ -1,6 +1,6 @@
 import pandas as pd
 from tqdm import tqdm
-from utilities.io import read_result, read_comvest_grades, write_result
+from enem.utilities.io import read_result, read_comvest_grades, write_result
 
 def main():
     merge()

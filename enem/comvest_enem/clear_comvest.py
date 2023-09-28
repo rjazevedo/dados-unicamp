@@ -1,5 +1,5 @@
 from tqdm import tqdm
-from utilities.io import write_result
+from enem.utilities.io import write_result
 
 import pandas as pd
 

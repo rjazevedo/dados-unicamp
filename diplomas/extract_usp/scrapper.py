@@ -1,7 +1,9 @@
 from tqdm import tqdm
 import pandas as pd
 from bs4 import BeautifulSoup
-from diplomas.utilities.io import next_usp_file
+from diplomas.utilities.io import write_result, usp_files
+from diplomas.utilities.io import Bases
+import os
 
 def scrap(FILENAME, SAVE_FILE):
     with open(FILENAME, 'rb') as file:
@@ -23,12 +25,25 @@ def scrap(FILENAME, SAVE_FILE):
 
                 df = df.append({'nome': nome,  'instituicao': instituicao, 
                 'grau': grau, 'curso': curso, 'ano_conclusao': ano_conclusao}, ignore_index=True)
-                
-        df.to_csv(SAVE_FILE, index=False)
+        
+        write_result(df, SAVE_FILE)
 
 def merge(FILE_NAMES, SAVE_FILE):
     files = [pd.read_csv(f) for f in FILE_NAMES]
 
     diplomados_usp = pd.concat(files)
     diplomados_usp.drop_duplicates(inplace=True)
-    diplomados_usp.to_csv(SAVE_FILE, index=False)
+    write_result(diplomados_usp, SAVE_FILE)
+
+def proccess_usp():
+    RESULT_FILES = []
+    OUTPUT_FILE = "diplomas_usp.csv"
+
+    for i, f in enumerate(usp_files):
+        SAVE_FILE =  f"DIPLOMAs{i}" + ".csv"
+        RESULT_FILES.append(SAVE_FILE)
+        scrap(f, SAVE_FILE)
+    
+    merge(RESULT_FILES, OUTPUT_FILE)
+    
+    for f in RESULT_FILES: os.remove(Bases.RESULT_USP + f)

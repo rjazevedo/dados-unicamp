@@ -1,36 +1,19 @@
 import pandas as pd
 import numpy as np
 from tqdm import tqdm 
+from enem.utilities.io import write_result, read_result
 
 def separate_enem_comvest(YEAR):
-    COMVEST_PATH = f'../input/enem/Enem_Unicamp/Enem{YEAR}.xlsx'
+    ENEM_COMVEST_PATH = f'Enem_Comvest/EnemComvest{YEAR}.csv'
 
-    COMVEST_COLUMNS = [f'comvest_{YEAR}', f'enem{YEAR - 1}', f'enem{YEAR - 2}', 'NOME', 'CPF', 
-                    f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', f'nlct{YEAR - 2}', 
-                    f'nmt{YEAR - 2}', f'nred{YEAR - 2}', 
-                    f'pcnt{YEAR - 2}', f'pcht{YEAR - 2}', f'plct{YEAR - 2}', 
-                    f'pmt{YEAR - 2}', f'pred{YEAR - 2}', 
-                    f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', f'nlct{YEAR - 1}', 
-                    f'nmt{YEAR - 1}', f'nred{YEAR - 1}', 
-                    f'pcnt{YEAR - 1}', f'pcht{YEAR - 1}', f'plct{YEAR - 1}', 
-                    f'pmt{YEAR - 1}', f'pred{YEAR - 1}']
-    
-    
-    DROP_PAD = [[f'nredPad{y}'] for y in range(YEAR - 2002, YEAR - 2000)]
-    DROP_COLUMNS = [[f'pcnt{y}', f'pcht{y}', f'plct{y}', f'pmt{y}', f'pred{y}'] for y in range(YEAR - 2, YEAR)]
+    RESULT_1 = f'/Enem_Comvest/split/INSC{YEAR - 2}_COMV{YEAR}.csv'
+    RESULT_2 = f'/Enem_Comvest/split/INSC{YEAR - 1}_COMV{YEAR}.csv'
+
+    comvest = read_result(ENEM_COMVEST_PATH)
 
     ENEM_YEARS = [[f'comvest_{YEAR}', f'enem{y}', f'ncnt{y}', f'ncht{y}', 
                 f'nlct{y}', f'nmt{y}', f'nred{y}'] for y in range(YEAR - 2, YEAR)]
 
-
-    comvest = pd.read_excel(COMVEST_PATH)
-    
-    for cols in DROP_PAD: comvest.drop(columns=cols, inplace=True, errors='ignore')
-
-    comvest = comvest.drop(comvest.iloc[:, 25:], axis=1)
-    comvest.columns = COMVEST_COLUMNS
-
-    for cols in DROP_COLUMNS: comvest.drop(columns=cols, inplace=True)
 
     enem_before = comvest.loc[:, ENEM_YEARS[0]]
     enem_last = comvest.loc[:, ENEM_YEARS[1]]
@@ -70,11 +53,17 @@ def separate_enem_comvest(YEAR):
 
     print(f'{enem_last.shape[0]} entries in enem {YEAR - 1} after null removal\n')
 
-    enem_before.to_csv(f'../output/insc_comvest_enem/INSC{YEAR - 2}_COMV{YEAR}.csv', index=False)
-    enem_last.to_csv(f'../output/insc_comvest_enem/INSC{YEAR - 1}_COMV{YEAR}.csv', index=False)
+    write_result(enem_before, RESULT_1)
+    write_result(enem_last, RESULT_2)
 
+def main():
+    split_all()
 
-for y in tqdm(range(2012, 2023)):
-    if y == 2021: continue
-    print(f"Separating {y}...")
-    separate_enem_comvest(y)
+if __name__ == '__main__':
+    main()
+
+def split_all():
+    for y in tqdm(range(2012, 2023)):
+        if y == 2021: continue
+        print(f"Separating {y}...")
+        separate_enem_comvest(y)
