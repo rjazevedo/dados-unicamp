@@ -13,7 +13,7 @@ def clean_all():
         clean_year(y)
 
 def clean_year(YEAR):
-    COMVEST_PATH = f'../input/enem/Enem_Unicamp/Enem{YEAR}.xlsx'
+    COMVEST_PATH = f'/home/input/Enem_Unicamp/Enem{YEAR}.xlsx'
 
     COMVEST_COLUMNS = [f'comvest_{YEAR}', f'enem{YEAR - 1}', f'enem{YEAR - 2}', 'NOME', 'CPF', 
                     f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', f'nlct{YEAR - 2}', 

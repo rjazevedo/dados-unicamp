@@ -25,6 +25,13 @@ from dac.clr_vida_academica_habilitacao import habilitacao
 from dac.uniao_dac_comvest import uniao_dac_comvest
 import dac.create_ids.identificadores as identificadores
 
+# ENEM -=-=-=-=-=-=-=-=-=-=-=-=-=-
+from enem.comvest_enem import clear_comvest 
+from enem.comvest_enem import divide_comvest
+from enem.comvest_enem import comvest_enem
+from enem.comvest_enem import comvest_vest_ids
+from enem.comvest_enem import comvest_enem_ids
+
 # RAIS -=-=-=-=-=-=-=-=-=-=-=-=-=-
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
@@ -92,6 +99,11 @@ def main():
     limpeza_dados_dac.generate_clean_data()
     uf_codes.generate_uf_code()
 
+    print("pre processamento enem")
+    # Pre processamento enem
+    clear_comvest.clean_all()
+    divide_comvest.split_all()
+    
     # Base da COMVEST
     cod_ibge.merge()
     validacao_esc.validation()
@@ -103,6 +115,10 @@ def main():
     limpeza_notas.extraction()
     presenca.get()
 
+    print("merge enem")
+    # Merge Enem Data
+    comvest_enem.merge()
+
     # Base da DAC
     historico_escolar.generate_clean_data()
     resumo_por_periodo.generate_clean_data()
@@ -112,6 +128,7 @@ def main():
     habilitacao.generate()
     uniao_dac_comvest.generate()
 
+    
     # Pre processamento rais
     identification.get_identification_from_all_years()
 
@@ -119,6 +136,11 @@ def main():
     cpf_verification.remove_invalid_cpf()
     recover_cpf_dac_comvest.recover_cpf_dac_comvest()
     random_index.generate_index()
+
+    print("retrieve enem ids")
+    # Merge ENEM com ids
+    comvest_vest_ids.retrieve()
+    comvest_enem_ids.merge()
 
     # Merge rais com ids
     merge.merge_all_years()

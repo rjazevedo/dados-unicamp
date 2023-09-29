@@ -7,7 +7,7 @@ def main():
 
 def merge():
     COMVEST_FILE = 'dados_comvest.csv'
-    FINAL_FILE = 'dados_comvest_enem.csv'
+    GRADES_FILE = 'enem_comvest_todos.csv'
     
     comvest = read_result(COMVEST_FILE)
     grades = read_comvest_grades()
@@ -40,7 +40,8 @@ def merge():
 
     print("Merging with Comvest")
     comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'])
-    write_result(comvest_enem_aggregated, FINAL_FILE)
+    write_result(comvest_enem_aggregated, COMVEST_FILE)
+    write_result(grades_comvest, GRADES_FILE)
 
 if __name__ == '__main__':
     main()

@@ -62,13 +62,13 @@ def retrieve_enem(YEAR, parameters):
     print(f'Saving database into {OUTPUT_FILE}\n')
     enem_comvest.to_csv(OUTPUT_FILE, index=False)
 
-def retrieve():
+def merge():
     for year in range(2020, 2021): 
         retrieve_enem(year, reading_parameters[year])
     
 
 def main():
-    retrieve()
+    merge()
     
 if __name__ == '__main__':
     main()
