@@ -85,9 +85,8 @@ def merge_socio_dac_comvest(tipo_extracao):
             ],
         ]
     )
-    sample["ano_entrada_sociedade"] = sample.data_entrada_sociedade.str[0:4].astype(
-        "Int16"
-    )
+    sample["ano_entrada_sociedade"] = sample.data_entrada_sociedade.astype("str").str[0:4]
+
     if tipo_extracao == "limitada":
         sample.loc[:, ["id", "origem_cpf", "ano_entrada_sociedade", "data_coleta"]]
     elif tipo_extracao == "completa":
