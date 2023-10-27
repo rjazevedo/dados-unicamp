@@ -32,6 +32,11 @@ from enem.comvest_enem import comvest_enem
 from enem.comvest_enem import comvest_vest_ids
 from enem.comvest_enem import comvest_enem_ids
 
+# DIPLOMADOS -=-=-=-=-=-=-=-=-=-=-=-=-=-
+from diplomas.extract_usp import scrapper 
+from diplomas.extract_usp import comvest_diplomasUSP
+
+
 # RAIS -=-=-=-=-=-=-=-=-=-=-=-=-=-
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
@@ -92,6 +97,7 @@ def main():
     extrair_convocados.extraction()
     limpeza_dados_comvest.extraction()
 
+
     # Pre-processamento DAC
     setup_dados.load_dados_cadastais()
     ufs_codes.generate_clean_data()
@@ -103,6 +109,11 @@ def main():
     # Pre processamento enem
     clear_comvest.clean_all()
     divide_comvest.split_all()
+
+
+    # Processamento Diplomados
+    scrapper.proccess_usp()
+    comvest_diplomasUSP.merge()
     
     # Base da COMVEST
     cod_ibge.merge()
