@@ -1,11 +1,11 @@
-import pandas as pd
 from diplomas.utilities.io import read_result
 
 def merge():
     DIPLOMAS_FILE = 'usp-diplomados.csv'
     COMVEST_FILE = 'dados_comvest.csv'
 
-    FINAL = 'diplomados_extraction.csv'
+    FINAL = '/home/processados/diplomados_extraction.csv'
+    
     diplomas = read_result(DIPLOMAS_FILE)
     comvest = read_result(COMVEST_FILE)
 
