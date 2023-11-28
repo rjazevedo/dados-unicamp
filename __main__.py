@@ -111,9 +111,7 @@ def main():
     divide_comvest.split_all()
 
 
-    # Processamento Diplomados
-    scrapper.proccess_usp()
-    comvest_diplomasUSP.merge()
+   
     
     # Base da COMVEST
     cod_ibge.merge()
@@ -147,6 +145,10 @@ def main():
     cpf_verification.remove_invalid_cpf()
     recover_cpf_dac_comvest.recover_cpf_dac_comvest()
     random_index.generate_index()
+
+    # Processamento Diplomados
+    scrapper.proccess_usp()
+    comvest_diplomasUSP.merge()
 
     print("retrieve enem ids")
     # Merge ENEM com ids
