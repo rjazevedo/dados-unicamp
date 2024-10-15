@@ -15,6 +15,8 @@ from capes.utilities.logging import log_extracting_ids, log_reading_file_extract
 
 
 def extract_ids():
+    """Extrai os IDs do sistema CAPES e realiza o merge com os IDs do DAC Comvest, 
+    limpando e organizando os dados antes de salvar o resultado em um arquivo."""
     log_extracting_ids()
     capes_folders = sorted(list_dirs_capes_tmp())
 
@@ -68,6 +70,9 @@ def extract_ids():
 
 # Clean capes files from a given year
 def extract_date_capes(path_folder, dac_comvest_ids, merge_year_list):
+    """Extrai e processa os dados do CAPES para um ano específico,
+    realizando a fusão com os IDs do DAC Comvest e armazenando
+    os resultados em uma lista."""
     date = path_folder.split("/")[-1]
     print(f"Extraindo ano {date}")
     if int(date) <= 2012:
@@ -79,6 +84,8 @@ def extract_date_capes(path_folder, dac_comvest_ids, merge_year_list):
 
 
 def extract_date_capes_pre2013(path_folder, dac_comvest_ids):
+    """Extrai e processa os dados do CAPES para anos anteriores a 2013,
+    realizando fusões exatas e aproximadas com os IDs do DAC Comvest."""
     merges = []
     files = get_all_files(path_folder)
 
@@ -171,6 +178,8 @@ def extract_date_capes_pre2013(path_folder, dac_comvest_ids):
 
 
 def extract_date_capes_post2013(path_folder, dac_comvest_ids):
+    """Extrai e processa os dados do CAPES para anos posteriores a 2013,
+    realizando fusões exatas e aproximadas com os IDs do DAC Comvest."""
     merges = []
     files = get_all_files(path_folder)
 
@@ -283,6 +292,8 @@ def extract_date_capes_post2013(path_folder, dac_comvest_ids):
 
 
 def get_similarity(name_a, name_b):
+    """Calcula a similaridade entre duas strings usando o algoritmo 
+    de similaridade de sequência de Difflib, retornando um valor entre 0 e 1."""
     last_name_a = name_a.split()[1:]
     last_name_b = name_b.split()[1:]
     similar_rate = SequenceMatcher(None, last_name_a, last_name_b).ratio()
@@ -290,6 +301,8 @@ def get_similarity(name_a, name_b):
 
 
 def prepare_dac_comvest_ids(df):
+    """Prepara os IDs do DAC Comvest para comparação, limpando e
+    padronizando os dados necessários para a fusão."""
     df["cpf_reduzido_dac"] = df.cpf.str[3:9]
     df["nome"] = df.nome.apply(unidecode).str.upper().str.strip()
     df["primeiro_nome_dac"] = df.nome.apply(lambda x: x.split()[0])
@@ -299,6 +312,7 @@ def prepare_dac_comvest_ids(df):
 
 
 def remove_columns(df):
+    """Remove colunas indesejadas do DataFrame resultante antes de salvar."""
     return df.drop(
         [
             "id_add_foto_programa",

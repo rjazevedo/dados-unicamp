@@ -2,6 +2,14 @@ from capes.cleaning import cleaning_functions
 
 
 def get_columns_info_capes():
+    """Retorna um dicionário que contém informações sobre as colunas do
+    conjunto de dados CAPES, incluindo os novos nomes das colunas,
+    os nomes antigos, o tipo de limpeza e a função de limpeza a ser 
+    aplicada, se houver.
+
+    Returns:
+        dict: Dicionário contendo informações das colunas.
+    """
     return {
         'ano_base_a': {
             'old_names': ['AN_BASE'],
@@ -309,6 +317,11 @@ def get_columns_info_capes():
 
 # Returns a dictionary corresponding old names with the new ones
 def get_columns_names():
+    """Pega o nome das colunas dos dados da CAPES. 
+
+    Returns:
+        names_dict: dicionário com o nome das colunas
+    """
     names_dict = {}
     cols_info = get_columns_info_capes()
     for new_name in cols_info:
@@ -318,6 +331,11 @@ def get_columns_names():
 
 
 def get_capes_clean_dtypes():
+    """Retorna um dicionário com os tipos de dados limpos das colunas do conjunto de dados CAPES.
+    
+    Returns:
+        dict: Dicionário com os tipos de dados limpos das colunas.
+    """
     columns_info = get_columns_info_capes()
     dtypes = {}
     for column in columns_info:
