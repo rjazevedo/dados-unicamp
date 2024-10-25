@@ -1,11 +1,8 @@
 import pandas as pd
 import yaml
 import os
-from pathlib import Path
 
 from capes.utilities.capes_information import get_capes_clean_dtypes
-from capes.utilities.capes_information import get_columns_names
-from capes.utilities.logging import log_discrepancies
 
 stream = open("capes/configuration.yaml")
 config = yaml.safe_load(stream)

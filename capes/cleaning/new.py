@@ -22,7 +22,7 @@ def clean_name(name):
     Retorna:
         str: O nome limpo, ou uma string vazia se o nome for nulo.
     """
-    if pd.isnull(name):
+    if pd.isnull(name) or not isinstance(name, str):
         return ""
     else:
         s = unidecode(name).upper().strip()
@@ -73,7 +73,7 @@ def read_files(year, version):
 
 
 def extract_columns(file):
-    df = pd.read_csv(file, nrows=0, encoding='utf-8', low_memory=False)
+    df = pd.read_csv(file, nrows=0, encoding='latin-1', low_memory=False)
     return df.columns.tolist()
 
 
@@ -165,29 +165,31 @@ def print_discrepancies(year, file_2021, file_2023, common_columns, missing_colu
     print(f"Discrepancies saved to {excel_filename}")
 
 
-def compare_categorical_columns(df_2021, df_2023, columns):
-    """Compara as categorias únicas das colunas especificadas entre os DataFrames de 2021 e 2023.
-    
-    Args:
-        df_2021 (DataFrame): DataFrame do arquivo de 2021.
-        df_2023 (DataFrame): DataFrame do arquivo de 2023.
-        columns (list): Lista de colunas categóricas a serem comparadas.
-        
-    Returns:
-        dict: Dicionário contendo as discrepâncias para cada coluna.
+def compare_categorical_columns(df1, df2, categorical_columns):
+    """
+    Compara as colunas categóricas entre dois DataFrames.
+
+    Parâmetros:
+        df1 (DataFrame): O primeiro DataFrame.
+        df2 (DataFrame): O segundo DataFrame.
+        categorical_columns (list): Lista de colunas categóricas a serem comparadas.
+
+    Retorna:
+        dict: Um dicionário com as discrepâncias encontradas.
     """
     discrepancies = {}
-    for column in columns:
-        if column in df_2021.columns and column in df_2023.columns:
-            unique_2021 = sorted(set(df_2021[column].unique()))
-            unique_2023 = sorted(set(df_2023[column].unique()))
+    for column in categorical_columns:
+        if column in df1.columns and column in df2.columns:
+            # Aplica a função clean_name às colunas antes de comparar
+            df1[column] = df1[column].apply(clean_name)
+            df2[column] = df2[column].apply(clean_name)
             
-            missing_categories = set(unique_2021) - set(unique_2023)
-            new_categories = set(unique_2023) - set(unique_2021)
+            unique_values_df1 = set(df1[column].dropna().unique())
+            unique_values_df2 = set(df2[column].dropna().unique())
             
             discrepancies[column] = {
-                "Categorias Faltantes": list(missing_categories),
-                "Novas Categorias": list(new_categories)
+                'Categorias Faltantes': list(unique_values_df1 - unique_values_df2),
+                'Novas Categorias': list(unique_values_df2 - unique_values_df1)
             }
     return discrepancies
 
@@ -253,17 +255,18 @@ def print_categorical_discrepancies(year, file_2021, file_2023, discrepancies):
     print(f"Categorical discrepancies saved to {excel_filename}")
 
 
-def read_csv_with_encoding(file, encoding):
-    """Tenta ler um arquivo CSV com diferentes encodings.
-    
-    Args:
-        file (str): O caminho do arquivo CSV.
-        encoding (str): O encoding a ser usado.
-        
-    Returns:
-        DataFrame: O DataFrame lido.
+def read_csv_with_encoding(file_path, encoding):
     """
-    return pd.read_csv(file, encoding=encoding, delimiter=';', low_memory=False)
+    Lê um arquivo CSV com a codificação especificada.
+
+    Parâmetros:
+        file_path (str): O caminho do arquivo CSV.
+        encoding (str): A codificação a ser usada na leitura do arquivo.
+
+    Retorna:
+        DataFrame: O DataFrame contendo os dados do arquivo CSV.
+    """
+    return pd.read_csv(file_path, encoding=encoding, delimiter=';', low_memory=False)
 
 
 def check_compatibility(years):
@@ -272,7 +275,7 @@ def check_compatibility(years):
     Args:
         years (list): Lista de anos para os quais os arquivos serão verificados.
     """
-    categorical_columns = ['CD_AREA_AVALICAO', 'NM_AREA_AVALICAO', 'CD_CONCEITO_CURSO', 'CD_CONCEITO_PROGRAMA', 'CS_STATUS_JURIDICO', 'DS_DEPENDENCIA_ADMINSTRATIVA', 'DS_FAIXA_ETARIA', 'DS_FAIXA_ETARIA_DISCENTE', 'DS_GRAU_ACADEMICO_DISCENTE', 'DS_TIPO_NACIONALIDADE_DISCENTE', 'NM_GRANDE_AREA_CONHECIMENTO', 'NM_GRAU_PROGRAMA', 'NM_MODALIDADE_PROGRAMA', 'NM_NIVEL_CONCLUSAO_DISCENTE', 'NM_NIVEL_PROGRAMA', 'NM_NIVEL_TITULACAO_DISCENTE', 'NM_REGIAO', 'NM_REGIAO_ENTIDADE', 'NM_SITUACAO_DISCENTE', 'NM_TIPO_DISCENTE_ORIENT_PRINC', 'SG_UF_ENTIDADE_ENSINO', 'SG_UF_PROGRAMA', 'ST_INGRESSANTE', 'TP_DOCUMENTO_DISCENTE']
+    categorical_columns = ['CD_AREA_AVALIACAO', 'NM_AREA_AVALIACAO', 'CD_CONCEITO_CURSO', 'CD_CONCEITO_PROGRAMA', 'CS_STATUS_JURIDICO', 'DS_DEPENDENCIA_ADMINISTRATIVA', 'DS_FAIXA_ETARIA', 'DS_GRAU_ACADEMICO_DISCENTE', 'DS_TIPO_NACIONALIDADE_DISCENTE', 'NM_GRANDE_AREA_CONHECIMENTO', 'NM_GRAU_PROGRAMA', 'NM_MODALIDADE_PROGRAMA', 'NM_REGIAO', 'NM_SITUACAO_DISCENTE', 'SG_UF_PROGRAMA', 'ST_INGRESSANTE', 'TP_DOCUMENTO_DISCENTE', 'NM_MUNICIPIO_PROGRAMA_IES', 'NM_ENTIDADE_ENSINO', 'ID_ADD_FOTO_PROGRAMA', 'CD_PROGRAMA_IES', 'NM_PAIS_NACIONALIDADE_DISCENTE', 'NM_PROGRAMA_IES', 'CD_ENTIDADE_EMEC', 'ID_ADD_FOTO_PROGRAMA_IES', 'CD_ENTIDADE_CAPES', 'SG_ENTIDADE_ENSINO']
     
     for year in years:
         files_2021 = read_files(year, '2021-11-10')
@@ -284,10 +287,16 @@ def check_compatibility(years):
             common_columns, missing_columns, extra_columns, altered_columns = compare_columns(columns_2021, columns_2023)
             print_discrepancies(year, file_2021, file_2023, common_columns, missing_columns, extra_columns, altered_columns)
 
-            encoding = 'latin-1'
+            # Define a codificação com base no ano
+            if year == 2020:
+                try:
+                    df_2021 = read_csv_with_encoding(file_2021, encoding='ascii')
+                except UnicodeDecodeError:
+                    df_2021 = read_csv_with_encoding(file_2021, encoding='latin-1')
+            else:
+                df_2021 = read_csv_with_encoding(file_2021, encoding='latin-1')
             
-            df_2021 = read_csv_with_encoding(file_2021, encoding=encoding)
-            df_2023 = read_csv_with_encoding(file_2023, encoding=encoding)
+            df_2023 = read_csv_with_encoding(file_2023, encoding='latin-1')
             discrepancies = compare_categorical_columns(df_2021, df_2023, categorical_columns)
             print_categorical_discrepancies(year, file_2021, file_2023, discrepancies)
 
@@ -301,7 +310,11 @@ def check_compatibility(years):
             common_columns, missing_columns, extra_columns, altered_columns = compare_columns(columns_2020, columns_new)
             print_discrepancies(year, file_2020, file_new, common_columns, missing_columns, extra_columns, altered_columns)
             
-            df_2020 = read_csv_with_encoding(file_2020, encoding='latin-1')
+            try:
+                df_2020 = read_csv_with_encoding(file_2020, encoding='ascii')
+            except UnicodeDecodeError:
+                df_2020 = read_csv_with_encoding(file_2020, encoding='latin-1')
+            
             df_new = read_csv_with_encoding(file_new, encoding='latin-1')
             discrepancies = compare_categorical_columns(df_2020, df_new, categorical_columns)
             print_categorical_discrepancies(year, file_2020, file_new, discrepancies)

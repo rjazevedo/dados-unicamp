@@ -312,7 +312,7 @@ def prepare_dac_comvest_ids(df):
 
 
 def remove_columns(df):
-    """Remove colunas indesejadas do DataFrame resultante antes de salvar."""
+    """Remove colunas confidenciais do DataFrame resultante antes de salvar."""
     return df.drop(
         [
             "id_add_foto_programa",

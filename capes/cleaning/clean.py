@@ -46,10 +46,7 @@ def clean_date_capes(path_folder):
     for file in files:
         print(f'Limpando: {file.split("/")[-1]}')
 
-        if int(date) == 2020:
-            df = read_capes_original(file, "ascii")
-        else:
-            df = read_capes_original(file, "latin-1")
+        df = read_capes_original(file, "latin-1")
 
         df = rename_columns(df)
         df = clean_columns(df)
