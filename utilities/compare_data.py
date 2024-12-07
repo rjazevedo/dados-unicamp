@@ -83,7 +83,7 @@ def compare_rows(df_1: DataFrame, df_2: DataFrame, identifier: str) -> set:
     # Se os identificadores forem iguais, então não foi adicionada ou removida nenhuma amostra
     # Ainda é possível que haja diferenças entre os valores das amostras para outras colunas que não o identificador
     if df_1[identifier].equals(df_2[identifier]):
-        return df_1
+        return set(), set()
    
     # Se os identificadores forem diferentes, então houve adição ou remoção de amostras
     missing_rows = df_1[~df_1[identifier].isin(df_2[identifier])]
