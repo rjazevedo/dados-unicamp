@@ -25,9 +25,6 @@ stream = open("rais/configuration.yaml")
 config = yaml.safe_load(stream)
 intervalo = config["intervalo_rais"]
 
-def teste():
-    print(intervalo)
-
 def get_identification_from_all_years():
     create_folder_tmp()
     for year in range(intervalo[0], intervalo[1] + 1):
