@@ -20,10 +20,17 @@ from rais.utilities.logging import (
     log_writing_file,
 )
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
+
+def teste():
+    print(intervalo)
 
 def get_identification_from_all_years():
     create_folder_tmp()
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_pre_process(year)
         create_folder_year(year)
         get_identification_from_year(year)

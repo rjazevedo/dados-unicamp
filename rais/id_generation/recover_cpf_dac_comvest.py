@@ -15,6 +15,10 @@ from rais.utilities.logging import log_recover_from_year
 from rais.utilities.logging import log_filter_results
 from unidecode import unidecode
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
 # ------------------------------------------------------------------------------------------------
 
 UNICO = 3
@@ -137,7 +141,7 @@ def get_first_name(name):
 # Merge dataframe with all files from rais to recover missing cpfs
 def merge_with_rais(df_dac_comvest, is_probabilistic):
     dfs = []
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_recover_from_year(year)
         df_recovered = merge_with_rais_year(df_dac_comvest, year, is_probabilistic)
         dfs.append(df_recovered)

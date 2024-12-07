@@ -23,9 +23,13 @@ from rais.utilities.write import write_rais_sample
 from rais.utilities.logging import log_cleaning_year
 from rais.utilities.logging import log_cleaning_file
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
 
 def clear_all_years(tipo_extracao):
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_cleaning_year(year)
         clear_year(year)
     join_all_years(tipo_extracao)
@@ -48,7 +52,7 @@ def clear_file(file, year):
 
 def join_all_years(tipo_extracao):
     dfs = []
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         files = get_all_tmp_files(year, "clean_data", "csv")
         for file in files:
             df = read_rais_clean(file)

@@ -7,12 +7,16 @@ from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_rais_merge
 from rais.utilities.logging import log_recover_cpf_rais
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
 
 def recover_cpf_all_years():
     df = join_all_years()
     df_pis_cpf = get_pis_cpf(df)
 
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_recover_cpf_rais(year)
         recover_cpf_year(df_pis_cpf, year)
 
@@ -21,7 +25,7 @@ def recover_cpf_all_years():
 # Join rais people that is dac comvest union and save in file "rais.csv"
 def join_all_years():
     dfs = []
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         df = join_year(year)
         dfs.append(df)
     df = pd.concat(dfs, sort=True)
