@@ -110,7 +110,7 @@ def get_columns_info_rais():
             'check_function': verification_functions.dummy
         },
         'deslig_mes': {
-            'tipo': 'int64',
+            'tipo': 'Int64',
             'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'MES DESLIG',
@@ -179,7 +179,7 @@ def get_columns_info_rais():
             'check_function': verification_functions.check_sexo
         },
         'pais_nacionalidade_r': {
-            'tipo': 'int64',
+            'tipo': 'Int64',
             'tipo_limpo': 'Int64',
             'campo': {
                 (2002, 2010): 'NACIONALIDAD',
