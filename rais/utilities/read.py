@@ -17,7 +17,8 @@ def read_rais_original(file, year):
 
 
 def read_rais_identification(file):
-    df = pd.read_pickle(file, compression="bz2")
+    columns = ["nome_r", "cpf_r", "dta_nasc_r", "pispasep", "mun_estbl", "ano_base"]
+    df = pd.read_parquet(file, dtype_backend="pyarrow", columns=columns)
     return df
 
 
@@ -36,13 +37,11 @@ def read_rais_merge_by_identification(file_identification, year):
     return df
 
 
-def read_rais_original_by_merge(file_merge, year):
-    path = config["path_input_data"] + str(year) + "/"
+def read_rais_original_pre_processed(file_merge, year):
+    path = config["path_pre_processed"] + str(year) + "/"
     file_name = get_file_name(file_merge)
-    extension = get_extension(year)
-    file = path + file_name + "." + extension
-    dtype = get_dtype_rais_original(year)
-    df = read_database(file, dtype)
+    file = path + file_name + ".parquet"
+    df = read_database_pre_processed(file)
     return df
 
 
@@ -95,4 +94,8 @@ def read_database(file, dtype, index=None, squeeze=False):
     )
     if squeeze:
         return df.squeeze()
+    return df
+
+def read_database_pre_processed(file):
+    df = pd.read_parquet(file, dtype_backend="pyarrow")
     return df

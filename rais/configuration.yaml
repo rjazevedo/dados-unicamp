@@ -2,5 +2,6 @@
 path_input_data:    /home/input/rais-novo/
 path_output_data:   /home/output/rais/
 path_intermediario: /home/output/intermediario/
+path_pre_processed:     /home/output/rais/pre_processed/
 uniao_dac_comvest:  /home/output/intermediario/uniao_dac_comvest.csv
 intervalo_rais:      [2002, 2022]

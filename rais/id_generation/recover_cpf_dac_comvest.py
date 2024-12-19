@@ -7,7 +7,7 @@ from rais.utilities.df_operations import remove_duplicated_rows
 from rais.utilities.read import read_dac_comvest_valid
 from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_dac_comvest_recovered
-from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_files
 
 from rais.utilities.logging import log_recover_cpf_exact_match
 from rais.utilities.logging import log_recover_cpf_probabilistic_match
@@ -153,7 +153,8 @@ def merge_with_rais(df_dac_comvest, is_probabilistic):
 
 # Merge dataframe with all files from some year to recover missing cpfs
 def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
-    files_rais = get_all_tmp_files(year, "identification_data", "pkl")
+    path = config["path_output_data"] + "pre_processed/" + str(year) + "/"
+    files_rais = get_all_files(path, "parquet")
 
     dfs = []
     for file in files_rais:
@@ -322,7 +323,7 @@ def get_origem_cpf_column_exact_match(df):
 
 # Create origem_cpf column
 def get_origem_cpf_column_probabilistic_match(df):
-    df["origem_cpf"] = df.apply(
+    df.loc[:, "origem_cpf"] = df.apply(
         lambda x: get_origem_cpf_probabilistic_match(x["similaridade"]), axis=1
     )
 
