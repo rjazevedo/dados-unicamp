@@ -41,7 +41,7 @@ from diplomas.extract_usp import comvest_diplomasUSP
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
 from rais.id_generation import random_index
-from rais.pre_processing import identification
+from rais.pre_processing.__main__ import pre_process_data as pre_process_rais
 from rais.extract import merge
 from rais.extract import recover_cpf_rais
 from rais.extract import clear
@@ -139,7 +139,7 @@ def main():
 
     
     # Pre processamento rais
-    identification.get_identification_from_all_years()
+    pre_process_rais()
 
     # Geracao ids
     cpf_verification.remove_invalid_cpf()
@@ -157,7 +157,7 @@ def main():
 
     # Merge rais com ids
     merge.merge_all_years()
-    recover_cpf_rais.recover_cpf_all_years()
+    recover_cpf_rais.recover_cpf_years()
     clear.clear_all_years(tipo_extracao_rais)
 
     clear_socio.clear_socio()

@@ -1,11 +1,11 @@
-from rais.pre_processing import identification
+from rais.pre_processing import parquet_parsing
 import logging
 
 
-def get_identification_data():
+def pre_process_data():
     logging.basicConfig(level=logging.INFO)
-    identification.get_identification_from_all_years()
+    parquet_parsing.parse_rais()
 
 
 if __name__ == "__main__":
-    get_identification_data()
+    pre_process_data()
