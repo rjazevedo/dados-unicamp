@@ -4,7 +4,7 @@ from rais.utilities.read import read_ids
 from rais.utilities.read import read_rais_identification
 from rais.utilities.write import write_rais_merge
 from rais.utilities.file import create_folder_inside_year
-from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_files
 
 from rais.utilities.logging import log_merge_rais_dac_comvest
 
@@ -26,7 +26,8 @@ def merge_all_years():
 
 # Merge rais from year with df_dac_comvest and save in files in rais_dac_comvest directory
 def merge_year(df_dac_comvest, year):
-    files = get_all_tmp_files(year, "identification_data", "pkl")
+    path = config["path_output_data"] + "pre_processed/" + str(year) + "/"
+    files = get_all_files(path, "parquet")
 
     for file_rais in files:
         print(f"File: {file_rais}")
