@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import re
 from unidecode import unidecode
 
@@ -307,6 +308,8 @@ def get_idade(value):
 
 
 def get_deslig_dia(value):
+    if pd.isna(value):
+        return np.nan
     if value == "{ñ":
         return 0
     if value == "NAO DESL ANO":
