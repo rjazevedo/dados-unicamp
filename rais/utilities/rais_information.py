@@ -384,7 +384,7 @@ def get_columns_info_rais():
                 (2011, 2022): 'Vl Última Remuneração Ano'
             },
             'clean_function': {
-                (2002, 2018): cleaning_functions.get_float
+                (2002, 2022): cleaning_functions.get_float
             },
             'check_function': verification_functions.dummy
         },
@@ -603,7 +603,7 @@ def get_columns_info_rais():
             'tipo_limpo': 'Int64',
             'campo': {
                 (2007, 2010): 'CAUS AFAST 2',
-                (2011, 2018): 'Causa Afastamento 2'
+                (2011, 2022): 'Causa Afastamento 2'
             },
             'clean_function': {
                 (2007, 2007): cleaning_functions.get_afast_causa_string,
@@ -694,7 +694,7 @@ def get_columns_info_rais():
                 (2011, 2022): 'Dia Ini AF3'
             },
             'clean_function': {
-                (2007, 2018): cleaning_functions.get_afast_dia
+                (2007, 2022): cleaning_functions.get_afast_dia
             },
             'check_function': verification_functions.check_dia
         },
