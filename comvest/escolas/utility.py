@@ -1,3 +1,24 @@
+"""
+Módulo utilitário para processamento de dados das escolas Comvest.
+
+Este módulo contém funções utilitárias para ler, limpar e processar os dados das escolas dos candidatos.
+
+Funções:
+- standardize_str(s): Padroniza uma string.
+- remove_countie_name_from_school(df, column): Remove o nome do município do nome da escola.
+- merge_inep_ibge(df_inep, df_ibge): Mescla os dados do INEP com os dados do IBGE.
+- concat_and_drop_duplicates(df1, df2): Concatena dois DataFrames e remove duplicatas.
+- get_match(element, serie): Obtém a melhor correspondência para um elemento em uma série.
+- create_dictionary_ufs(df): Cria um dicionário de códigos de UF.
+- merge_by_uf(df1, df2): Mescla dois DataFrames por UF.
+- counties_merge(df1, df2): Mescla dois DataFrames por municípios.
+- get_the_closest_matche(element, serie): Obtém a correspondência mais próxima para um elemento em uma série.
+
+Como usar:
+Implemente e execute as funções utilitárias para processar os dados das escolas dos candidatos.
+"""
+
+
 import pandas as pd
 import swifter
 import difflib as dff
@@ -7,6 +28,19 @@ from unidecode import unidecode
 
 
 def standardize_str(s):
+    """
+    Padroniza uma string.
+
+    Parâmetros
+    ----------
+    s : str
+        A string a ser padronizada.
+
+    Retorna
+    -------
+    str
+        A string padronizada.
+    """
     return (
         re.sub(r"[^\w\s]", "", unidecode(str(s)).upper())
         .replace('ADVENTISTA', "A")
@@ -210,6 +244,23 @@ def standardize_str(s):
 
 
 def get_match(escola, escolas_series, cutoff):
+    """
+    Obtém a melhor correspondência para o nome de uma escola em uma série.
+
+    Parâmetros
+    ----------
+    escola : str
+        O nome da escola a ser correspondido.
+    escolas_series : Series
+        A série contendo os nomes das escolas para correspondência.
+    cutoff : float
+        O limite de similaridade para considerar uma correspondência.
+
+    Retorna
+    -------
+    str
+        O nome da escola mais próximo encontrado ou uma string vazia se nenhuma correspondência for encontrada.
+    """
     values = dff.get_close_matches(escola, escolas_series, cutoff=cutoff)
     
     if len(values) > 0:
@@ -219,6 +270,21 @@ def get_match(escola, escolas_series, cutoff):
 
 
 def merge_inep_ibge(escolas, uf_codes):
+    """
+    Mescla os dados de escolas com os códigos de UF (INEP e IBGE).
+
+    Parâmetros
+    ----------
+    escolas : DataFrame
+        O DataFrame contendo os dados das escolas.
+    uf_codes : DataFrame
+        O DataFrame contendo os códigos de UF do IBGE.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame resultante da mesclagem dos dados.
+    """    
     base_escolas = pd.merge(escolas, uf_codes, how="left", on=['uf', 'municipio'])
     base_escolas = base_escolas.drop_duplicates(subset=None)
 
@@ -237,6 +303,19 @@ def merge_inep_ibge(escolas, uf_codes):
 
 
 def create_dictonary_ufs(df):
+    """
+    Cria um dicionário de códigos de UF.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados das UFs.
+
+    Retorna
+    -------
+    dict
+        Um dicionário com os códigos de UF.
+    """
     ufs = df['uf'].unique()
     dict = {}
     for value in ufs:
@@ -247,6 +326,21 @@ def create_dictonary_ufs(df):
 
 
 def merge_by_uf(dict_df, ibge_data):
+    """
+    Mescla DataFrames de um dicionário por UF utilizando dados do IBGE.
+
+    Parâmetros
+    ----------
+    dict_df : dict
+        Um dicionário com DataFrames separados por UF.
+    ibge_data : DataFrame
+        O DataFrame contendo os dados do IBGE.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame resultante da mesclagem.
+    """
     correct_dfs = []
 
     for key,value in dict_df.items():
@@ -258,6 +352,21 @@ def merge_by_uf(dict_df, ibge_data):
 
 
 def counties_merge(value, ibge_data):
+    """
+    Mescla um DataFrame filtrado com dados do IBGE por município.
+
+    Parâmetros
+    ----------
+    value : DataFrame
+        O DataFrame filtrado por UF.
+    ibge_data : DataFrame
+        O DataFrame contendo os dados do IBGE.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame resultante da mesclagem por município.
+    """
     new = value.copy()
     new['municipio'] = new['municipio'].map(lambda x: get_the_closest_matche(x, ibge_data['municipio']))
     merged_df = pd.merge(new, ibge_data, left_on = ['uf', 'municipio'], right_on = ['uf', 'municipio'], how='left')
@@ -265,6 +374,21 @@ def counties_merge(value, ibge_data):
 
 
 def get_the_closest_matche(element, serie):
+    """
+    Obtém a correspondência mais próxima para um elemento em uma série.
+
+    Parâmetros
+    ----------
+    element : str
+        O elemento a ser correspondido.
+    serie : Series
+        A série onde procurar a correspondência.
+
+    Retorna
+    -------
+    str
+        A correspondência mais próxima encontrada ou uma string vazia se nenhuma correspondência for encontrada.
+    """
     values = dff.get_close_matches(element, serie, cutoff=0.6)
     if len(values) > 0:
         return values[0]
@@ -273,6 +397,21 @@ def get_the_closest_matche(element, serie):
 
 
 def remove_countie_name_from_school(df, column):
+    """
+    Remove o nome do município do nome da escola.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados das escolas.
+    column : str
+        O nome da coluna que contém os nomes dos municípios.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os nomes dos municípios removidos dos nomes das escolas.
+    """
     counties = df[column].unique()
     correct = []
     for countie in counties:
@@ -287,6 +426,19 @@ def remove_countie_name_from_school(df, column):
 
 
 def concat_and_drop_duplicates(dfs):
+    """
+    Concatena dois DataFrames e remove duplicatas.
+
+    Parâmetros
+    ----------
+    dfs : list of DataFrame
+        Lista de DataFrames a serem concatenados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame resultante da concatenação dos DataFrames com duplicatas removidas.
+    """
     concat = pd.concat(dfs, ignore_index = True)
     concat = concat.drop_duplicates()
     return concat

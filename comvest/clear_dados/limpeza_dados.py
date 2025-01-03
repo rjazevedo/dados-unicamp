@@ -1,3 +1,38 @@
+"""
+Módulo para limpeza e validação de dados Comvest.
+
+Este módulo contém funções para limpar e validar os dados lidos de arquivos CSV.
+
+Funções:
+- validacao_curso(df, col, date): Valida os códigos de curso nos dados e remapeia códigos inválidos para valores ausentes.
+- data_nasc(row, df): Concatena dia, mês e ano para formar a data de nascimento.
+- tratar_inscricao(df): Trata os números de inscrição nos dados.
+- tratar_CPF(df): Trata os números de CPF nos dados.
+- tratar_doc(df): Trata os números de documentos nos dados.
+- tratar_nome(df): Trata os nomes nos dados.
+- tratar_nome_pai(df): Trata os nomes dos pais nos dados.
+- tratar_nome_mae(df): Trata os nomes das mães nos dados.
+- tratar_nacionalidade(df): Trata a nacionalidade nos dados.
+- tratar_mun_nasc(df): Trata os municípios de nascimento nos dados.
+- tratar_uf_nasc(df): Trata as unidades federativas de nascimento nos dados.
+- tratar_cep(df): Trata os CEPs nos dados.
+- tratar_mun_resid(df): Trata os municípios de residência nos dados.
+- tratar_uf_resid(df): Trata as unidades federativas de residência nos dados.
+- tratar_opvest(df): Trata as opções de vestibular nos dados.
+- tratar_escola(df): Trata as escolas nos dados.
+- tratar_mun_escola(df): Trata os municípios das escolas nos dados.
+- tratar_uf_escola(df): Trata as unidades federativas das escolas nos dados.
+- tratar_tipo_escola(df): Trata os tipos de escola nos dados.
+- validar_ano(df): Valida os anos nos dados.
+- tratar_ano_conclu(df): Trata os anos de conclusão nos dados.
+- tratar_dados(df, date, path, ingresso): Trata os dados gerais.
+- extraction(): Executa a extração e limpeza dos dados.
+
+Como usar:
+Implemente e execute as funções `validacao_curso` e `data_nasc` para limpar e validar os dados.
+"""
+
+
 import logging
 import re
 import pandas as pd
@@ -11,6 +46,23 @@ CURSOS = "cursos.csv"
 pd.options.mode.chained_assignment = None  # default='warn'
 
 def validacao_curso(df, col, date):
+    """
+    Valida os códigos de curso nos dados e remapeia códigos inválidos para valores ausentes.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem validados.
+    col : str
+        O nome da coluna contendo os códigos de curso.
+    date : int
+        O ano de referência para a validação dos códigos de curso.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os códigos de curso validados.
+    """
     df_cursos = read_result("cursos.csv")
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
@@ -22,8 +74,22 @@ def validacao_curso(df, col, date):
     return df
 
 
-# Função para concatenar dia, mês e ano
 def data_nasc(row, df):
+    """
+    Concatena dia, mês e ano para formar a data de nascimento.
+
+    Parâmetros
+    ----------
+    row : Series
+        A linha do DataFrame contendo os dados da data de nascimento.
+    df : DataFrame
+        O DataFrame contendo os dados.
+
+    Retorna
+    -------
+    str
+        A data de nascimento concatenada no formato 'YYYY-MM-DD'.
+    """
     if (
         ("DATA_NASC" in df.columns)
         or ("DAT_NASC" in df.columns)
@@ -71,6 +137,19 @@ def data_nasc(row, df):
 
 
 def tratar_inscricao(df):
+    """
+    Trata os números de inscrição nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os números de inscrição tratados.
+    """
     # Checa Número de Inscrição de acordo com as diferentes variações no nome da coluna e retira o '\.0' da string
     if "INSC" in df.columns:
         df["INSC"] = df["INSC"].astype("string").replace("\.0", "", regex=True)
@@ -89,6 +168,19 @@ def tratar_inscricao(df):
 
 
 def tratar_CPF(df):
+    """
+    Trata os números de CPF nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os números de CPF tratados.
+    """
     # Checa se existe a coluna de CPF
     if "CPF" in df.columns:
         df["CPF"] = df["CPF"].map(lambda cpf: str(cpf).zfill(11))
@@ -99,6 +191,19 @@ def tratar_CPF(df):
 
 
 def tratar_doc(df):
+    """
+    Trata os números de documentos nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os números de documentos tratados.
+    """
     if any(col in df.columns for col in {"RG", "DOC3"}):
         df.rename({"RG": "DOC", "DOC3": "DOC"}, axis=1, inplace=True)
 
@@ -108,6 +213,19 @@ def tratar_doc(df):
 
 
 def tratar_nome(df):
+    """
+    Trata os nomes nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os nomes tratados.
+    """
     # Se o nome é dado por NOME_CAND ou NOMEOFIC, entao renomeia a coluna para NOME
     if "NOME_CAND" in df.columns:
         df.rename({"NOME_CAND": "NOME"}, axis=1, inplace=True)
@@ -120,6 +238,19 @@ def tratar_nome(df):
 
 
 def tratar_nome_pai(df):
+    """
+    Trata os nomes dos pais nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os nomes dos pais tratados.
+    """
     if "PAI" in df.columns:
         df.rename({"PAI": "NOME_PAI"}, axis=1, inplace=True)
 
@@ -127,6 +258,19 @@ def tratar_nome_pai(df):
 
 
 def tratar_nome_mae(df):
+    """
+    Trata os nomes das mães nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os nomes das mães tratados.
+    """
     if "MAE" in df.columns:
         df.rename({"MAE": "NOME_MAE"}, axis=1, inplace=True)
 
@@ -134,6 +278,20 @@ def tratar_nome_mae(df):
 
 
 def tratar_nacionalidade(df):
+    """
+    Trata a nacionalidade nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com a nacionalidade tratada.
+    """
+
     for col in df.columns:
         if col in {"NACIO", "NACION", "NACIONALID", "NACIONALIDADE"}:
             df.rename({col: "NACIONALIDADE"}, axis=1, inplace=True)
@@ -148,6 +306,19 @@ def tratar_nacionalidade(df):
 
 
 def tratar_mun_nasc(df):
+    """
+    Trata os municípios de nascimento nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os municípios de nascimento tratados.
+    """
     for col in df.columns:
         if col in {"MUNICIPIO_NASC", "MU_NASC", "MUNIC_NASC", "CIDNASC", "CIDNAS"}:
             df.rename({col: "MUN_NASC"}, axis=1, inplace=True)
@@ -161,6 +332,19 @@ def tratar_mun_nasc(df):
 
 
 def tratar_uf_nasc(df):
+    """
+    Trata as unidades federativas de nascimento nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as unidades federativas de nascimento tratadas.
+    """
     for col in df.columns:
         if col in {"UFNASC", "EST_NASC", "UFNAS"}:
             df.rename({col: "UF_NASC"}, axis=1, inplace=True)
@@ -174,6 +358,19 @@ def tratar_uf_nasc(df):
 
 
 def tratar_cep(df):
+    """
+    Trata os CEPs nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os CEPs tratados.
+    """
     for col in df.columns:
         if col in {"CEP", "CEPEND", "CEP_END", "CEP3"}:
             df.rename({col: "CEP_RESID"}, axis=1, inplace=True)
@@ -196,6 +393,19 @@ def tratar_cep(df):
 
 
 def tratar_mun_resid(df):
+    """
+    Trata os municípios de residência nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os municípios de residência tratados.
+    """
     for col in df.columns:
         if col in {"MUEND", "MUNIC_END", "MUNICIPIO", "CID", "CIDEND"}:
             df.rename({col: "MUN_RESID"}, axis=1, inplace=True)
@@ -209,6 +419,19 @@ def tratar_mun_resid(df):
 
 
 def tratar_uf_resid(df):
+    """
+    Trata as unidades federativas de residência nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as unidades federativas de residência tratadas.
+    """
     # Se a UF de Residência é dado por UFEND, UF_END ou ESTADO, entao renomeia a coluna para UF_RESID
     if "UFEND" in df.columns:
         df.rename({"UFEND": "UF_RESID"}, axis=1, inplace=True)
@@ -223,6 +446,19 @@ def tratar_uf_resid(df):
 
 
 def tratar_opvest(df, date, path):
+    """
+    Trata as opções de vestibular nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as opções de vestibular tratadas.
+    """
     # Checa colunas de opção de curso no vestibular
     for col in df.columns:
         if any(opc in col for opc in {"OPCAO1", "OP1", "OPCAO1OR"}):
@@ -256,6 +492,19 @@ def tratar_opvest(df, date, path):
 
 
 def tratar_escola(df):
+    """
+    Trata as escolas nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as escolas tratadas.
+    """
     # Checa coluna de escola do ensino médio do candidato
     for col in df.columns:
         if col in {"NOMEESC", "NOME_ESC", "NOME_ESCOLA", "ESCOLAEM", "ESCOLA", "ESC2"}:
@@ -270,6 +519,19 @@ def tratar_escola(df):
 
 
 def tratar_mun_escola(df):
+    """
+    Trata os municípios das escolas nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os municípios das escolas tratados.
+    """
     # Checa coluna do município da escola do ensino médio do candidato
     for col in df.columns:
         if col in {
@@ -291,6 +553,19 @@ def tratar_mun_escola(df):
 
 
 def tratar_uf_escola(df):
+    """
+    Trata as unidades federativas das escolas nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as unidades federativas das escolas tratadas.
+    """
     # Checa coluna da UF onde se localiza a escola do ensino médio do candidato
     for col in df.columns:
         if col in {
@@ -310,6 +585,19 @@ def tratar_uf_escola(df):
 
 
 def tratar_tipo_escola(df):
+    """
+    Trata os tipos de escola nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os tipos de escola tratados.
+    """
     # Checa coluna do tipo da escola do ensino médio do candidato
     for col in df.columns:
         if col in {"TIPOESC", "TIPO_ESC", "TIPO_ESCOL", "TIPO_ESCOLA"}:
@@ -326,6 +614,19 @@ def tratar_tipo_escola(df):
 
 
 def validar_ano(val, date):
+    """
+    Valida os anos nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem validados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os anos validados.
+    """
     if pd.isna(val):
         return pd.NA
     else:
@@ -333,6 +634,19 @@ def validar_ano(val, date):
 
 
 def tratar_ano_conclu(df, date):
+    """
+    Trata os anos de conclusão nos dados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os anos de conclusão tratados.
+    """
     # Checa coluna do ano de conclusão do ensino médio do candidato
     for col in df.columns:
         if col in {"ANO_CONCLU", "ANOCONC", "ANO_CONC", "ANO_CONCLUSAO"}:
@@ -354,7 +668,25 @@ def tratar_ano_conclu(df, date):
 
 
 def tratar_dados(df, date, path, ingresso=1):
+    """
+    Trata os dados gerais.
 
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+    date : int
+        O ano de referência para o tratamento dos dados.
+    path : str
+        O caminho do arquivo de dados.
+    ingresso : int
+        O tipo de ingresso (1 - Vestibular, 2 - ENEM, 3 - ProFis, etc.).
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os dados tratados.
+    """
     # Junção da data de nascimento em 1 única coluna
     df["DATA_NASC"] = df.apply(data_nasc, axis=1, args=(df,))
     df["ANO_NASC"] = df["DATA_NASC"].map(lambda data: data[-4:] if data != "" else data)
@@ -450,6 +782,13 @@ def tratar_dados(df, date, path, ingresso=1):
 
 
 def extraction():
+    """
+    Executa a extração e limpeza dos dados.
+
+    Retorna
+    -------
+    None
+    """
     if check_if_need_result_file(CURSOS):
         extrair_cursos.main()
 

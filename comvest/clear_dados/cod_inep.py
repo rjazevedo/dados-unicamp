@@ -1,9 +1,31 @@
+"""
+Módulo para correção de códigos INEP das escolas nos dados Comvest.
+
+Este módulo contém a função para corrigir os códigos INEP das escolas nos dados lidos de arquivos CSV.
+
+Funções:
+- merge(): Corrige os códigos INEP das escolas nos dados e salva o resultado em um arquivo CSV.
+
+Como usar:
+Implemente e execute a função `merge` para corrigir os códigos INEP das escolas nos dados.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import read_result, write_result
 from comvest.utilities.dtypes import DTYPES_DADOS
 
 
 def merge():
+    """
+    Corrige os códigos INEP das escolas nos dados e salva o resultado em um arquivo CSV.
+
+    Lê os dados de arquivos CSV, corrige os códigos INEP das escolas e salva o resultado em um novo arquivo CSV.
+
+    Retorna
+    -------
+    None
+    """
     df_comvest = read_result("dados_comvest_com_uf.csv", dtype=DTYPES_DADOS)
     res = read_result("escola_codigo_inep.csv", dtype={"Código INEP": "Int64"})
 

@@ -1,25 +1,50 @@
+"""
+Módulo principal para a validação e extração de dados das escolas Comvest.
+
+Este módulo executa a função principal para validar e extrair dados das escolas Comvest usando os módulos `validacao_esc`, `limpeza_dados`, `setup_dados`, `uf_codes`, `create_ufs_codes`, `courses`, e `cod_ibge`.
+
+Funções:
+- main(): Função principal que chama as funções de validação e extração de dados das escolas.
+- pre_processing(): Função que verifica a necessidade de arquivos de resultado e chama as funções de criação correspondentes.
+
+Como usar:
+Execute este script para realizar a validação e extração de dados das escolas Comvest.
+
+Exemplo:
+python -m comvest.escolas
+"""
+
+
 from comvest.escolas import validacao_esc
 from dac.utilities.io import check_if_need_result_file
-
 from dac.clr_dados_cadastrais import limpeza_dados
 from dac.clr_dados_cadastrais import setup_dados
 from dac.clr_dados_cadastrais import uf_codes
-
 import dac.create_ufs_codes.__main__ as create_ufs_codes
 import comvest.extract_courses.__main__ as courses
 import comvest.clear_dados.limpeza_dados as limpeza_dados
 from comvest.clear_dados import limpeza_dados, cod_ibge
 import dac.create_ufs_codes.__main__ as create_ufs_codes
 
+
 DADOS_CADASTRAIS = "dados_cadastrais_com_uf.csv"
 DADOS_COMVEST = "dados_comvest_com_uf.csv"
 UF_CODE_NAME = 'final_counties.csv'
+
 
 def main():
     pre_processing()
     validacao_esc.validation()
     
-def pre_processing():   
+    
+def pre_processing():
+    """
+    Função que verifica a necessidade de arquivos de resultado e chama as funções de criação correspondentes.
+
+    Retorna
+    -------
+    None
+    """
     if check_if_need_result_file(UF_CODE_NAME):
         create_ufs_codes.main() 
 

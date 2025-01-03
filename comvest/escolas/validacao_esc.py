@@ -1,3 +1,18 @@
+"""
+Módulo para validação de dados das escolas Comvest.
+
+Este módulo contém funções para validar e processar os dados das escolas dos candidatos.
+
+Funções:
+- validation(): Executa a validação dos dados das escolas.
+- get_closest_schools(esc_dict, inep): Obtém as escolas mais próximas com base na similaridade dos nomes.
+- create_escs_dict(esc, inep): Cria um dicionário de escolas com base nos códigos dos municípios.
+
+Como usar:
+Implemente e execute as funções para validar e processar os dados das escolas dos candidatos.
+"""
+
+
 from collections import defaultdict
 import pandas as pd
 import swifter
@@ -13,7 +28,15 @@ from comvest.escolas.utility import get_match
 from collections import Counter
 import re
 
+
 def validation():
+    """
+    Executa a validação dos dados das escolas.
+
+    Retorna
+    -------
+    None
+    """
     escs = load_esc_bases()
     inep = load_inep_base()
 
@@ -30,6 +53,21 @@ def validation():
 
 
 def get_closest_schools(esc_dict, inep):
+    """
+    Obtém as escolas mais próximas com base na similaridade dos nomes.
+
+    Parâmetros
+    ----------
+    esc_dict : dict
+        Um dicionário contendo as escolas base.
+    inep : DataFrame
+        O DataFrame contendo os dados das escolas do INEP.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame contendo as escolas mais próximas.
+    """
     dfs = []
     soma = 0
 
@@ -57,6 +95,21 @@ def get_closest_schools(esc_dict, inep):
 
 
 def create_escs_dict(esc, inep):
+    """
+    Cria um dicionário de escolas com base nos códigos dos municípios.
+
+    Parâmetros
+    ----------
+    esc : DataFrame
+        O DataFrame contendo os dados das escolas base.
+    inep : DataFrame
+        O DataFrame contendo os dados das escolas do INEP.
+
+    Retorna
+    -------
+    dict
+        Um dicionário onde as chaves são os códigos dos municípios e os valores são DataFrames das escolas.
+    """
     uf_codes = inep['codigo_municipio'].unique()
     escolas = esc.copy()
     dict = {}

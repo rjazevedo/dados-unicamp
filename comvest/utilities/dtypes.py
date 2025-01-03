@@ -1,3 +1,17 @@
+"""
+Módulo para definir os tipos de dados (dtypes) das colunas em DataFrames.
+
+Este módulo contém um dicionário que mapeia os nomes das colunas para seus tipos de dados correspondentes.
+Os tipos de dados são usados para garantir que os DataFrames sejam lidos e manipulados corretamente.
+
+Dicionários:
+- dtypes: Um dicionário que mapeia os nomes das colunas para seus tipos de dados.
+
+Como usar:
+Importe o dicionário `dtypes` deste módulo e use-o ao ler ou manipular DataFrames com pandas.
+"""
+
+
 DTYPES_DADOS = {
     'ano_vest'                 :  'Int64',
     'tipo_ingresso_comvest'    :  'Int64',
