@@ -1,3 +1,17 @@
+"""
+Módulo para extração de dados das cidades Comvest.
+
+Este módulo contém funções para extrair e processar dados das cidades onde os exames Comvest foram aplicados.
+
+Funções:
+- cleandata(cities, date): Realiza a limpeza dos dados das cidades.
+- extraction(): Executa a extração e processamento dos dados das cidades Comvest.
+
+Como usar:
+Implemente e execute as funções para realizar a extração e processamento dos dados das cidades Comvest.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, write_result
 from comvest.utilities.logging import progresslog, resultlog
@@ -5,14 +19,21 @@ from unidecode import unidecode
 
 
 def cleandata(cities, date):
-  '''
-    Desc: Data wrangling for cities' sheets
-    Args: Cities df, date
-    Returns: Clean cities dataframe with two columns: ano_vest, cidades_vest
-      where ano_vest is the column correspondent to the year of Comvest exam, 
-      cidades_vest is the column correspondent to the cities where the exam was applied 
-  '''
+  """
+  Realiza a limpeza dos dados das cidades.
 
+  Parâmetros:
+  ----------
+  cities : DataFrame
+      O DataFrame contendo os dados das cidades.
+  date : int
+      O ano do exame Comvest.
+
+  Retorna:
+  -------
+  DataFrame
+      O DataFrame contendo os dados das cidades limpos.
+  """
   cities.insert(loc=0,column='ano_vest',value=date)
 
   cities = cities.iloc[:,0:2]
@@ -26,6 +47,15 @@ def cleandata(cities, date):
 
 
 def extraction():
+  """
+  Executa a extração e processamento dos dados das cidades Comvest.
+
+  Esta função lê os dados das cidades de diferentes anos, realiza a limpeza dos dados e os concatena em um único DataFrame.
+
+  Retorna:
+  -------
+  None
+  """
   cities_frames = []
 
   for path, date in files.items():

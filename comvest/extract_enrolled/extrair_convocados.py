@@ -1,3 +1,16 @@
+"""
+Módulo para extração de dados dos convocados Comvest.
+
+Este módulo contém a função principal para extrair e processar dados dos convocados nos exames Comvest.
+
+Funções:
+- extraction(): Executa a extração e processamento dos dados dos convocados Comvest.
+
+Como usar:
+Implemente e execute a função para realizar a extração e processamento dos dados dos convocados Comvest.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import (
     files,
@@ -9,6 +22,15 @@ from comvest.utilities.io import (
 
 
 def extraction():
+    """
+    Executa a extração e processamento dos dados dos convocados Comvest.
+
+    Esta função lê os dados dos convocados de diferentes anos, realiza a limpeza dos dados e os concatena em um único DataFrame.
+
+    Retorna
+    -------
+    None
+    """
     convocados_frames = []
 
     for path, date in files.items():

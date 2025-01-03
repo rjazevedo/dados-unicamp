@@ -1,3 +1,16 @@
+"""
+Módulo para mesclar e corrigir dados das planilhas Comvest.
+
+Este módulo contém a função principal para mesclar e corrigir dados das planilhas Comvest.
+
+Funções:
+- merge(): Executa a mesclagem e correção dos dados das planilhas Comvest.
+
+Como usar:
+Implemente e execute a função para realizar a mesclagem e correção dos dados das planilhas Comvest.
+"""
+
+
 from functools import reduce
 from comvest.utilities.io import read_result, write_output
 from comvest.utilities.dtypes import (
@@ -19,6 +32,15 @@ def merge(
         "nome_mae_c",
     ]
 ):
+    """
+    Executa a mesclagem e correção dos dados das planilhas Comvest.
+
+    Esta função lê os dados das planilhas, realiza correções específicas e escreve os dados corrigidos em um arquivo CSV.
+
+    Retorna
+    -------
+    None
+    """
     dados = read_result("dados_comvest.csv", dtype=DTYPES_DADOS)
     perfil = read_result("perfil_comvest.csv", dtype=DTYPES_PERFIL)
     notas = read_result("notas_comvest.csv", dtype=DTYPES_NOTAS)

@@ -1,3 +1,18 @@
+"""
+Módulo para limpeza e extração de perfil Comvest.
+
+Este módulo contém funções para ler, limpar e extrair dados de perfil dos candidatos lidos de arquivos CSV.
+
+Funções:
+- validacao_cidade(df, date): Valida as cidades nos dados de perfil dos candidatos.
+- cleandata(df, questoes, date): Limpa e trata os dados de perfil dos candidatos.
+- extraction(): Executa a extração e limpeza dos dados de perfil.
+
+Como usar:
+Implemente e execute as funções para ler, limpar e extrair dados de perfil dos candidatos.
+"""
+
+
 import logging
 import pandas as pd
 from unidecode import unidecode
@@ -9,6 +24,21 @@ from comvest.clear_perfil import limpeza_questoes
 
 
 def validacao_cidade(df, date):
+    """
+    Valida as cidades nos dados de perfil dos candidatos.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados de perfil dos candidatos.
+    date : int
+        O ano de referência para a validação das cidades.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as cidades validadas.
+    """
     df_cidades = read_result("cidades_comvest.csv")
     cidades_ano = df_cidades[df_cidades["ano_vest"] == date]
 
@@ -33,6 +63,23 @@ def validacao_cidade(df, date):
 
 
 def cleandata(df, questoes, date):
+    """
+    Limpa e trata os dados de perfil dos candidatos.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados de perfil dos candidatos.
+    questoes : dict
+        Um dicionário mapeando as questões para os nomes das colunas.
+    date : int
+        O ano de referência para a limpeza dos dados.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com os dados de perfil limpos e tratados.
+    """
     # Renomeia colunas de acordo com o mapeamento das questões
     df = df.rename(questoes, axis=1)
     df = df.rename(
@@ -89,6 +136,13 @@ def cleandata(df, questoes, date):
 
 
 def extraction():
+    """
+    Executa a extração e limpeza dos dados de perfil.
+
+    Retorna
+    -------
+    None
+    """
     perfil_comvest = []
 
     cols = [

@@ -1,3 +1,16 @@
+"""
+Módulo para carregar e processar as bases de dados das escolas Comvest.
+
+Este módulo contém funções para ler, limpar e processar os dados das escolas dos candidatos lidos de arquivos CSV.
+
+Funções:
+- load_esc_bases(): Carrega e processa as bases de dados das escolas.
+
+Como usar:
+Implemente e execute a função para carregar e processar os dados das escolas dos candidatos.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import read_auxiliary
 from comvest.utilities.dtypes import DTYPES_DADOS
@@ -5,9 +18,19 @@ from comvest.escolas.utility import standardize_str
 from comvest.escolas.utility import remove_countie_name_from_school
 from comvest.utilities.io import read_result, write_result
 
+
 COLUMNS = ["escola", 'codigo_municipio', 'municipio_original', 'uf_original']
 
+
 def load_esc_bases():
+    """
+    Carrega e processa as bases de dados das escolas.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame contendo os dados das escolas processados.
+    """
     df_comvest = read_result("dados_comvest_com_uf.csv", dtype=DTYPES_DADOS)
     df_dac = read_result("dados_cadastrais_com_uf.csv")
 

@@ -1,3 +1,16 @@
+"""
+Módulo para extração de dados do pedido 2 Comvest.
+
+Este módulo contém a função principal para extrair e processar dados do pedido 2 Comvest.
+
+Funções:
+- extract(): Executa a extração e processamento dos dados do pedido 2 Comvest.
+
+Como usar:
+Implemente e execute a função para realizar a extração e processamento dos dados do pedido 2 Comvest.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import read_output
 from comvest.utilities.dtypes import (
@@ -10,6 +23,15 @@ import filters.filters as filter_db
 
 
 def extract():
+    """
+    Executa a extração e processamento dos dados do pedido 2 Comvest.
+
+    Esta função lê os dados de várias fontes, aplica filtros específicos e concatena os dados filtrados em um único DataFrame.
+
+    Retorna
+    -------
+    None
+    """
     # Leitura das bases
     COMVEST_SAMPLE = read_output(
         "comvest_amostra.csv",

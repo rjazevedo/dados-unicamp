@@ -1,9 +1,31 @@
+"""
+Módulo para correção de códigos de municípios IBGE nos dados Comvest.
+
+Este módulo contém a função para corrigir os códigos de municípios IBGE nos dados lidos de arquivos CSV.
+
+Funções:
+- merge(): Corrige os códigos de municípios IBGE nos dados e salva o resultado em um arquivo CSV.
+
+Como usar:
+Implemente e execute a função `merge` para corrigir os códigos de municípios IBGE nos dados.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import read_result, read_output, write_result
 from comvest.utilities.dtypes import DTYPES_DADOS
 
 
 def merge():
+    """
+    Corrige os códigos de municípios IBGE nos dados e salva o resultado em um arquivo CSV.
+
+    Lê os dados de arquivos CSV, corrige os códigos de municípios IBGE e salva o resultado em um novo arquivo CSV.
+
+    Retorna
+    -------
+    None
+    """
     dados = read_result("dados_comvest.csv", DTYPES_DADOS)
     tabela_mun = read_result("final_counties.csv")
 

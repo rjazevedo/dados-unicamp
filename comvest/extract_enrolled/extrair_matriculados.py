@@ -1,3 +1,18 @@
+"""
+Módulo para extração de dados dos matriculados Comvest.
+
+Este módulo contém funções para extrair e processar dados dos matriculados nos exames Comvest.
+
+Funções:
+- cleandata(df, date): Realiza a limpeza dos dados dos matriculados.
+- validacao_curso(df, date): Valida os códigos dos cursos dos matriculados.
+- extraction(): Executa a extração e processamento dos dados dos matriculados Comvest.
+
+Como usar:
+Implemente e execute as funções para realizar a extração e processamento dos dados dos matriculados Comvest.
+"""
+
+
 import logging
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, read_result, write_result
@@ -5,6 +20,21 @@ from comvest.utilities.logging import progresslog, resultlog
 
 
 def cleandata(df, date):
+    """
+    Realiza a limpeza dos dados dos matriculados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados dos matriculados.
+    date : int
+        O ano do exame Comvest.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame contendo os dados dos matriculados limpos.
+    """
     df.insert(loc=0, column="ano_vest", value=date)
     df.drop("nome", axis=1, errors="ignore", inplace=True)
     df = df.iloc[:, 0:3]
@@ -18,6 +48,21 @@ def cleandata(df, date):
 
 
 def validacao_curso(df, date):
+    """
+    Valida os códigos dos cursos dos matriculados.
+
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados dos matriculados.
+    date : int
+        O ano do exame Comvest.
+
+    Retorna
+    -------
+    DataFrame
+        O DataFrame contendo os dados dos matriculados com códigos de cursos validados.
+    """
     df_cursos = read_result("cursos.csv")
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
@@ -34,6 +79,15 @@ def validacao_curso(df, date):
     return df
 
 def extraction():
+    """
+    Executa a extração e processamento dos dados dos matriculados Comvest.
+
+    Esta função lê os dados dos matriculados de diferentes anos, realiza a limpeza e validação dos dados e os concatena em um único DataFrame.
+
+    Retorna
+    -------
+    None
+    """
     matriculados_frames = []
 
     for path, date in files.items():

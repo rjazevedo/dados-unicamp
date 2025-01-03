@@ -1,3 +1,16 @@
+"""
+Módulo para tratamento de presença nos dados Comvest.
+
+Este módulo contém funções para ler, limpar e tratar dados de presença dos candidatos.
+
+Funções:
+- get(): Executa a leitura e tratamento dos dados de presença.
+
+Como usar:
+Implemente e execute a função `get` para ler e tratar os dados de presença.
+"""
+
+
 import pandas as pd
 import glob
 import yaml
@@ -7,6 +20,13 @@ from comvest.utilities.dtypes import DTYPES_NOTAS
 
 
 def get():
+    """
+    Executa a leitura e tratamento dos dados de presença.
+
+    Retorna:
+    -------
+    None
+    """
     files_path = glob.glob(Bases.AUXILIARY.value+ r"*sitF*")
     files = [file.split("/")[-1] for file in files_path]
 

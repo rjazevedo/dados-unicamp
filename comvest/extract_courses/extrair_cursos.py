@@ -1,9 +1,40 @@
+"""
+Módulo para extração de dados dos cursos Comvest.
+
+Este módulo contém funções para extrair e processar dados dos cursos oferecidos nos exames Comvest.
+
+Funções:
+- cleandata(df, date, keepcolumns=['ano_vest', 'cod_curso', 'desc_curso', 'he', 'mod_isencao']): Realiza a limpeza dos dados dos cursos.
+- extraction(): Executa a extração e processamento dos dados dos cursos Comvest.
+
+Como usar:
+Implemente e execute as funções para realizar a extração e processamento dos dados dos cursos Comvest.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import files, read_from_db, write_result
 from comvest.utilities.logging import progresslog, resultlog
 
 
 def cleandata(df,date,keepcolumns=['ano_vest','cod_curso','desc_curso','he','mod_isencao']):
+	"""
+    Realiza a limpeza dos dados dos cursos.
+
+    Parâmetros:
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados dos cursos.
+    date : int
+        O ano do exame Comvest.
+    keepcolumns : list, opcional
+        Lista de colunas a serem mantidas no DataFrame final (o padrão é ['ano_vest', 'cod_curso', 'desc_curso', 'he', 'mod_isencao']).
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame contendo os dados dos cursos limpos.
+    """
 	df.insert(loc=0, column='ano_vest', value=date)
 	
 	df.drop(columns=['area'], errors='ignore', inplace=True)
@@ -18,6 +49,15 @@ def cleandata(df,date,keepcolumns=['ano_vest','cod_curso','desc_curso','he','mod
 
 
 def extraction():
+	"""
+	Executa a extração e processamento dos dados dos cursos Comvest.
+
+	Esta função lê os dados dos cursos de diferentes anos, realiza a limpeza dos dados e os concatena em um único DataFrame.
+
+	Retorna:
+	-------
+	None
+	"""
 	courses_frames = []
 
 	for path, date in files.items():

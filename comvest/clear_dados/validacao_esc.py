@@ -1,3 +1,20 @@
+"""
+Módulo para validação de escolas nos dados Comvest.
+
+Este módulo contém funções para validar e corrigir os nomes das escolas nos dados lidos de arquivos CSV.
+
+Funções:
+- standardize_str(s): Padroniza uma string removendo acentos, convertendo para maiúsculas e removendo caracteres especiais.
+- standardize_key(row): Padroniza as chaves de uma linha do DataFrame.
+- get_tokens(row): Obtém tokens de uma linha do DataFrame.
+- get_match(row, base): Encontra a melhor correspondência para uma linha do DataFrame em uma base de dados.
+- validation(): Executa a validação e correção dos nomes das escolas nos dados.
+
+Como usar:
+Implemente e execute as funções para validar e corrigir os nomes das escolas nos dados.
+"""
+
+
 from collections import defaultdict
 import pandas as pd
 import swifter
@@ -40,6 +57,19 @@ ESTADOS = {
 
 
 def standardize_str(s, type):
+    """
+    Padroniza uma string removendo acentos, convertendo para maiúsculas e removendo caracteres especiais.
+
+    Parâmetros
+    ----------
+    s : str
+        A string a ser padronizada.
+
+    Retorna
+    -------
+    str
+        A string padronizada.
+    """
     if type == "seq":
         return (
             re.sub(r"[^\w]", "", unidecode(str(s)).upper())
@@ -144,6 +174,21 @@ def standardize_str(s, type):
 
 
 def standardize_key(i, type):
+    """
+    Padroniza as chaves de uma linha do DataFrame.
+
+    Parâmetros
+    ----------
+    i : Series
+        A linha do DataFrame contendo as chaves a serem padronizadas.
+    type : str
+        O tipo de padronização a ser aplicado.
+
+    Retorna
+    -------
+    Series
+        A linha do DataFrame com as chaves padronizadas.
+    """
     if type == "seq":
         return standardize_str(i["escola"], type=type) + re.sub(
             r"[^\w]", "", unidecode(str(i["municipio"])).upper()
@@ -157,6 +202,19 @@ def standardize_key(i, type):
 
 
 def get_tokens(s):
+    """
+    Obtém tokens de uma linha do DataFrame.
+
+    Parâmetros
+    ----------
+    s : Series
+        A linha do DataFrame contendo os dados.
+
+    Retorna
+    -------
+    list
+        Uma lista de tokens extraídos da linha do DataFrame.
+    """
     if len(s) <= 3:
         return [s]
 
@@ -164,6 +222,21 @@ def get_tokens(s):
 
 
 def get_match(i, escolas, by, cutoff):
+    """
+    Encontra a melhor correspondência para uma linha do DataFrame em uma base de dados.
+
+    Parâmetros
+    ----------
+    row : Series
+        A linha do DataFrame contendo os dados a serem correspondidos.
+    base : DataFrame
+        A base de dados onde a correspondência será procurada.
+
+    Retorna
+    -------
+    Series
+        A linha do DataFrame com a melhor correspondência encontrada.
+    """
     if by == "seq":
         return (
             difflib.get_close_matches(
@@ -189,6 +262,13 @@ def get_match(i, escolas, by, cutoff):
 
 
 def validation():
+    """
+    Executa a validação e correção dos nomes das escolas nos dados.
+
+    Retorna
+    -------
+    None
+    """
     df_inep = read_auxiliary("INEP data.csv", dtype=object, sep=";").loc[
         :,
         [

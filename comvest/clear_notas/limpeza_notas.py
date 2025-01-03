@@ -1,3 +1,24 @@
+"""
+Módulo para limpeza e extração de notas Comvest.
+
+Este módulo contém funções para ler, limpar e extrair notas dos dados lidos de arquivos Excel.
+
+Funções:
+- leitura_notas(path, date): Lê as notas das planilhas de um arquivo Excel.
+- tratar_notas_f1(notas_f1): Trata as notas da primeira fase.
+- tratar_notas_f2(notas_f2): Trata as notas da segunda fase.
+- tratar_notas_enem(notas_enem, date): Trata as notas do ENEM.
+- tratar_notas_vi(notas_vi, date): Trata as notas do Vestibular Indígena.
+- tratar_notas_vo(notas_vo, date): Trata as notas do Vestibular Olímpico.
+- tratar_notas_profis(notas_profis, date): Trata as notas do ProFis.
+- tratar_notas_he(notas_he, date): Trata as notas do Histórico Escolar.
+- extraction(): Executa a extração e limpeza das notas.
+
+Como usar:
+Implemente e execute as funções para ler, limpar e extrair notas dos dados.
+"""
+
+
 import pandas as pd
 import logging
 from comvest.utilities.io import files, read_from_db, write_result
@@ -5,6 +26,21 @@ from comvest.utilities.logging import progresslog, resultlog
 
 
 def leitura_notas(path, date):
+    """
+    Lê as notas das planilhas de um arquivo Excel.
+
+    Parâmetros:
+    ----------
+    path : str
+        O caminho do arquivo Excel.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    dict
+        Um dicionário contendo as notas lidas das planilhas.
+    """
     notas_f1 = read_from_db(path, sheet_name="notasf1")
 
     try:
@@ -59,6 +95,19 @@ def leitura_notas(path, date):
 
 
 def tratar_notas_f1(notas_f1, date):
+    """
+    Trata as notas da primeira fase.
+
+    Parâmetros:
+    ----------
+    notas_f1 : DataFrame
+        O DataFrame contendo as notas da primeira fase.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas da primeira fase tratadas.
+    """
     for col in notas_f1.columns:
         if col in {"red", "red0c0o"}:
             notas_f1["redacao"] = notas_f1[col]
@@ -121,6 +170,19 @@ def tratar_notas_f1(notas_f1, date):
 
 
 def tratar_notas_f2(notas_f2, date):
+    """
+    Trata as notas da segunda fase.
+
+    Parâmetros:
+    ----------
+    notas_f2 : DataFrame
+        O DataFrame contendo as notas da segunda fase.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas da segunda fase tratadas.
+    """
     notas_f2.rename(
         {
             "presen_he": "papt",
@@ -307,6 +369,21 @@ def tratar_notas_f2(notas_f2, date):
 
 
 def tratar_notas_enem(notas_enem, inscritos, date):
+    """
+    Trata as notas do ENEM.
+
+    Parâmetros:
+    ----------
+    notas_enem : DataFrame
+        O DataFrame contendo as notas do ENEM.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas do ENEM tratadas.
+    """
     column_names = [
         "insc",
         "nota_enem",
@@ -358,6 +435,21 @@ def tratar_notas_enem(notas_enem, inscritos, date):
 
 
 def tratar_notas_vi(notas_vi, date):
+    """
+    Trata as notas do Vestibular Indígena.
+
+    Parâmetros:
+    ----------
+    notas_vi : DataFrame
+        O DataFrame contendo as notas do Vestibular Indígena.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas do Vestibular Indígena tratadas.
+    """
     column_names = [
         "insc",
         "questoes_vi",
@@ -408,6 +500,21 @@ def tratar_notas_vi(notas_vi, date):
 
 
 def tratar_notas_vo(notas_vo, date):
+    """
+    Trata as notas do Vestibular Olímpico.
+
+    Parâmetros:
+    ----------
+    notas_vo : DataFrame
+        O DataFrame contendo as notas do Vestibular Olímpico.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas do Vestibular Olímpico tratadas.
+    """
     column_names = [
         "insc",
         "olimpiada1_vo",
@@ -447,6 +554,21 @@ def tratar_notas_vo(notas_vo, date):
 
 
 def tratar_notas_profis(notas_profis, date):
+    """
+    Trata as notas do ProFis.
+
+    Parâmetros:
+    ----------
+    notas_profis : DataFrame
+        O DataFrame contendo as notas do ProFis.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas do ProFis tratadas.
+    """
     column_names = [
         "insc",
         "escola_profis",
@@ -475,6 +597,22 @@ def tratar_notas_profis(notas_profis, date):
 
 
 def tratar_notas_he(notas_he, date):
+    """
+    Trata as notas do Histórico Escolar.
+
+    Parâmetros:
+    ----------
+    notas_he : DataFrame
+        O DataFrame contendo as notas do Histórico Escolar.
+    date : int
+        O ano de referência para a leitura das notas.
+
+    Retorna:
+    -------
+    DataFrame
+        O DataFrame com as notas do Histórico Escolar tratadas.
+    """
+
     column_names = [
         "insc",
         "he1_arquitetura",
@@ -523,6 +661,13 @@ def tratar_notas_he(notas_he, date):
 
 
 def extraction():
+    """
+    Executa a extração e limpeza das notas.
+
+    Retorna:
+    -------
+    None
+    """
     notas_comvest = []
 
     for path, date in files.items():

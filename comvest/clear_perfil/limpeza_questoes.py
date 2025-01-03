@@ -1,7 +1,34 @@
+"""
+Módulo para limpeza e extração de questões Comvest.
+
+Este módulo contém funções para ler, limpar e extrair dados de questões dos candidatos lidos de arquivos Excel.
+
+Funções:
+- filtrar_perguntas(pergunta): Filtra as perguntas relevantes.
+- get_questions(path): Lê e trata as questões dos dados lidos de arquivos Excel.
+
+Como usar:
+Implemente e execute as funções para ler, limpar e extrair dados de questões dos candidatos.
+"""
+
+
 from comvest.utilities.io import read_from_db
 
 
 def filtrar_perguntas(desc):
+  """
+    Filtra as perguntas relevantes.
+
+    Parâmetros
+    ----------
+    pergunta : str
+        A descrição da pergunta.
+
+    Retorna
+    -------
+    str
+        A pergunta filtrada ou 'TODO' se a pergunta não for relevante.
+    """
   descricao = desc.lower()
   if 'sexo' in descricao:
     return 'sexo'
@@ -252,6 +279,19 @@ def filtrar_perguntas(desc):
   return 'TODO'
 
 def get_questions(path):
+  """
+  Lê e trata as questões dos dados lidos de arquivos Excel.
+
+  Parâmetros
+  ----------
+  path : str
+      O caminho do arquivo Excel.
+
+  Retorna
+  -------
+  tuple
+      Um tuplo contendo dois DataFrames: um com as questões e outro com as respostas.
+  """
   df = read_from_db(path, sheet_name='questoes')
 
   # Filtra as linhas do questionário com a descrição da pergunta

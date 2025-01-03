@@ -1,3 +1,16 @@
+"""
+Módulo para atribuição de IDs Comvest.
+
+Este módulo contém a função para atribuir IDs Comvest aos dados lidos de arquivos CSV.
+
+Funções:
+- assign_ids(): Atribui IDs Comvest aos dados e salva o resultado em um arquivo CSV.
+
+Como usar:
+Implemente e execute a função `assign_ids` para atribuir IDs Comvest aos dados.
+"""
+
+
 import pandas as pd
 from comvest.utilities.io import read_output, write_output, read_result
 from comvest.utilities.dtypes import (
@@ -9,6 +22,15 @@ from comvest.utilities.dtypes import (
 
 
 def assign_ids():
+    """
+    Atribui IDs Comvest aos dados e salva o resultado em um arquivo CSV.
+
+    Lê os dados de arquivos CSV, atribui IDs Comvest aos registros e salva o resultado em um novo arquivo CSV.
+
+    Retorna
+    -------
+    None
+    """
     comvest = read_output(
         "comvest_amostra.csv",
         dtype={**DTYPES_DADOS, **DTYPES_PERFIL, **DTYPES_MATRICULADOS, **DTYPES_NOTAS},
