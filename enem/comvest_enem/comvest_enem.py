@@ -1,11 +1,32 @@
+"""
+Este script combina os dados do Enem com os dados da Comvest para a Unicamp, realizando transformações e filtragens necessárias.
+
+Módulos necessários:
+- pandas: Para manipulação de dados em DataFrames.
+- tqdm: Para exibir uma barra de progresso.
+- enem.utilities.io: Para leitura e escrita dos resultados.
+
+Funções:
+- main(): Função principal que inicia o processo de combinação.
+- merge(): Combina os dados do Enem com os dados da Comvest.
+
+Como usar:
+Execute o script para combinar os dados do Enem com os dados da Comvest.
+"""
+
+
 import pandas as pd
 from tqdm import tqdm
 from enem.utilities.io import read_result, read_comvest_grades, write_result
 
-def main():
-    merge()
 
-def merge():
+def merge() -> None:
+    """
+    Combina os dados do Enem com os dados da Comvest.
+
+    Esta função lê os dados da Comvest e do Enem, padroniza as notas do Enem, concatena os dados de diferentes anos e mescla com os dados da Comvest.
+    Os dados da comvest vêm de outro arquivo, o qual ganhará as colunas para as notas de cada disciplina do Enem.
+    """
     COMVEST_FILE = 'dados_comvest.csv'
     GRADES_FILE = 'enem_comvest_todos.csv'
     
@@ -39,10 +60,14 @@ def merge():
     grades_comvest = pd.concat(grades)
 
     print("Merging with Comvest")
-    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'])
+    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'], suffixes=('_comvest1', '_grades1'))
     write_result(comvest_enem_aggregated, COMVEST_FILE)
     write_result(grades_comvest, GRADES_FILE)
 
+
+def main() -> None:
+    merge()
+
+
 if __name__ == '__main__':
     main()
-
