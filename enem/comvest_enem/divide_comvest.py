@@ -1,9 +1,39 @@
+"""
+Este script divide os dados do Enem combinados com os dados da Comvest para a Unicamp, separando-os em diferentes arquivos com base nos anos de inscrição.
+
+Módulos necessários:
+- pandas: Para manipulação de dados em DataFrames.
+- numpy: Para operações numéricas.
+- tqdm: Para exibir uma barra de progresso.
+- enem.utilities.io: Para leitura e escrita dos resultados.
+
+Funções:
+- separate_enem_comvest(YEAR): Separa os dados do Enem combinados com os dados da Comvest para um ano específico.
+
+Como usar:
+Execute o script para dividir os dados do Enem combinados com os dados da Comvest.
+"""
+
+
 import pandas as pd
 import numpy as np
 from tqdm import tqdm 
 from enem.utilities.io import write_result, read_result
 
-def separate_enem_comvest(YEAR):
+
+def separate_enem_comvest(YEAR: int) -> None:
+    """
+    Separa os dados do Enem combinados com os dados da Comvest para um ano específico.
+
+    Parâmetros
+    ----------
+    YEAR : int
+        O ano para o qual os dados serão separados.
+
+    Retorna
+    -------
+    None
+    """
     ENEM_COMVEST_PATH = f'Enem_Comvest/EnemComvest{YEAR}.csv'
 
     RESULT_1 = f'/Enem_Comvest/split/INSC{YEAR - 2}_COMV{YEAR}.csv'
@@ -36,8 +66,6 @@ def separate_enem_comvest(YEAR):
 
     print(f'{enem_before.shape[0]} entries in enem {YEAR - 2} after null removal\n')
     
-    
-    
     print(f"Droping INSC nulls {YEAR - 1}")
 
     enem_last.dropna(subset=[f'enem{YEAR - 1}'], inplace=True)
@@ -56,14 +84,27 @@ def separate_enem_comvest(YEAR):
     write_result(enem_before, RESULT_1)
     write_result(enem_last, RESULT_2)
 
-def main():
+
+def split_all() -> None:
+    """
+    Separa os dados do Enem combinados com os dados da Comvest para todos os anos especificados, exceto 2021.
+
+    Esta função itera sobre os anos de 2012 a 2022, excluindo 2021, e chama a função separate_enem_comvest para cada ano.
+
+    Retorna
+    -------
+    None
+    """
+    for y in tqdm(range(2012, 2024)):
+        if y == 2021: 
+            continue
+        print(f"Separating {y}...")
+        separate_enem_comvest(y)
+
+
+def main() -> None:
     split_all()
+
 
 if __name__ == '__main__':
     main()
-
-def split_all():
-    for y in tqdm(range(2012, 2023)):
-        if y == 2021: continue
-        print(f"Separating {y}...")
-        separate_enem_comvest(y)
