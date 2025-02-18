@@ -61,6 +61,9 @@ def extraction():
 	courses_frames = []
 
 	for path, date in files.items():
+		if "Profis" in path:
+			continue
+
 		courses = read_from_db(path, sheet_name='cursos')
 		courses = cleandata(courses, date)
 

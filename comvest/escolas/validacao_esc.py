@@ -37,16 +37,18 @@ def validation():
     -------
     None
     """
+    print("Carregando a base de escolas...")
     escs = load_esc_bases()
+    print("Carregando a base do INEP...")
     inep = load_inep_base()
 
     esc_dict = create_escs_dict(escs, inep)
     escs = get_closest_schools(esc_dict, inep)
 
+    print("Fazendo o merge das bases de escolas e do INEP...")
     result = pd.merge(escs, inep, on=['codigo_municipio', 'chave_seq'], how='left', suffixes=("_base", "_inep")) 
     filt = result['escola_inep'].isnull()
     print(result[~filt].shape[0] / result.shape[0])
-    #result = result.sort_values(by=['codigo_municipio'], ascending=True)
 
     result = result.drop_duplicates(subset=["escola_base", "codigo_municipio"])
     write_result(result, "escola_codigo_inep.csv")

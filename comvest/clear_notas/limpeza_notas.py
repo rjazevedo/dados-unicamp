@@ -42,6 +42,7 @@ def leitura_notas(path, date):
         Um dicionário contendo as notas lidas das planilhas.
     """
     notas_f1 = read_from_db(path, sheet_name="notasf1")
+    print(f"Notas da primeira fase lidas para o ano {date}")
 
     try:
         notas_f2 = read_from_db(path, sheet_name="notasfin")
@@ -50,6 +51,7 @@ def leitura_notas(path, date):
             notas_f2 = read_from_db(path, sheet_name="notasfinal")
         except:
             notas_f2 = read_from_db(path, sheet_name="notasf2")
+    print(f"Notas da segunda fase lidas para o ano {date}")
 
     # 2010 e 2011 nao tem dados sobre o ENEM
     # ENEM passa a ser usado como complemento no vestibular Comvest a partir de 2000
@@ -63,11 +65,13 @@ def leitura_notas(path, date):
             notas_enem = read_from_db(path, sheet_name="ve_notas")
         except:
             notas_enem = pd.DataFrame(columns=["insc", "nota_enem"])
+    print(f"Notas do ENEM lidas para o ano {date}")
 
     try:
         notas_vi = read_from_db(path, sheet_name="vi_notas")
     except:
         notas_vi = None
+    print(f"Notas do Vestibular Indígena lidas para o ano {date}")
 
     try:
         notas_vo = read_from_db(path, sheet_name="vo_notas")
@@ -76,16 +80,19 @@ def leitura_notas(path, date):
             notas_vo = read_from_db(path, sheet_name="vo_class")
         except:
             notas_vo = None
+    print(f"Notas do Vestibular Olímpico lidas para o ano {date}")
 
     try:
         notas_profis = read_from_db(path, sheet_name="profis_class")
     except:
         notas_profis = None
+    print(f"Notas do ProFis lidas para o ano {date}")
 
     try:
         notas_he = read_from_db(path, sheet_name="notashe")
     except:
         notas_he = None
+    print(f"Notas de Habiliades Específicas lidas para o ano {date}")
 
     notas_f1.columns = notas_f1.columns.str.lower()
     notas_f2.columns = notas_f2.columns.str.lower()
@@ -183,9 +190,10 @@ def tratar_notas_f2(notas_f2, date):
     DataFrame
         O DataFrame com as notas da segunda fase tratadas.
     """
-    notas_f2.rename(
+    if date == 2023:
+        notas_f2.rename(
         {
-            "presen_he": "papt",
+            "sit_he": "papt",
             "notpad_he": "notpad_aptidao",
             "napt": "not_apt",
             "apaptidao": "aprov_apt",
@@ -197,42 +205,42 @@ def tratar_notas_f2(notas_f2, date):
             "notpadf1op2": "notpad_f1_opc2",
             "red": "not_red",
             "notpadred": "notpad_red",
-            "presen_inter": "pinter",
+            "sit_inter": "pinter",
             "inter": "not_inter",
             "notpad8": "notpad_inter",
-            "sit": "pres_f2_d4",
+            "sit_f1": "pres_f2_d4",
             "ing": "not_est",
             "est": "not_est",
             "notpad_ing": "notpad_est",
-            "presen_por": "ppor",
-            "presen_port": "ppor",
+            "sit_por": "ppor",
+            "sit_port": "ppor",
             "notpad1": "notpad_por",
             "por": "not_por_f2",
             "npor": "not_por_f2",
             "notpad6": "notpad_bio",
-            "presen_bio": "pbio",
+            "sit_bio": "pbio",
             "bio": "not_bio",
             "nbio": "not_bio",
             "notpad7": "notpad_qui",
-            "presen_qui": "pqui",
+            "sit_qui": "pqui",
             "qui": "not_qui",
             "nqui": "not_qui",
             "notpad4": "notpad_his",
-            "presen_his": "phis",
+            "sit_his": "phis",
             "his": "not_his",
             "nhis": "not_his",
             "notpad5": "notpad_fis",
-            "presen_fis": "pfis",
+            "sit_fis": "pfis",
             "fis": "not_fis",
             "nfis": "not_fis",
             "notpad3": "notpad_geo",
-            "presen_geo": "pgeo",
+            "sit_geo": "pgeo",
             "geo": "not_geo",
             "ngeo": "not_geo",
             "notpad2": "notpad_mat",
-            "presen_math": "pmath",
+            "sit_math": "pmath",
             "math": "not_math",
-            "presen_mat": "pmat",
+            "sit_mat": "pmat",
             "mat": "not_mat",
             "nmat": "not_mat",
             "cha": "not_cha",
@@ -255,6 +263,80 @@ def tratar_notas_f2(notas_f2, date):
         axis=1,
         inplace=True,
     )
+        
+    else:   
+        notas_f2.rename(
+            {
+                "presen_he": "papt",
+                "notpad_he": "notpad_aptidao",
+                "napt": "not_apt",
+                "apaptidao": "aprov_apt",
+                "aptidao": "not_apt",
+                "fase1": "nf_f1",
+                "nfase1": "nf_f1",
+                "notpadf1": "notpad_f1",
+                "fase1op2": "not_f1_opc2",
+                "notpadf1op2": "notpad_f1_opc2",
+                "red": "not_red",
+                "notpadred": "notpad_red",
+                "presen_inter": "pinter",
+                "inter": "not_inter",
+                "notpad8": "notpad_inter",
+                "sit": "pres_f2_d4",
+                "ing": "not_est",
+                "est": "not_est",
+                "notpad_ing": "notpad_est",
+                "presen_por": "ppor",
+                "presen_port": "ppor",
+                "notpad1": "notpad_por",
+                "por": "not_por_f2",
+                "npor": "not_por_f2",
+                "notpad6": "notpad_bio",
+                "presen_bio": "pbio",
+                "bio": "not_bio",
+                "nbio": "not_bio",
+                "notpad7": "notpad_qui",
+                "presen_qui": "pqui",
+                "qui": "not_qui",
+                "nqui": "not_qui",
+                "notpad4": "notpad_his",
+                "presen_his": "phis",
+                "his": "not_his",
+                "nhis": "not_his",
+                "notpad5": "notpad_fis",
+                "presen_fis": "pfis",
+                "fis": "not_fis",
+                "nfis": "not_fis",
+                "notpad3": "notpad_geo",
+                "presen_geo": "pgeo",
+                "geo": "not_geo",
+                "ngeo": "not_geo",
+                "notpad2": "notpad_mat",
+                "presen_math": "pmath",
+                "math": "not_math",
+                "presen_mat": "pmat",
+                "mat": "not_mat",
+                "nmat": "not_mat",
+                "cha": "not_cha",
+                "cn": "not_cn",
+                "plin": "pest",
+                "nlin": "not_est",
+                "clas1": "clas_opc1",
+                "clas2": "clas_opc2",
+                "clas3": "clas_opc3",
+                "clacur1": "clas_opc1",
+                "clacur2": "clas_opc2",
+                "clacur3": "clas_opc3",
+                "nf2_opcao1": "nf_f2_opc1",
+                "nf2_opcao2": "nf_f2_opc2",
+                "npfinal1": "npo1",
+                "npfinal2": "npo2",
+                "npfinal3": "npo3",
+                "npfinal": "np_unica",
+            },
+            axis=1,
+            inplace=True,
+        )
 
     try:
         notas_f2["pres_f2_d4"] = notas_f2["pres_f2_d4"].map(
@@ -292,7 +374,7 @@ def tratar_notas_f2(notas_f2, date):
     if date == 1987:
         notas_f2["pbio"] = notas_f2["pbio"].map({"A": "A", "S": "P"})
 
-    # No caso em que a pagina de notas final (notas da fase 2) tem o número de inscrição dada por uma string
+    # No caso em que a página de notas final (notas da fase 2) tem o número de inscrição dada por uma string
     # sem a possibilidade de ser convertida para número pelo próprio método read_excel, deve-se fazer a conversão
     if notas_f2["insc"].dtype == object:
         notas_f2["insc"] = (
@@ -671,6 +753,10 @@ def extraction():
     notas_comvest = []
 
     for path, date in files.items():
+        if "Profis" in path:
+            continue
+        
+        print(f"Processando o ano {date}")
         (
             notas_f1,
             notas_f2,
@@ -683,13 +769,26 @@ def extraction():
         progresslog("notas", date)
 
         notas_f1 = tratar_notas_f1(notas_f1, date)
+        print(f"Notas da primeira fase tratadas para o ano {date}")
+        
         notas_f2 = tratar_notas_f2(notas_f2, date)
+        print(f"Notas da segunda fase tratadas para o ano {date}")
+        
         notas_enem = tratar_notas_enem(notas_enem, notas_f1["insc"], date)
+        print(f"Notas do ENEM tratadas para o ano {date}")
+        
         notas_vi = tratar_notas_vi(notas_vi, date)
+        print(f"Notas do Vestibular Indígena tratadas para o ano {date}")
+        
         notas_vo = tratar_notas_vo(notas_vo, date)
+        print(f"Notas do Vestibular Olímpico tratadas para o ano {date}")
+        
         notas_profis = tratar_notas_profis(notas_profis, date)
+        print(f"Notas do ProFis tratadas para o ano {date}")
+        
         notas_he = tratar_notas_he(notas_he, date)
-
+        print(f"Notas de Habilidades Específicas tratadas para o ano {date}")
+        
         notas_vc = notas_f1.merge(
             notas_f2, how="left", on="insc", suffixes=("_f1", "_f2")
         )

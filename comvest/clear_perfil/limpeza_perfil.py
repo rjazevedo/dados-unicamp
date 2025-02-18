@@ -160,6 +160,10 @@ def extraction():
     ]
 
     for path, date in files.items():
+        if "Profis" in path:
+            continue
+        
+        print(f"Processando o ano {date}")
         df = read_from_db(path, sheet_name="perfil", dtype=object)
         df.opcao1 = df.opcao1.astype(float).astype("Int32")
         progresslog("perfil", date)

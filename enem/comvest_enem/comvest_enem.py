@@ -60,7 +60,7 @@ def merge() -> None:
     grades_comvest = pd.concat(grades)
 
     print("Merging with Comvest")
-    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'], suffixes=('_comvest1', '_grades1'))
+    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'])
     write_result(comvest_enem_aggregated, COMVEST_FILE)
     write_result(grades_comvest, GRADES_FILE)
 

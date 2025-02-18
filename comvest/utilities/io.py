@@ -127,7 +127,7 @@ def read_result(FILE_NAME, dtype=None, na_values=None):
     DataFrame
         Um DataFrame contendo os dados lidos do arquivo CSV.
     """
-    return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype, na_values=na_values)
+    return pd.read_csv(Bases.RESULT.value + FILE_NAME, dtype=dtype, na_values=na_values, low_memory=False, on_bad_lines='skip')
 
 
 def read_output(FILE_NAME, database="comvest", dtype=None, sep=",", na_values=None):

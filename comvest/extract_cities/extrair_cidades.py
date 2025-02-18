@@ -59,6 +59,10 @@ def extraction():
   cities_frames = []
 
   for path, date in files.items():
+    if "Profis" in path:
+      continue
+    
+    print(f"Extraindo cidades do ano {date}...")
     cities = read_from_db(path, sheet_name='cidades')
     progresslog('cidades', date)
 

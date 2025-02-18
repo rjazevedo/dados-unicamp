@@ -107,6 +107,11 @@ def get():
         :, ["ano_vest", "insc_vest", "presente_vi"]
     ]
     vi_2022.rename(columns={"presente_vi": "sit", "insc_vest": "insc"}, inplace=True)
+    
+    vi_2023 = df_notas[df_notas["ano_vest"] == 2023].loc[
+        :, ["ano_vest", "insc_vest", "presente_vi"]
+    ]
+    vi_2023.rename(columns={"presente_vi": "sit", "insc_vest": "insc"}, inplace=True)
 
     com_presenca_f1 = df_notas[
         ~df_notas["ano_vest"].isin([i for i in range(2005, 2011)])
@@ -114,7 +119,7 @@ def get():
     f1.append(com_presenca_f1)
 
     com_presenca_f2 = df_notas[
-        df_notas["ano_vest"].isin([i for i in range(1987, 2005)] + [2022])
+        df_notas["ano_vest"].isin([i for i in range(1987, 2005)] + [2022, 2023])
     ].loc[
         :,
         [
@@ -138,7 +143,7 @@ def get():
 
     pres_f1 = pd.concat(f1)
     pres_f2 = pd.concat(f2)
-    pres_vi = pd.concat([vi_2019, vi_2020, vi_2021, vi_2022])
+    pres_vi = pd.concat([vi_2019, vi_2020, vi_2021, vi_2022, vi_2023])
     pres_vi.columns = ["ano_vest", "insc_vest", "presente_vi"]
 
     df_notas = df_notas.drop(columns="presente_f1").merge(

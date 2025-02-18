@@ -34,12 +34,21 @@ def extraction():
     convocados_frames = []
 
     for path, date in files.items():
+        if "Profis" in path:
+            continue
+        
         try:
-            convocados = read_from_db(path, sheet_name="convocadosMatriculados")
+            if date == 2023:
+                convocados = read_from_db(path, sheet_name="convocados_matriculados")
+            else:
+                convocados = read_from_db(path, sheet_name="convocadosMatriculados")
+                
             convocados_frames.append(convocados)
         except:
             pass
-
+    
+        print(f"Extraindo os convocados para o ano {date}...")
+    
     convocados_file = read_auxiliary(
         "ConvocadosMatriculadosLista87a21.xlsx",
         dtype={"ano": "Int64", "insc": "Int64", "curso": "Int64", "lista": "Int64"},

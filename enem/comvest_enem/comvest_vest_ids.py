@@ -23,9 +23,11 @@ import os
 from tqdm import tqdm
 from enem.utilities.io import write_result
 
+
 COMVEST_IDS_PATH = '/home/gsiqueira/dados-unicamp/input/ids/dac_comvest_ids.csv'
-COMVEST_ENEM_PATH = '/home/gsiqueira/dados-unicamp/output/insc_comvest_enem/'
+COMVEST_ENEM_PATH = '/home/output/intermediario/Enem_Comvest/split/'
 RESULT_PATH = '/home/output/intermediario/Enem-Comvest/ids_comvest_enem/'
+
 
 def merge_ids_per_year(comvest_enem: DataFrame, comvest_ids: DataFrame, year: int) -> DataFrame:
     """
@@ -70,13 +72,18 @@ def retrieve_ids(comvest_ids_year: DataFrame, year: int) -> None:
     RESULT_PATHS = [f'{RESULT_PATH}insc{y}_comv{year}_ids.csv' for y in range(year - 2, year)]
    
     comvest_enem_dfs = [pd.read_csv(FILE) for FILE in COMVEST_PATHS if os.path.isfile(FILE)]
+    print(len(comvest_enem_dfs))
     
     comvest_enem_ids = list(map(lambda comvest_enem : merge_ids_per_year(comvest_enem, comvest_ids_year, year), comvest_enem_dfs))
 
     os.makedirs(RESULT_PATH, exist_ok=True)
     
-    for i, ids in enumerate(comvest_enem_ids): 
-        ids.to_csv(RESULT_PATHS[i], index=False)
+    if (year == 2021) or (year == 2023):
+        comvest_enem_ids[0].to_csv(RESULT_PATHS[1], index=False)
+    
+    else:
+        for i, ids in enumerate(comvest_enem_ids):
+            ids.to_csv(RESULT_PATHS[i], index=False)
 
 
 def retrieve() -> None:

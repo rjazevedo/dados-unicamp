@@ -99,7 +99,7 @@ def clean_2023(year: int) -> None:
     
     # Reordena as colunas
     comvest = comvest[[
-        "comvest_2023", "enem2022", "enem2021", "NOME", "CPF",
+        "comvest_2023", "enem2021", "enem2022", "NOME", "CPF",
         "ncnt2021", "ncht2021", "nlct2021", "nmt2021", "nred2021",
         "ncnt2022", "ncht2022", "nlct2022", "nmt2022", "nred2022"
     ]]  
