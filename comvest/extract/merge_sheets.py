@@ -56,7 +56,7 @@ def merge(
     )
 
     # Retira variáveis que não serão disponibilizadas na base final
-    base_comvest.drop(columns=dropcolumns, errors="ignore", inplace=True)
+    base_comvest = base_comvest.drop(columns=dropcolumns, errors="ignore")
 
     # Corrige manualmente casos com problemas nos dados originais.
     base_comvest.loc[

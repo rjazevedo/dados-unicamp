@@ -1,5 +1,5 @@
 """
-Esse script serve para limpar os dados dos arquivos fin para os anos de 2018 a 2022.
+Esse script serve para limpar e padronizar os dados dos arquivos fin, compatibilizando-os com o enem e permitindo o merge com a comvest.
 
 Módulos necessários:
 - pandas: Para manipulação de dados em DataFrames.
@@ -20,7 +20,7 @@ import pandas as pd
 import numpy as np
 
 
-def clear_fin(year: str) -> None:
+def standardize_fin(year: str) -> None:
     """
     Limpa os dados dos arquivos fin para os anos de 2018 a 2022
     
@@ -49,15 +49,29 @@ def clear_fin(year: str) -> None:
         "nred": f"nred{year}"
     })
     fin = fin[[f"comvest_{year + 1}", f"enem{year}", "NOME", "CPF", f"ncnt{year}", f"ncht{year}", f"nlct{year}", f"nmt{year}", f"nred{year}"]]
-    fin.drop(columns=[f"enem{year}", "NOME", "CPF"], inplace=True)
 
-    write_result(fin, f'Enem_Comvest/fin{year}.csv')
+    cols_to_add = [f'enem{year - 1}' ,f'ncnt{year - 1}', f'ncht{year - 1}', f'nlct{year - 1}', 
+                    f'nmt{year - 1}', f'nred{year - 1}']
+    
+    # Preenche as novas colunas com valores nulos
+    for col in cols_to_add:
+        fin[col] = np.nan
+    
+    # Ajusta a ordem das colunas do fin para que seja a mesma do df do enem
+    fin = fin[[f'comvest_{year + 1}', f'enem{year - 1}', f'enem{year}', 'NOME', 'CPF',
+             f'ncnt{year - 1}', f'ncht{year - 1}', f'nlct{year - 1}', f'nmt{year - 1}', f'nred{year - 1}',
+             f'ncnt{year}', f'ncht{year}', f'nlct{year}', f'nmt{year}', f'nred{year}']]
+
+    if year == 2020:
+        write_result(fin, f'Enem_Comvest/EnemComvest{year + 1}.csv')
+    
+    write_result(fin, f'Enem_Comvest/fin_stand{year + 1}.csv')
 
 
 def main() -> None:
     for year in tqdm(range(2018, 2023)):
-        print(f"Cleaning fin {year}...")
-        clear_fin(year)
+        print(f"Standardizing fin {year}...")
+        standardize_fin(year)
 
 
 if __name__ == "__main__":

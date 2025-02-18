@@ -67,7 +67,7 @@ def validacao_curso(df, date):
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
     # Codigos que nao constam na lista de cursos serao remapeados para missing
-    df["curso_matric"].fillna(-1, inplace=True)
+    df["curso_matric"] = df["curso_matric"].fillna(-1)
     df["curso_matric"] = df["curso_matric"].map(
         lambda cod: int(cod) if int(cod) in cursos else pd.NA
     )
@@ -77,6 +77,7 @@ def validacao_curso(df, date):
     df.dropna(subset=["curso_matric"], inplace=True)
 
     return df
+
 
 def extraction():
     """
@@ -91,12 +92,21 @@ def extraction():
     matriculados_frames = []
 
     for path, date in files.items():
-        matriculados = read_from_db(path, sheet_name="matriculados")
+        if "Profis" in path:
+            continue
+        
+        elif date == 2023:
+            matriculados = read_from_db(path, sheet_name="matriculados_final")
+            matriculados = matriculados.drop(columns=["CPF", "nome"])
+        
+        else:
+            matriculados = read_from_db(path, sheet_name="matriculados")
+        
+        print(f"Processando os matriculados para o ano {date}...")
         progresslog("matriculados", date)
 
         matriculados = cleandata(matriculados, date)
         matriculados = validacao_curso(matriculados, date)
-
         matriculados_frames.append(matriculados)
 
     # Exportar CSV

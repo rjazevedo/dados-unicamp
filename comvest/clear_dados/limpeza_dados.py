@@ -45,6 +45,7 @@ CURSOS = "cursos.csv"
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
+
 def validacao_curso(df, col, date):
     """
     Valida os códigos de curso nos dados e remapeia códigos inválidos para valores ausentes.
@@ -291,7 +292,6 @@ def tratar_nacionalidade(df):
     DataFrame
         O DataFrame com a nacionalidade tratada.
     """
-
     for col in df.columns:
         if col in {"NACIO", "NACION", "NACIONALID", "NACIONALIDADE"}:
             df.rename({col: "NACIONALIDADE"}, axis=1, inplace=True)
@@ -795,6 +795,10 @@ def extraction():
     dados_comvest = []
 
     for path, date in files.items():
+        if "Profis" in path:
+            continue
+        
+        print(f"Lendo o arquivo para o ano {date}")
         df = read_from_db(path, sheet_name="dados", dtype=str)
         progresslog("dados", date)
 

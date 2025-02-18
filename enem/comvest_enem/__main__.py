@@ -21,14 +21,15 @@ from enem.comvest_enem import divide_comvest
 from enem.comvest_enem import comvest_enem
 from enem.comvest_enem import comvest_vest_ids
 from enem.comvest_enem import comvest_enem_ids
-from enem.comvest_enem import clear_fin
-from enem.comvest_enem import merge_enem_fin
+from enem.comvest_enem import stand_fin
+from enem.comvest_enem import concat_enem_fin
+
 
 def main():
     clear_comvest.clean_all()
-    clear_fin.main()
-    merge_enem_fin.main()
-    #comvest_enem.merge()
+    stand_fin.main()
+    concat_enem_fin.main()
+    comvest_enem.merge()
     divide_comvest.split_all()
     comvest_vest_ids.retrieve()
     comvest_enem_ids.merge()
