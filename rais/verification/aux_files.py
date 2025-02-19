@@ -3,7 +3,11 @@ import pandas as pd
 
 def read_database(file, dtype, index=None, squeeze=False):
     df = pd.read_csv(
-        file, sep=";", encoding="latin", dtype=dtype, index_col=index).squeeze("columns")
+        file, sep=";", encoding="latin", dtype=dtype, index_col=index
+    )
+    if squeeze:
+        return df.squeeze()
+      
     return df
 
 

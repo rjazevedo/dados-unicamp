@@ -129,7 +129,7 @@ def merge_socio_individual_files(df_dac_comvest):
 
 def prepare_socio(df, year):
     df = df.drop_duplicates()
-    df["nome_socio"] = df["nome_socio"].replace("", np.nan)
+    df.loc[:, "nome_socio"] = df["nome_socio"].replace("", np.nan)
     df = df.dropna(subset=["nome_socio"])
     df["primeiro_nome"] = df["nome_socio"].map(get_first_name)
     if year > 2020:

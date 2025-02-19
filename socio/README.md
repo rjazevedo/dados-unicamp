@@ -13,7 +13,7 @@ Após a remoção dessa linha, uma nova linha defeiturosa aparece na posição 7
 
 ## Módulos disponíveis
 
-Aqui se encontram os scripts de limpeza, extração e verificação dos dados das bases de Sócios, Empresas e CNAE Secundário, todas carregadas no site https://basedosdados.org/dataset/br-me-socios.
+Aqui se encontram os scripts de limpeza, extração e verificação dos dados das bases de Sócios, Empresas e CNAE Secundário, todas carregadas no site https://dadosabertos.rfb.gov.br/CNPJ/.
 
 O projeto está dividido nos seguintes módulos:
 

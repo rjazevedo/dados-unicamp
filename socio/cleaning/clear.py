@@ -18,27 +18,36 @@ from socio.utilities.logging import log_cleaning_file
 
 def clear_socio():
     log_cleaning_database("Socio")
+    # Read all paths inside the input folder and sort them
     socio_folders = list_dirs_socio_input()
     socio_folders = sorted(socio_folders)
     create_folder_socio_tmp()
 
     for folder in socio_folders:
+        # Clear the date from the folder founded
         clear_date_socio(folder)
 
 
 def clear_date_socio(path):
+    # Get the date that is in the last part of the path like input/socios/2020-01-01
     date = path.split("/")[-1]
     date_clean = date.replace("-", "")
+
+    # Create the temporary folder for each date
     create_folder_socio_tmp_date(date)
+
+    # Get all files inside the date folder
     files = get_all_files(path)
     for file in files:
         filename = file.split("/")[-1]
         log_cleaning_file(path, filename)
         df = read_socio_original(file, date_clean)
 
+        # Clear the columns that are not in the columns_info or that will not be shared
         df = filter_columns_socio(df)
         df["data_coleta"] = date_clean
 
+        # Clear every column using specific cleaning functions
         df = clear_file_socio(df)
         print(f"Saving cleaned file: {file}")
 
@@ -67,7 +76,7 @@ def filter_columns_socio(df):
         }
     )
     columns_info = get_columns_info_socio()
-    valid_cols = set(columns_info.keys()).intersection(set(df.columns))
+    valid_cols = list(set(columns_info.keys()).intersection(set(df.columns)))
 
     if "codigo_tipo_socio" in valid_cols:
         df = df.loc[df.codigo_tipo_socio == 2, valid_cols]

@@ -42,7 +42,7 @@ def get_file_name(file):
 
 # ------------------------------------------------------------------------------------------------
 def create_folder(path, folder_name):
-    command = "mkdir " + path + folder_name
+    command = "mkdir -p " + path + folder_name
     subprocess.run(command, shell=True)
 
 

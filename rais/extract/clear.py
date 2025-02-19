@@ -14,7 +14,7 @@ from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_tmp_files
 
 from rais.utilities.read import read_rais_merge
-from rais.utilities.read import read_rais_original_by_merge
+from rais.utilities.read import read_rais_original_pre_processed
 from rais.utilities.read import read_rais_clean
 
 from rais.utilities.write import write_rais_clean
@@ -23,17 +23,23 @@ from rais.utilities.write import write_rais_sample
 from rais.utilities.logging import log_cleaning_year
 from rais.utilities.logging import log_cleaning_file
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
 
-def clear_all_years(tipo_extracao):
-    for year in range(2002, 2019):
+def clear_all_years():
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_cleaning_year(year)
         clear_year(year)
-    join_all_years(tipo_extracao)
+    join_all_years()
 
 
 def clear_year(year):
     create_folder_inside_year(year, "clean_data")
     files = get_all_tmp_files(year, "rais_dac_comvest", "csv")
+    from random import shuffle
+    shuffle(files)
     for file in files:
         clear_file(file, year)
 
@@ -41,38 +47,33 @@ def clear_year(year):
 def clear_file(file, year):
     log_cleaning_file(file)
     df_clean = read_rais_merge(file)
-    df_original = read_rais_original_by_merge(file, year)
-    df_final = get_columns(df_clean, df_original, year, file)
+    df_original = read_rais_original_pre_processed(file, year)
+    df_final = get_columns(df_clean, df_original, year)
     write_rais_clean(df_final, year, file)
 
 
-def join_all_years(tipo_extracao):
+def join_all_years():
     dfs = []
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         files = get_all_tmp_files(year, "clean_data", "csv")
         for file in files:
             df = read_rais_clean(file)
             dfs.append(df)
     result = pd.concat(dfs)
     anonymize_data(result)
-    if tipo_extracao == "limitada":
-        del result["mun_etbl"]
-        del result["cnae95"]
-        del result["cnpj"]
-        del result["mun_etbl"]
-        del result["mun_etbl"]
     final_cleaning(result)
     write_rais_sample(result)
 
 
 # ------------------------------------------------------------------------------------------------
-def get_columns(df_clean, df_original, year, file):
-    df_merged = pd.merge(df_clean, df_original, left_index=True, right_index=True)
+def get_columns(df_clean, df_original, year):
+    df_merged = pd.merge(df_clean, df_original, left_index=True, right_index=True, suffixes=("", "_original"))
     df_merged = rename_all_columns(df_merged, year)
     df_clean = clean_columns(df_merged, year)
     columns = get_all_columns_rais()
     valid_cols = list(set(df_clean.columns).intersection(set(columns)))
     df_clean = df_clean.loc[:, valid_cols]
+    merged = set(df_merged.columns).difference(set(df_clean.columns))
     return df_clean
 
 
@@ -136,10 +137,20 @@ def final_cleaning(df):
 
 
 def clean_columns(df, year):
+    columns_already_cleaned = [
+        "nome_r",
+        "cpf_r",
+        "dta_nasc_r",
+        "pispasep",
+        "mun_estbl",
+        "ano_base",
+    ]
     if df.empty:
         return df
     columns_info = get_columns_info_rais()
     for column in columns_info:
+        if column in columns_already_cleaned:
+            continue
         periods = columns_info[column]["clean_function"]
         function = get_info_period(year, periods)
         if function is not None:

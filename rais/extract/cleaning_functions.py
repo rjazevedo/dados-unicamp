@@ -1,22 +1,38 @@
 import numpy as np
+import pandas as pd
 import re
 from unidecode import unidecode
 
 
 def clean_cpf_column(df):
-    df["cpf_r"] = df.apply(lambda x: get_cpf(x["cpf_r"]), axis=1)
+    # Verifica se o CPF é string e substitui NaN ou não-strings por ""
+    df["cpf_r"] = df["cpf_r"].astype(str).str.strip()
+
+    # Remove os CPFs inválidos usando uma operação vetorizada
+    invalid_cpfs = ["0", "99", "191", "00000000000", "11111111111", "33333333333"]
+    df.loc[df["cpf_r"].isin(invalid_cpfs), "cpf_r"] = ""
+
+    # Preenche com zeros à esquerda (zfill) - Vetorizado
+    df["cpf_r"] = df["cpf_r"].str.zfill(11)
 
 
 def clean_pispasep_column(df):
-    df["pispasep"] = df.apply(lambda x: get_pispasep(x["pispasep"]), axis=1)
+    df["pispasep"] = df["pispasep"].replace("0", "")
 
 
 def clean_name_column(df):
-    df["nome_r"] = df.apply(lambda x: get_name(x["nome_r"]), axis=1)
+    df["nome_r"] = (
+    df["nome_r"]
+    .astype(str)  # Converte para string (substitui o check type(name) != str)
+    .apply(unidecode)  # Remove os acentos
+    .str.upper()  # Converte para maiúsculas
+    .str.strip()  # Remove espaços no início e no fim
+    .str.replace(r'\s+', ' ', regex=True)  # Remove múltiplos espaços consecutivos
+)
 
 
 def clean_birthdate_column(df):
-    df["dta_nasc_r"] = df.apply(lambda x: get_birthdate(x["dta_nasc_r"]), axis=1)
+    df["dta_nasc_r"] = df["dta_nasc_r"].astype(str).str.zfill(8)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -292,6 +308,8 @@ def get_idade(value):
 
 
 def get_deslig_dia(value):
+    if pd.isna(value):
+        return np.nan
     if value == "{ñ":
         return 0
     if value == "NAO DESL ANO":

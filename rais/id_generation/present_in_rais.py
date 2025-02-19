@@ -2,6 +2,11 @@ import pandas as pd
 import clean_module.file
 import clean_module.dtypes
 
+import yaml
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+intervalo = config["intervalo_rais"]
+
 # Create a column in dac/comvest union saying if the person is in rais or not, and save it in uniao_dac_comvest_is_in_rais.csv
 def check_is_in_rais(path):
     file_dac_comvest = path + 'dac_comvest_recovered.csv'
@@ -17,7 +22,7 @@ def check_is_in_rais(path):
 # Concat files in rais_dac_comvest in all years
 def join_merged_files(path):
     dfs = []
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         df = join_merged_files_year(year, path)
         dfs.append(df)
 

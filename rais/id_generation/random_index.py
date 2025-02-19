@@ -94,10 +94,10 @@ def generate_index():
     )
     result = result.fillna({"wrong": False})
 
-    result.id = result.id.where(~result.wrong, result.id_y)
+    result.id = result.id.where(~result.wrong.astype(bool), result.id_y)
     result.id = result.id.astype("int64")
 
-    result.origem_cpf = result.origem_cpf.where(~result.wrong, result.origem_cpf_y)
+    result.origem_cpf = result.origem_cpf.where(~result.wrong.astype(bool), result.origem_cpf_y)
     result.origem_cpf = result.origem_cpf.astype("int64")
 
     del result["wrong"]
@@ -119,6 +119,7 @@ def generate_index():
             "origem_cpf",
         ],
     ]
+    logging.info("Writing dac_comvest_ids.csv")
     write_dac_comvest_ids(result)
 
 
@@ -130,7 +131,7 @@ def get_index_missing_cpf(df):
         (df["cpf"] == "-") & ~((df2.dta_nasc == "-") & (df2.doc == "000000000000000")),
         :,
     ]
-    df_cpf_missing_not_null["join"] = df_cpf_missing_not_null.apply(
+    df_cpf_missing_not_null.loc[:, "join"] = df_cpf_missing_not_null.apply(
         lambda x: str(x["doc"]) + str(x["dta_nasc"]), axis=1
     )
     df_cpf_missing_not_null = df_cpf_missing_not_null.sample(
@@ -147,7 +148,7 @@ def get_index_missing_cpf(df):
     codes, uniques = pd.factorize(df_cpf_missing_null["nome"])
     df_cpf_missing_null.insert(0, "id", codes, True)
 
-    df_cpf_missing_null.id = df_cpf_missing_null.id + df_cpf_missing_not_null["id"].max() + 1
+    df_cpf_missing_null.loc[:, 'id'] = df_cpf_missing_null.id + df_cpf_missing_not_null["id"].max() + 1
 
     df_cpf_missing = pd.concat(
         [df_cpf_missing_null, df_cpf_missing_not_null], sort=True
