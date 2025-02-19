@@ -84,18 +84,6 @@ def main():
             tipo_extracao_socios = d[socios_in]
             break
 
-    while True:
-        rais_in = int(
-            input(
-                "Digite 1 para realizar a extração limitada da base RAIS ou 2 para a extração completa:"
-            )
-        )
-        if rais_in != 1 and rais_in != 2:
-            print("Entrada inválida, digite novamente.")
-        else:
-            tipo_extracao_rais = d[rais_in]
-            break
-
     # Pre-processamento COMVEST
     extrair_cidades.extraction()
     extrair_cursos.extraction()
@@ -118,8 +106,6 @@ def main():
     divide_comvest.split_all()
 
 
-   
-    
     # Base da COMVEST
     cod_ibge.merge()
     validacao_esc.validation()
@@ -165,7 +151,7 @@ def main():
     # Merge rais com ids
     merge.merge_all_years()
     recover_cpf_rais.recover_cpf_all_years()
-    clear.clear_all_years(tipo_extracao_rais)
+    clear.clear_all_years()
 
     clear_socio.clear_socio()
     merge_socio.merge_socio_dac_comvest(tipo_extracao_socios)
