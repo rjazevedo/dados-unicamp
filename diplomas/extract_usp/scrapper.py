@@ -7,10 +7,10 @@ import os
 
 def scrap(FILENAME, SAVE_FILE):
     with open(FILENAME, 'rb') as file:
-        df = pd.DataFrame(columns=['nome', 'instituicao', 'grau', 'curso', 'ano_conclusao'])
+        data = []
         print("Scrapping " + FILENAME)
-        soup = BeautifulSoup(file.read(), 'html.parser')
-                
+        soup = BeautifulSoup(file.read(), 'html.parser', from_encoding='utf-8')
+        
         table = soup.find('table', class_='table_list')
         for row in tqdm(table.tbody.find_all('tr')):    
 
@@ -23,9 +23,10 @@ def scrap(FILENAME, SAVE_FILE):
                 curso = columns[3].text.strip()
                 ano_conclusao = columns[4].text.strip()
 
-                df = df.append({'nome': nome,  'instituicao': instituicao, 
-                'grau': grau, 'curso': curso, 'ano_conclusao': ano_conclusao}, ignore_index=True)
+                data.append({'nome': nome,  'instituicao': instituicao, 
+                'grau': grau, 'curso': curso, 'ano_conclusao': ano_conclusao})
         
+        df = pd.DataFrame(data)
         write_result(df, SAVE_FILE)
 
 def merge(FILE_NAMES, SAVE_FILE):
@@ -38,7 +39,6 @@ def merge(FILE_NAMES, SAVE_FILE):
 def proccess_usp():
     RESULT_FILES = []
     OUTPUT_FILE = "usp-diplomados.csv"
-    print(usp_files)
     for i, f in enumerate(usp_files):
         SAVE_FILE =  f"diplomas/DIPLOMAS{i}" + ".csv"
         RESULT_FILES.append(SAVE_FILE)
