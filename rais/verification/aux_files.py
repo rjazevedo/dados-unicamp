@@ -7,6 +7,7 @@ def read_database(file, dtype, index=None, squeeze=False):
     )
     if squeeze:
         return df.squeeze()
+      
     return df
 
 

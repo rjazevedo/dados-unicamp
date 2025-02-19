@@ -106,8 +106,6 @@ def main():
     divide_comvest.split_all()
 
 
-   
-    
     # Base da COMVEST
     cod_ibge.merge()
     validacao_esc.validation()

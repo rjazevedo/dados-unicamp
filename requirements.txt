@@ -1,0 +1,11 @@
+Módulos de importação/download necessários para rodar corretamente a main do script:
+- Pandas
+- xlrd
+- openpyxl
+- yaml
+- glob
+- dask
+- bs4
+- os
+- subprocess
+- 
