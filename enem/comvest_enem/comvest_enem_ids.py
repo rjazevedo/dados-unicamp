@@ -92,7 +92,7 @@ def retrieve_enem(YEAR: int) -> None:
 
 
 def merge() -> None:
-    for year in range(2012, 2024): 
+    for year in range(2012, 2021): 
         retrieve_enem(year)
     
 
