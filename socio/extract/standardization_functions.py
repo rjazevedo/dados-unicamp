@@ -1,13 +1,14 @@
 from difflib import SequenceMatcher
-
+import pandas as pd
 
 def get_first_name(name):
-    names = name.split()
-    return names[0]
+    if not pd.isna(name):
+        names = name.split()
+        return names[0]
 
 
 def get_reduced_cpf(cpf):
-    if cpf == "-":
+    if pd.isna(cpf) or cpf == "-":
         return "-"
     reduced_cpf = "***" + cpf[3:-2] + "**"
     return reduced_cpf
