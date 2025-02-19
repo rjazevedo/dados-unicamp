@@ -28,7 +28,7 @@ def get_dtype_dac_comvest():
         "origem": str,
         "tipo_ingresso": str,
         "tipo_ingresso_comvest": "Int32",
-        "origem_cpf": "int64",
+        "origem_cpf": "Int64",
     }
 
 
