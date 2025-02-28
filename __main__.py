@@ -152,13 +152,13 @@ def main():
     merge.merge_all_years()
     recover_cpf_rais.recover_cpf_years()
     clear.clear_all_years()
-
+    
     clear_socio.clear_socio()
     merge_socio.merge_socio_dac_comvest(tipo_extracao_socios)
-
+    
     clean_capes.clean_capes()
     merge_capes.extract_ids()
-
+    
     extract_unesp()
     extract_fuvest()
 

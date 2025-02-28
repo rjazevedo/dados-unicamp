@@ -59,7 +59,7 @@ def separate_enem_comvest(YEAR: int) -> None:
     enem_before = enem_before.replace(0, np.nan)
     enem_before.dropna(subset=[f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', 
                             f'nlct{YEAR - 2}', f'nred{YEAR - 2}',
-                            f'nmt{YEAR - 2}'], inplace=True, thresh=4) 
+                            f'nmt{YEAR - 2}'], inplace=True, thresh=2) 
       
     enem_before.drop(columns=[f'enem{YEAR - 2}'], inplace=True) 
     enem_before = enem_before.fillna(0) 
@@ -74,7 +74,7 @@ def separate_enem_comvest(YEAR: int) -> None:
     enem_last = enem_last.replace(0, np.nan)
     enem_last.dropna(subset=[f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', 
                             f'nlct{YEAR - 1}', f'nred{YEAR - 1}',
-                            f'nmt{YEAR - 1}'], inplace=True, thresh=4)
+                            f'nmt{YEAR - 1}'], inplace=True, thresh=2)
 
     enem_last.drop(columns=[f'enem{YEAR - 1}'], inplace=True)
     enem_last = enem_last.fillna(0)

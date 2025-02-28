@@ -304,8 +304,8 @@ def prepare_dac_comvest_ids(df):
     """Prepara os IDs do DAC Comvest para comparação, limpando e
     padronizando os dados necessários para a fusão."""
     df["cpf_reduzido_dac"] = df.cpf.str[3:9]
-    df["nome"] = df.nome.apply(unidecode).str.upper().str.strip()
-    df["primeiro_nome_dac"] = df.nome.apply(lambda x: x.split()[0])
+    df["nome"] = df["nome"].apply(lambda x: unidecode(x).upper().strip() if isinstance(x, str) else x)
+    df["primeiro_nome_dac"] = df.nome.apply(lambda x: x.split()[0] if isinstance(x, str) else x)
     df["ano_nasc_dac"] = df.dta_nasc.str[-4:]
 
     return df.drop_duplicates()

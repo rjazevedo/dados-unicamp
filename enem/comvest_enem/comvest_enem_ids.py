@@ -78,6 +78,7 @@ def retrieve_enem(YEAR: int) -> None:
 
         if os.path.isfile(COMVEST_PATH_2):
             print(f'reading comvest {YEAR + 2}')
+            
             comvest_2 = pd.read_csv(COMVEST_PATH_2)
             print(f'{comvest_2.shape[0]} entries in comvest {YEAR + 1}\n')    
             print(f'merging Enem {YEAR} with comvest {YEAR + 2}')

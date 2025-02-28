@@ -29,6 +29,9 @@ def extract_simples_amostra():
         )
         simples_merges.append(simples.copy())
 
-    simples_amostra = pd.concat(simples_merges)
-
-    write_simples_amostra(simples_amostra)
+    if not simples_merges:
+        pass
+    
+    else:
+        simples_amostra = pd.concat(simples_merges)
+        write_simples_amostra(simples_amostra)

@@ -39,7 +39,7 @@ def read_unesp(path):
 def read_ids():
     file = config["database_ids"]
     dtype = get_dtype_dac_comvest()
-    df = pd.read_csv(file, sep=",", dtype=dtype)
+    df = pd.read_csv(file, sep=",", dtype=dtype, low_memory=False)
     return df
 
 
@@ -50,7 +50,7 @@ def write_unesp_amostra(df):
 
 def get_dtype_dac_comvest():
     return {
-        "ano_ingresso_curso": "int64",
+        "ano_ingresso_curso": "Int64",
         "cpf": str,
         "cpf_comvest": str,
         "cpf_dac": str,
@@ -72,5 +72,5 @@ def get_dtype_dac_comvest():
         "origem": str,
         "tipo_ingresso": str,
         "tipo_ingresso_comvest": "Int32",
-        "origem_cpf": "int64",
+        "origem_cpf": "Int64",
     }
