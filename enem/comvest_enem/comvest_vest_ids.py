@@ -24,7 +24,7 @@ from tqdm import tqdm
 from enem.utilities.io import write_result
 
 
-COMVEST_IDS_PATH = '/home/gsiqueira/dados-unicamp/input/ids/dac_comvest_ids.csv'
+COMVEST_IDS_PATH = '/home/output/intermediario/dac_comvest_ids.csv'
 COMVEST_ENEM_PATH = '/home/output/intermediario/Enem_Comvest/split/'
 RESULT_PATH = '/home/output/intermediario/Enem-Comvest/ids_comvest_enem/'
 

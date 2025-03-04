@@ -3,74 +3,40 @@ import pandas as pd
 from pandas import DataFrame
 import sys
 from openpyxl import load_workbook
+from enem.utilities.format import reading_parameters
 
-
-def compare_enems(df_enem_pre: DataFrame, df_enem_pos: DataFrame, year: int):
-    """
-    Verifica se as pessoas que estão no DataFrame do enem também estão no DataFrame da Comvest.
-    
-    O resultado é salvo em um arquivo excel, indicando quais pessoas estão só em um dos arquivos e quais estão em ambos.
-    
-    Parâmetros
-    ----------
-    df_enem_pre : DataFrame
-        DataFrame do enem pré-processado.
-    df_enem_pos : DataFrame
-        DataFrame do enem pós-processado.
-    year : int
-        Ano do DataFrame.
-        
-    Retorna
-    -------
-    None
-    """
-    if year == 2018:
-        comvest2019_enem_pre = df_enem_pre["comvest_2019"].dropna()
-        comvest2020_enem_pre = df_enem_pre["comvest_2020"].dropna()
-        comvest2019_enem_pos = df_enem_pos["comvest_2019"].dropna()
-        comvest2020_enem_pos = df_enem_pos["comvest_2020"].dropna()
-        
-        print(f"Entradas não nulas em comvest_2019 (pré-processado) para 2018: {len(comvest2019_enem_pre)}")
-        print(f"Entradas não nulas em comvest_2019 (pós-processado) para 2018: {len(comvest2019_enem_pos)}")
-        print(f"Entradas não nulas em comvest_2020 (pré-processado) para 2018: {len(comvest2020_enem_pre)}")
-        print(f"Entradas não nulas em comvest_2020 (pós-processado) para 2018: {len(comvest2020_enem_pos)}")
-        
-    elif year == 2019:
-        comvest2020_enem_pre = df_enem_pre["comvest_2020"].dropna()
-        comvest2020_enem_pos = df_enem_pos["comvest_2020"].dropna()
-        
-        print(f"Entradas não nulas em comvest_2020 (pré-processado) para 2019: {len(comvest2020_enem_pre)}")
-        print(f"Entradas não nulas em comvest_2020 (pós-processado) para 2019: {len(comvest2020_enem_pos)}")
-        
-    elif year == 2020:
-        comvest2022_enem_pre = df_enem_pre["comvest_2022"].dropna()
-        comvest2022_enem_pos = df_enem_pos["comvest_2022"].dropna()
-        
-        print(f"Entradas não nulas em comvest_2022 (pré-processado) para 2020: {len(comvest2022_enem_pre)}")
-        print(f"Entradas não nulas em comvest_2022 (pós-processado) para 2020: {len(comvest2022_enem_pos)}")
-                
 
 def main():
-    print("Lendo as informações dos outputs novos do Enem...")
-    enem2018_pos = pd.read_csv("/home/output/enem/comvest_enem2018.csv")
-    enem2019_pos = pd.read_csv("/home/output/enem/comvest_enem2019.csv")
-    enem2020_pos = pd.read_csv("/home/output/enem/comvest_enem2020.csv")
+    for year in range(2012, 2021):
+        print(f"Comparando o ano {year}") 
+        comvest_1 = pd.read_csv(f'/home/output/intermediario/Enem-Comvest/ids_comvest_enem/insc{year}_comv{year + 1}_ids.csv')
+        comvest_2 = pd.read_csv(f'/home/output/intermediario/Enem-Comvest/ids_comvest_enem/insc{year}_comv{year + 2}_ids.csv')
+        ENEM_PATH = f'/home/input/Enem/enem/MICRODADOS_ENEM_{year}.csv'
 
-    print("Lendo as informações dos outputs antigos do Enem...")
-    enem2018_pre = pd.read_csv("/home/gsiqueira/dados-unicamp/output/comvest_enem2018.csv")
-    enem2019_pre = pd.read_csv("/home/gsiqueira/dados-unicamp/output/comvest_enem2019.csv")
-    enem2020_pre = pd.read_csv("/home/gsiqueira/dados-unicamp/output/comvest_enem2020.csv")
-    
-    print("Comparando os arquivos de output do Enem para o ano de 2018...")
-    compare_enems(enem2018_pre, enem2018_pos, 2018)
-    
-    print("Comparando os arquivos de output do Enem para o ano de 2019...")
-    compare_enems(enem2019_pre, enem2019_pos, 2019)
-    
-    print("Comparando os arquivos de output do Enem para o ano de 2020...")
-    compare_enems(enem2020_pre, enem2020_pos, 2020)
-    
+        comvest_1[f'enem{year}'] = pd.to_numeric(comvest_1[f'enem{year}'], errors='coerce').dropna().astype(int)
+        comvest_2[f'enem{year}'] = pd.to_numeric(comvest_2[f'enem{year}'], errors='coerce').dropna().astype(int)
+        
+        NEW_COLUMNS = [f'enem{year}', f'ncnt{year}', f'ncht{year}', f'nlct{year}', f'nmt{year}', f'nred{year}']
+        GRADES = NEW_COLUMNS[1:]
+        parameters = reading_parameters[year]
+        COLUMNS_ENEM = parameters["columns"]
+        enem = pd.read_csv(ENEM_PATH, encoding='latin-1', sep=parameters['separator'])
+        enem = enem.loc[:, COLUMNS_ENEM]
+        enem.columns = NEW_COLUMNS
+
+        # Merge comvest_1 and enem DataFrames on 'inscricao' column
+        merged_1 = pd.merge(comvest_1, enem, on=f'enem{year}', suffixes=('_comvest', '_enem'))
+        
+        # Merge comvest_2 and enem DataFrames on 'inscricao' column
+        merged_2 = pd.merge(comvest_2, enem, on=f'enem{year}', suffixes=('_comvest', '_enem'))
+
+        # Check if the corresponding scores are the same
+        for col in GRADES:  # Replace with actual score column names
+            if not (merged_1[f'{col}_comvest'] == merged_1[f'{col}_enem']).all():
+                print(f'Differences found in {col} for year {year} in comvest_1')
+            if not (merged_2[f'{col}_comvest'] == merged_2[f'{col}_enem']).all():
+                print(f'Differences found in {col} for year {year} in comvest_2')
+
 
 if __name__ == "__main__":
     main()
-    

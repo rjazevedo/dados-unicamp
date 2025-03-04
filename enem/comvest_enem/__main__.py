@@ -26,12 +26,12 @@ from enem.comvest_enem import concat_enem_fin
 
 
 def main():
-    clear_comvest.clean_all()
-    stand_fin.main()
-    concat_enem_fin.main()
-    comvest_enem.merge()
-    divide_comvest.split_all()
-    comvest_vest_ids.retrieve()
+    #clear_comvest.clean_all()
+    #stand_fin.main()
+    #concat_enem_fin.main()
+    #comvest_enem.merge()
+    #divide_comvest.split_all()
+    #comvest_vest_ids.retrieve()
     comvest_enem_ids.merge()
 
 

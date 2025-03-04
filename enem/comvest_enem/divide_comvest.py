@@ -48,39 +48,46 @@ def separate_enem_comvest(YEAR: int) -> None:
     enem_before = comvest.loc[:, ENEM_YEARS[0]]
     enem_last = comvest.loc[:, ENEM_YEARS[1]]
 
-    
     print(f'{comvest.shape[0]} entries in total\n')
     
-    print(f"Droping INSC nulls {YEAR - 2}")
+    #print(f"Droping INSC nulls {YEAR - 2}")
     
-    enem_before.dropna(subset=[f'enem{YEAR - 2}'], inplace=True)
-    print(f'{enem_before.shape[0]} entries in enem {YEAR - 2}\n')
+    #enem_before.dropna(subset=[f'enem{YEAR - 2}'], inplace=True)
+    #print(f'{enem_before.shape[0]} entries in enem {YEAR - 2}\n')
     
     enem_before = enem_before.replace(0, np.nan)
-    enem_before.dropna(subset=[f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', 
+    enem_before.dropna(subset=[f'enem{YEAR - 2}', f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', 
                             f'nlct{YEAR - 2}', f'nred{YEAR - 2}',
-                            f'nmt{YEAR - 2}'], inplace=True, thresh=2) 
+                            f'nmt{YEAR - 2}'], inplace=True, thresh=1) 
       
-    enem_before.drop(columns=[f'enem{YEAR - 2}'], inplace=True) 
-    enem_before = enem_before.fillna(0) 
+    #enem_before.drop(columns=[f'enem{YEAR - 2}'], inplace=True) 
+    enem_before[[f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', 
+                            f'nlct{YEAR - 2}', f'nred{YEAR - 2}',
+                            f'nmt{YEAR - 2}']] = enem_before[[f'ncnt{YEAR - 2}', f'ncht{YEAR - 2}', 
+                                                            f'nlct{YEAR - 2}', f'nred{YEAR - 2}',
+                                                            f'nmt{YEAR - 2}']].fillna(0) 
 
-    print(f'{enem_before.shape[0]} entries in enem {YEAR - 2} after null removal\n')
+    #print(f'{enem_before.shape[0]} entries in enem {YEAR - 2} after null removal\n')
     
-    print(f"Droping INSC nulls {YEAR - 1}")
+    #print(f"Droping INSC nulls {YEAR - 1}")
 
-    enem_last.dropna(subset=[f'enem{YEAR - 1}'], inplace=True)
-    print(f'{enem_last.shape[0]} entries in enem {YEAR - 1}\n')
+    #enem_last.dropna(subset=[f'enem{YEAR - 1}'], inplace=True)
+    #print(f'{enem_last.shape[0]} entries in enem {YEAR - 1}\n')
     
     enem_last = enem_last.replace(0, np.nan)
-    enem_last.dropna(subset=[f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', 
+    enem_last.dropna(subset=[f'enem{YEAR - 1}', f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', 
                             f'nlct{YEAR - 1}', f'nred{YEAR - 1}',
-                            f'nmt{YEAR - 1}'], inplace=True, thresh=2)
+                            f'nmt{YEAR - 1}'], inplace=True, thresh=1)
 
-    enem_last.drop(columns=[f'enem{YEAR - 1}'], inplace=True)
-    enem_last = enem_last.fillna(0)
+    #enem_last.drop(columns=[f'enem{YEAR - 1}'], inplace=True)
+    enem_last[[f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', 
+                            f'nlct{YEAR - 1}', f'nred{YEAR - 1}',
+                            f'nmt{YEAR - 1}']] = enem_last[[f'ncnt{YEAR - 1}', f'ncht{YEAR - 1}', 
+                                                            f'nlct{YEAR -1}', f'nred{YEAR - 1}',
+                                                            f'nmt{YEAR - 1}']].fillna(0) 
 
-    print(f'{enem_last.shape[0]} entries in enem {YEAR - 1} after null removal\n')
-
+    #print(f'{enem_last.shape[0]} entries in enem {YEAR - 1} after null removal\n')
+    
     if (YEAR != 2021) and (YEAR != 2023):
         write_result(enem_before, RESULT_1)
     

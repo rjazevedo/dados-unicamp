@@ -40,7 +40,7 @@ def retrieve_enem(YEAR: int) -> None:
     ENEM_PATH = f'/home/input/Enem/enem/MICRODADOS_ENEM_{YEAR}.csv'
     OUTPUT_FILE = f'/home/output/enem/comvest_enem{YEAR}.csv'
 
-    NEW_COLUMNS = ['insc_enem', f'ncnt{YEAR}', f'ncht{YEAR}', f'nlct{YEAR}', f'nmt{YEAR}', f'nred{YEAR}']
+    NEW_COLUMNS = [f'enem{YEAR}', f'ncnt{YEAR}', f'ncht{YEAR}', f'nlct{YEAR}', f'nmt{YEAR}', f'nred{YEAR}']
     GRADES = NEW_COLUMNS[1:]
 
     if YEAR in range(2012, 2021):
@@ -66,11 +66,19 @@ def retrieve_enem(YEAR: int) -> None:
             comvest_1 = pd.read_csv(COMVEST_PATH_1)
             print(f'{comvest_1.shape[0]} entries in comvest {YEAR + 1}\n')  
             print(f'merging Enem {YEAR} with comvest {YEAR + 1}')
-            # Removendo linhas com notas duplicadas
-            comvest_1 = comvest_1.drop_duplicates(subset=GRADES)
             comvest_1 = comvest_1.rename(columns={f'id_comvest_{YEAR + 1}' : f'comvest_{YEAR + 1}'})
+            # Merge para quem tem número de inscrição do Enem e nas 5 notas
             enem_comvest = enem_comvest.merge(comvest_1, how='left')
-
+            
+            # Filtando comvest somente para quem tem número de inscrição não-nulo
+            comvest_1 = comvest_1[~comvest_1[f'enem{YEAR}'].isnull()]
+            enem_comvest = enem_comvest.merge(comvest_1, how='left', on=f'enem{YEAR}')
+            
+            # Removendo linhas com notas duplicadas
+            comvest_1 = comvest_1[comvest_1[f'enem{YEAR}'].isnull()]
+            enem_comvest = enem_comvest.merge(comvest_1, how='left', on=f'enem{YEAR}')
+            comvest_1 = comvest_1.drop_duplicates(subset=GRADES, keep='false')
+            
             entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 1}'].notna()]).shape[0]    
             print(f'{entries} entries found in merge between ENEM {YEAR} and comvest {YEAR + 1}\n')
 
@@ -83,7 +91,7 @@ def retrieve_enem(YEAR: int) -> None:
             print(f'merging Enem {YEAR} with comvest {YEAR + 2}')
             comvest_2 = comvest_2.rename(columns={f'id_comvest_{YEAR + 2}' : f'comvest_{YEAR + 2}'})
             # Removendo linhas com notas duplicadas
-            comvest_2 = comvest_2.drop_duplicates(subset=GRADES)
+            comvest_2 = comvest_2.drop_duplicates(subset=GRADES, keep='false')
             enem_comvest = enem_comvest.merge(comvest_2, how='left')
             
             entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 2}'].notna()]).shape[0]
