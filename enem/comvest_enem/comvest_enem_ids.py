@@ -58,10 +58,10 @@ def retrieve_enem(YEAR: int) -> None:
         for grade in GRADES:
             enem[grade] = pd.to_numeric(enem[grade], errors='coerce')
 
-        print('dropping null or zero grades\n')
-        enem = enem.replace(0, np.nan)
-        enem = enem.dropna(subset=GRADES, thresh=4)
-        enem_comvest = enem.replace(np.nan, 0)
+        # # print('dropping null or zero grades\n')
+        # enem = enem.replace(0, np.nan)
+        # enem = enem.dropna(subset=GRADES, thresh=4)
+        # enem_comvest = enem.replace(np.nan, 0)
 
         if os.path.isfile(COMVEST_PATH_1):
             print(f'reading comvest {YEAR + 1}')
@@ -69,6 +69,8 @@ def retrieve_enem(YEAR: int) -> None:
             comvest_1 = pd.read_csv(COMVEST_PATH_1)
             print(f'{comvest_1.shape[0]} entries in comvest {YEAR + 1}\n')  
             print(f'merging Enem {YEAR} with comvest {YEAR + 1}')
+            # Removendo colunas com notas duplicadas
+            comvest_1 = comvest_1.loc[:, ~comvest_1[GRADES].duplicated(keep=False)]
             comvest_1 = comvest_1.rename(columns={f'id_comvest_{YEAR + 1}' : f'comvest_{YEAR + 1}'})
             enem_comvest = enem_comvest.merge(comvest_1, how='left')
 
@@ -83,6 +85,8 @@ def retrieve_enem(YEAR: int) -> None:
             print(f'{comvest_2.shape[0]} entries in comvest {YEAR + 1}\n')    
             print(f'merging Enem {YEAR} with comvest {YEAR + 2}')
             comvest_2 = comvest_2.rename(columns={f'id_comvest_{YEAR + 2}' : f'comvest_{YEAR + 2}'})
+            # Removendo colunas com notas duplicadas
+            comvest_2 = comvest_2.loc[:, ~comvest_2[GRADES].duplicated(keep=False)]
             enem_comvest = enem_comvest.merge(comvest_2, how='left')
             
             entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 2}'].notna()]).shape[0]
