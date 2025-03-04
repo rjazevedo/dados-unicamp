@@ -58,10 +58,7 @@ def retrieve_enem(YEAR: int) -> None:
         for grade in GRADES:
             enem[grade] = pd.to_numeric(enem[grade], errors='coerce')
 
-        # # print('dropping null or zero grades\n')
-        # enem = enem.replace(0, np.nan)
-        # enem = enem.dropna(subset=GRADES, thresh=4)
-        # enem_comvest = enem.replace(np.nan, 0)
+        enem_comvest = enem.copy()
 
         if os.path.isfile(COMVEST_PATH_1):
             print(f'reading comvest {YEAR + 1}')
