@@ -62,41 +62,40 @@ def retrieve_enem(YEAR: int) -> None:
 
         if os.path.isfile(COMVEST_PATH_1):
             print(f'reading comvest {YEAR + 1}')
-            
             comvest_1 = pd.read_csv(COMVEST_PATH_1)
+            
+            # Removendo duplicatas da comvest (pré-limpeza) e fazendo o merge com o enem
+            comvest_1 = comvest_1.drop_duplicates(subset=GRADES, keep=False)
             print(f'{comvest_1.shape[0]} entries in comvest {YEAR + 1}\n')  
             print(f'merging Enem {YEAR} with comvest {YEAR + 1}')
             comvest_1 = comvest_1.rename(columns={f'id_comvest_{YEAR + 1}' : f'comvest_{YEAR + 1}'})
-            # Merge para quem tem número de inscrição do Enem e nas 5 notas
             enem_comvest = enem_comvest.merge(comvest_1, how='left')
             
-            # Filtando comvest somente para quem tem número de inscrição não-nulo
-            comvest_1 = comvest_1[~comvest_1[f'enem{YEAR}'].isnull()]
-            enem_comvest = enem_comvest.merge(comvest_1, how='left', on=f'enem{YEAR}')
-            
-            # Removendo linhas com notas duplicadas
-            comvest_1 = comvest_1[comvest_1[f'enem{YEAR}'].isnull()]
-            enem_comvest = enem_comvest.merge(comvest_1, how='left', on=f'enem{YEAR}')
-            comvest_1 = comvest_1.drop_duplicates(subset=GRADES, keep='false')
+            # Removendo ids da Comvest para as linhas com notas duplicadas
+            duplicates_1 = enem_comvest.duplicated(subset=GRADES, keep=False)
+            enem_comvest.loc[duplicates_1, f'comvest_{YEAR + 1}'] = np.nan
             
             entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 1}'].notna()]).shape[0]    
             print(f'{entries} entries found in merge between ENEM {YEAR} and comvest {YEAR + 1}\n')
-
-
+        
         if os.path.isfile(COMVEST_PATH_2):
             print(f'reading comvest {YEAR + 2}')
-            
             comvest_2 = pd.read_csv(COMVEST_PATH_2)
-            print(f'{comvest_2.shape[0]} entries in comvest {YEAR + 1}\n')    
+            
+            # Removendo duplicatas da comvest (pré-limpeza) e fazendo o merge com o enem
+            comvest_2 = comvest_2.drop_duplicates(subset=GRADES, keep=False)
+            print(f'{comvest_2.shape[0]} entries in comvest {YEAR + 2}\n')  
             print(f'merging Enem {YEAR} with comvest {YEAR + 2}')
             comvest_2 = comvest_2.rename(columns={f'id_comvest_{YEAR + 2}' : f'comvest_{YEAR + 2}'})
-            # Removendo linhas com notas duplicadas
-            comvest_2 = comvest_2.drop_duplicates(subset=GRADES, keep='false')
             enem_comvest = enem_comvest.merge(comvest_2, how='left')
             
-            entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 2}'].notna()]).shape[0]
+            # Removendo ids da Comvest para as linhas com notas duplicadas
+            duplicates_2 = enem_comvest.duplicated(subset=GRADES, keep=False)
+            enem_comvest.loc[duplicates_2, f'comvest_{YEAR + 2}'] = np.nan
+            
+            entries = (enem_comvest[enem_comvest[f'comvest_{YEAR + 2}'].notna()]).shape[0]    
             print(f'{entries} entries found in merge between ENEM {YEAR} and comvest {YEAR + 2}\n')
-
+        
     print(f'Saving database into {OUTPUT_FILE}\n')
     enem_comvest.to_csv(OUTPUT_FILE, index=False)
 
