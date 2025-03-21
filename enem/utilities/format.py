@@ -53,5 +53,9 @@ reading_parameters = {
     2020 : {
         "columns" : columns["POS2015"],
         "separator" : ';'
+    },
+    2021 : {
+        "columns" : columns["POS2015"],
+        "separator" : ';'
     }
 }
