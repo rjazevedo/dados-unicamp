@@ -69,6 +69,18 @@ from estabelecimento.extract import extract_estabelecimento_amostra
 
 from simples.extract import extract_simples_amostra
 
+# Configurando o logger com o nome "main"
+logger = logging.getLogger("main")
+
+# O nível de log padrão é INFO, então só serão exibidas mensagens de INFO ou superior
+# Acima de INFO temos WARNING, ERROR e CRITICAL
+logger.setLevel("INFO") 
+
+# Configurando o logger para escrever em um arquivo
+fh = logging.FileHandler("main.log")
+
+# Adicionando o handler ao logger
+logger.addHandler(fh)
 
 def main():
     d = {1: "limitada", 2: "completa"}
@@ -84,92 +96,115 @@ def main():
             tipo_extracao_socios = d[socios_in]
             break
 
-    # Pre-processamento COMVEST
-    extrair_cidades.extraction()
-    extrair_cursos.extraction()
-    dict_cursos.get()
-    extrair_matriculados.extraction()
-    extrair_convocados.extraction()
-    limpeza_dados_comvest.extraction()
+    # # Pre-processamento COMVEST
+    # logger.info("Iniciando o pré-processamento de dados da COMVEST")
+    # extrair_cidades.extraction()
+    # extrair_cursos.extraction()
+    # dict_cursos.get()
+    # extrair_matriculados.extraction()
+    # extrair_convocados.extraction()
+    # limpeza_dados_comvest.extraction()
 
 
-    # Pre-processamento DAC
-    setup_dados.load_dados_cadastais()
-    ufs_codes.generate_clean_data()
-    create_ids.create_ids()
-    limpeza_dados_dac.generate_clean_data()
-    uf_codes.generate_uf_code()
+    # # Pre-processamento DAC
+    # logger.info("Iniciando o pré-processamento de dados da DAC")
+    # setup_dados.load_dados_cadastais()
+    # ufs_codes.generate_clean_data()
+    # create_ids.create_ids()
+    # limpeza_dados_dac.generate_clean_data()
+    # uf_codes.generate_uf_code()
 
-    print("pre processamento enem")
-    # Pre processamento enem
-    clear_comvest.clean_all()
-    divide_comvest.split_all()
+    # print("pre processamento enem")
+    # # Pre processamento enem
+    # logger.info("Iniciando o pré-processamento de dados do ENEM")
+    # clear_comvest.clean_all()
+    # divide_comvest.split_all()
 
 
-    # Base da COMVEST
-    cod_ibge.merge()
-    validacao_esc.validation()
-    # Gera códigos das escolas na DAC
-    school_codes.generate_school_codes()
-    cod_inep.merge()
-    ids_nomes.merge()
-    limpeza_perfil.extraction()
-    limpeza_notas.extraction()
-    presenca.get()
+    # # Base da COMVEST
+    # logger.info("Iniciando a geração de bases da COMVEST")
+    # cod_ibge.merge()
+    # validacao_esc.validation()
+    # # Gera códigos das escolas na DAC
+    # school_codes.generate_school_codes()
+    # logger.info("Iniciando o merge de códigos INEP")
+    # cod_inep.merge()
+    # ids_nomes.merge()
+    # logger.info("Iniciando a limpeza de perfil e notas")
+    # limpeza_perfil.extraction()
+    # limpeza_notas.extraction()
+    # presenca.get()
 
-    print("merge enem")
-    # Merge Enem Data
-    comvest_enem.merge()
+    # print("merge enem")
+    # # Merge Enem Data
+    # logger.info("Iniciando o merge de dados do ENEM")
+    # comvest_enem.merge()
 
-    # Base da DAC
-    historico_escolar.generate_clean_data()
-    resumo_por_periodo.generate_clean_data()
-    resumo_periodo_cr.generate_cr()
-    vida_academica.generate_clean_data()
-    dados_ingressantes.generate()
-    habilitacao.generate()
-    uniao_dac_comvest.generate()
+    # # Base da DAC
+    # logger.info("Iniciando a geração de bases da DAC")
+    # historico_escolar.generate_clean_data()
+    # resumo_por_periodo.generate_clean_data()
+    # resumo_periodo_cr.generate_cr()
+    # vida_academica.generate_clean_data()
+    # dados_ingressantes.generate()
+    # habilitacao.generate()
+    # uniao_dac_comvest.generate()
 
     
-    # Pre processamento rais
-    pre_process_rais()
+    # # Pre processamento rais
+    # logger.info("Iniciando o pré-processamento de dados da RAIS")
+    # pre_process_rais()
 
     # Geracao ids
+    logger.info("Iniciando a geração de ids")
     cpf_verification.remove_invalid_cpf()
     recover_cpf_dac_comvest.recover_cpf_dac_comvest()
     random_index.generate_index()
 
     # Processamento Diplomados
+    logger.info("Iniciando o pré-processamento de dados de Diplomados")
     scrapper.proccess_usp()
     comvest_diplomasUSP.merge()
 
     print("retrieve enem ids")
     # Merge ENEM com ids
+    logger.info("Iniciando o merge de ids do ENEM")
     comvest_vest_ids.retrieve()
     comvest_enem_ids.merge()
 
     # Merge rais com ids
+    logger.info("Iniciando o merge de ids da RAIS")
     merge.merge_all_years()
     recover_cpf_rais.recover_cpf_years()
     clear.clear_all_years()
     
+    logger.info("Iniciando a limpeza de dados da base sócios")
     clear_socio.clear_socio()
+    logger.info("Iniciando o merge de dados da base sócios com DAC_COMVEST")
     merge_socio.merge_socio_dac_comvest(tipo_extracao_socios)
     
+    logger.info("Iniciando a limpeza de dados da base CAPES")
     clean_capes.clean_capes()
+    logger.info("Iniciando o merge de dados da base CAPES com DAC_COMVEST")
     merge_capes.extract_ids()
     
+    logger.info("Iniciando a extração de dados da base UNESP")
     extract_unesp()
     extract_fuvest()
+    logger.info("Iniciando a extração de dados da base fuvest")
 
+    logger.info("Iniciando a extração de dados da base empresa")
     extract_empresa_amostra()
     extract_estabelecimento_amostra()
     extract_simples_amostra()
 
+    logger.info("Iniciando a atribuição de ids para DAC e COMVEST")
     # Atribuição de ids para DAC e COMVEST
     merge_sheets.merge()
     comvest_ids.assign_ids()
     identificadores.create_ids()
+
+    logger.info("Extração de dados finalizada com sucesso!")
 
 
 if __name__ == "__main__":

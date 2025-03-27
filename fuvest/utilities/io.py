@@ -2,9 +2,15 @@ import pandas as pd
 import yaml
 from pathlib import Path
 from fuvest.utilities.dtype import DTYPES_DADOS
+import os
 
 
-stream = open("fuvest/configuration.yaml")
+# Obtém o caminho absoluto do diretório onde o script está localizado
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "../configuration.yaml")
+
+# Abre o arquivo de configuração
+stream = open(config_path)
 config = yaml.safe_load(stream)
 path_input = Path(config["path_input"])
 

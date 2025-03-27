@@ -14,9 +14,16 @@ from rais.utilities.logging import log_recover_cpf_probabilistic_match
 from rais.utilities.logging import log_recover_from_year
 from rais.utilities.logging import log_filter_results
 from unidecode import unidecode
-
 import yaml
-stream = open("rais/configuration.yaml")
+import os
+
+
+# Obtém o caminho absoluto do diretório onde o script está localizado
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "../configuration.yaml")
+
+# Abre o arquivo de configuração
+stream = open(config_path)
 config = yaml.safe_load(stream)
 intervalo = config["intervalo_rais"]
 # ------------------------------------------------------------------------------------------------

@@ -1,8 +1,14 @@
 import yaml
 import pandas as pd
 from pathlib import Path
+import os
 
-stream = open("simples/configuration.yaml")
+# Obtém o caminho absoluto do diretório onde o script está localizado
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = "/home/giovani/dados-unicamp-clone/simples/configuration.yaml"
+
+# Abre o arquivo de configuração
+stream = open(config_path)
 config = yaml.safe_load(stream)
 
 

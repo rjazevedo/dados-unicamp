@@ -9,9 +9,16 @@ from rais.utilities.write import write_dac_comvest_valid
 from rais.utilities.file import get_all_files
 
 from rais.utilities.logging import log_remove_invalid_cpf
-
 import yaml
-stream = open("rais/configuration.yaml")
+import os
+
+
+# Obtém o caminho absoluto do diretório onde o script está localizado
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "../configuration.yaml")
+
+# Abre o arquivo de configuração
+stream = open(config_path)
 config = yaml.safe_load(stream)
 intervalo = config["intervalo_rais"]
 pd.set_option('future.no_silent_downcasting', True)

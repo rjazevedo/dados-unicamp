@@ -7,9 +7,16 @@ from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_files
 
 from rais.utilities.logging import log_merge_rais_dac_comvest
-
 import yaml
-stream = open("rais/configuration.yaml")
+import os
+
+
+# Obtém o caminho absoluto do diretório onde o script está localizado
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "../configuration.yaml")
+
+# Abre o arquivo de configuração
+stream = open(config_path)
 config = yaml.safe_load(stream)
 intervalo = config["intervalo_rais"]
 
