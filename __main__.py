@@ -77,7 +77,7 @@ logger = logging.getLogger("main")
 logger.setLevel("INFO") 
 
 # Configurando o logger para escrever em um arquivo
-fh = logging.FileHandler("main.log")
+fh = logging.FileHandler("main2.log")
 
 # Adicionando o handler ao logger
 logger.addHandler(fh)
@@ -155,11 +155,17 @@ def main():
     # logger.info("Iniciando o pré-processamento de dados da RAIS")
     # pre_process_rais()
 
-    # Geracao ids
-    logger.info("Iniciando a geração de ids")
+    # # Geracao ids
+    # logger.info("Iniciando a geração de ids")
+    logger.info("Remove CPFs inválidos")
     cpf_verification.remove_invalid_cpf()
+    logger.info("Finalizado - Remove CPFs inválidos")
+    logger.info("Recupera CPFs DAC e COMVEST")
     recover_cpf_dac_comvest.recover_cpf_dac_comvest()
+    logger.info("Finalizado - Recupera CPFs DAC e COMVEST")
+    logger.info("Gera índices aleatórios")
     random_index.generate_index()
+    logger.info("Finalizado - Gera índices aleatórios")
 
     # Processamento Diplomados
     logger.info("Iniciando o pré-processamento de dados de Diplomados")
