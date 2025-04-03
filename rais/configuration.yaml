@@ -6,3 +6,4 @@ path_pre_processed:     /home/output/rais/pre_processed/
 uniao_dac_comvest:  /home/output/intermediario/uniao_dac_comvest.csv
 intervalo_rais:      [2002, 2022]
 recover_cpf_list:   [2002, 2013]
+temp_path: /home/output/rais/temp/

@@ -23,9 +23,9 @@ def read_rais_original(file, year):
     return read_database(file, dtype)
 
 
-def read_rais_identification(file):
+def read_rais_identification(file, dtype_backend="pyarrow"):
     columns = ["nome_r", "cpf_r", "dta_nasc_r", "pispasep", "mun_estbl", "ano_base"]
-    df = pd.read_parquet(file, dtype_backend="pyarrow", columns=columns)
+    df = pd.read_parquet(file, dtype_backend=dtype_backend, columns=columns)
     return df
 
 

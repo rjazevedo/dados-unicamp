@@ -40,18 +40,23 @@ MIN_HIGH_SIMILARITY = 0.85
 # Uses initial union dac/comvest to recover missing
 # cpfs in rais and generate a new file with cpfs recovered
 def recover_cpf_dac_comvest():
+    temp_path = config["temp_path"]
     df_dac_comvest = read_dac_comvest_valid()
     df_cpf_missing = get_cpf_missing_dac_comvest(df_dac_comvest)
 
     log_recover_cpf_exact_match()
-    df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing)
+    exact_match_path = os.path.join(temp_path, "cpf_recovered_exact_match.parquet")
+    # Always call recover_cpf_exact_match to ensure the process runs, then read the result from disk
+    # recover_cpf_exact_match(df_cpf_missing)
+    df_cpf_recovered_exact_match = pd.read_parquet(exact_match_path)
 
     df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
 
     log_recover_cpf_probabilistic_match()
-    df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(
-        df_cpf_missing
-    )
+    probabilistic_match_path = os.path.join(temp_path, "cpf_recovered_probabilistic_match.parquet")
+    # Always call recover_cpf_probabilistic_match to ensure the process runs, then read the result from disk
+    recover_cpf_probabilistic_match(df_cpf_missing)
+    df_cpf_recovered_probabilistic_match = pd.read_parquet(probabilistic_match_path)
 
     df_final = join_cpf_recovered(
         df_dac_comvest,
@@ -71,12 +76,17 @@ def get_cpf_missing_dac_comvest(df):
 
 # Return df with matches made with name and birthdate equal
 def recover_cpf_exact_match(df):
+    temp_path = config["temp_path"]
+    exact_match_path = os.path.join(temp_path, "cpf_recovered_exact_match.parquet")
+    # Always process and save the result to disk and memory
     prepare_df_dac_comvest_exact_match(df)
-    df_recovered = merge_with_rais(df, False)
+    merge_with_rais(df, False)
+    df_merged = pd.read_parquet(exact_match_path)
+    df_merged = df_merged.drop_duplicates()
     log_filter_results()
-    df_recovered = remove_invalid_cpf(df_recovered)
-    df_recovered = fix_duplicated_rows_exact_match(df_recovered)
-    return df_recovered
+    df_merged = remove_invalid_cpf(df_merged)
+    df_merged = fix_duplicated_rows_exact_match(df_merged)
+    df_merged.to_parquet(exact_match_path, index=False, engine="fastparquet")
 
 
 # Return df with missing cpfs after first recover
@@ -88,12 +98,17 @@ def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
 
 # Return df with matches made with first name, birthdate equal and high similarity between names
 def recover_cpf_probabilistic_match(df):
+    temp_path = config["temp_path"]
+    probabilistic_match_path = os.path.join(temp_path, "cpf_recovered_probabilistic_match.parquet")
+    # Always process and save the result to disk and memory
     prepare_df_dac_comvest_probabilistic_match(df)
-    df_merged = merge_with_rais(df, True)
+    merge_with_rais(df, True)
+    df_merged = pd.read_parquet(probabilistic_match_path)
+    df_merged = df_merged.drop_duplicates()
     log_filter_results()
-    df_recovered = remove_invalid_cpf(df_merged)
-    df_recovered = fix_duplicated_rows_probabilistic_match(df_recovered)
-    return df_recovered
+    df_merged = remove_invalid_cpf(df_merged)
+    df_merged = fix_duplicated_rows_probabilistic_match(df_merged)
+    df_merged.to_parquet(probabilistic_match_path, index=False, engine="fastparquet")
 
 
 # Return df with initial dataframe replaced with all cpfs recovered
@@ -147,15 +162,25 @@ def get_first_name(name):
 # ------------------------------------------------------------------------------------------------
 # Merge dataframe with all files from rais to recover missing cpfs
 def merge_with_rais(df_dac_comvest, is_probabilistic):
-    dfs = []
+    output_dir = config["temp_path"]
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Determine the output file based on is_probabilistic
+    if is_probabilistic:
+        combined_path = os.path.join(output_dir, "cpf_recovered_exact_match.parquet")
+    else:
+        combined_path = os.path.join(output_dir, "cpf_recovered_probabilistic_match.parquet")
+
+    # Remove the file if it already exists to start fresh
+    if os.path.exists(combined_path):
+        os.remove(combined_path)
+
     for year in range(intervalo[0], intervalo[1] + 1):
+        append = year != intervalo[0]
         log_recover_from_year(year)
         df_recovered = merge_with_rais_year(df_dac_comvest, year, is_probabilistic)
-        dfs.append(df_recovered)
-
-    df = pd.concat(dfs, sort=True)
-    df = df.drop_duplicates()
-    return df
+        # Write directly to the output file in append mode
+        df_recovered.to_parquet(combined_path, index=False, engine="fastparquet", append=append)
 
 
 # Merge dataframe with all files from some year to recover missing cpfs
@@ -165,7 +190,7 @@ def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
 
     dfs = []
     for file in files_rais:
-        df_rais = read_rais_identification(file)
+        df_rais = read_rais_identification(file, "numpy_nullable")
         # Data from year 2011-2013 has the wrong dtype on column 'dta_nasc_r',
         # it's float64 when it should be object
         if year == 2011 or year == 2012 or year == 2013:
