@@ -47,7 +47,7 @@ def recover_cpf_dac_comvest():
     log_recover_cpf_exact_match()
     exact_match_path = os.path.join(tmp_path, "cpf_recovered_exact_match.parquet")
     # Always call recover_cpf_exact_match to ensure the process runs, then read the result from disk
-    recover_cpf_exact_match(df_cpf_missing)
+    recover_cpf_exact_match(df_cpf_missing, exact_match_path)
     df_cpf_recovered_exact_match = pd.read_parquet(exact_match_path)
 
     df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
@@ -55,7 +55,7 @@ def recover_cpf_dac_comvest():
     log_recover_cpf_probabilistic_match()
     probabilistic_match_path = os.path.join(tmp_path, "cpf_recovered_probabilistic_match.parquet")
     # Always call recover_cpf_probabilistic_match to ensure the process runs, then read the result from disk
-    recover_cpf_probabilistic_match(df_cpf_missing)
+    recover_cpf_probabilistic_match(df_cpf_missing, probabilistic_match_path)
     df_cpf_recovered_probabilistic_match = pd.read_parquet(probabilistic_match_path)
 
     df_final = join_cpf_recovered(
