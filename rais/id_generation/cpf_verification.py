@@ -38,7 +38,7 @@ def remove_invalid_cpf():
 
 
 def prepare_dac_comvest(df):
-    df = df.loc[df["cpf"] != "-"].copy()
+    df = df.loc[df["cpf"] != "-"]
     df.drop_duplicates(subset=["cpf"], inplace=True)
     df.rename(columns={"cpf": "cpf_r"}, inplace=True)
     return df
@@ -77,7 +77,7 @@ def get_invalid_cpf(df):
     df_not_same_person = df[~df["is_same_person"]]
     df_total = pd.concat([df_same_person, df_not_same_person], sort=True)
     df_total.drop_duplicates(subset=["cpf_r"], keep="first", inplace=True)
-    df_cpf_invalid = df_total[~df_total["is_same_person"]].copy()
+    df_cpf_invalid = df_total[~df_total["is_same_person"]]
     vec = np.vectorize(get_similarity)
     df_cpf_invalid["similarity"] = vec(df_cpf_invalid.nome, df_cpf_invalid.nome_r)
     df_cpf_invalid = df_cpf_invalid[df_cpf_invalid.similarity < 0.9]
@@ -130,11 +130,11 @@ def recover_cpf_inside_union(df):
         on=["first_name", "dta_nasc"],
         indicator=True,
         suffixes=["", "_y"],
-    ).copy()
+    )
 
     match_first_name_and_dta = merge_first_name_dta.loc[
         merge_first_name_dta._merge == "both", :
-    ].copy()
+    ]
 
     match_first_name_and_dta.loc[:, "sim_nome"] = match_first_name_and_dta.apply(
         get_sim_nome, axis=1
