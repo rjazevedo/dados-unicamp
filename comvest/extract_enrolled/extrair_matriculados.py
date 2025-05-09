@@ -95,9 +95,13 @@ def extraction():
         if "Profis" in path:
             continue
         
-        elif date == 2023:
+        if date in (2023, 2024):
             matriculados = read_from_db(path, sheet_name="matriculados_final")
-            matriculados = matriculados.drop(columns=["CPF", "nome"])
+
+            if date == 2023:
+                matriculados = matriculados.drop(columns=["CPF", "nome"])
+            else:
+                matriculados = matriculados.drop(columns=["NOME"])
         
         else:
             matriculados = read_from_db(path, sheet_name="matriculados")

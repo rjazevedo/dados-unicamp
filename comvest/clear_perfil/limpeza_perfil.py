@@ -135,6 +135,45 @@ def cleandata(df, questoes, date):
     return df
 
 
+def stand_2024(df):
+    """
+    Renomeia colunas específicas para o ano de 2024 para que seus dados possam ser processados corretamente.
+    
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+        
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as colunas renomeadas. 
+    """
+    df = df.rename(
+        columns={
+            "APROVF2" : "aprovf2",
+            "CID_INSCRICAO" : "cid_inscricao",
+            "COTISTA" : "cotista",
+            "CURPAS" : "curpas",
+            "ESTADO" : "estado",
+            "EST_CIVIL" : "est_civil",
+            "GRPCOTA" : "grpcota",
+            "IDADE" : "idade",
+            "INSC" : "insc_cand",
+            "ISENTO" : "isento",
+            "LocalResid" : "local_residencia",
+            "MATRICULADO" : "matriculado",
+            "OPCAO1" : "opcao1",
+            "OPCAO2" : "opcao2",
+            "PAAIS" : "paais",
+            "PROCESSO" : "processo",
+            "SEXO" : "sexo",
+            "VESTIBULAR" : "vestibular",
+        })
+    
+    return df
+
+
 def extraction():
     """
     Executa a extração e limpeza dos dados de perfil.
@@ -165,6 +204,11 @@ def extraction():
         
         print(f"Processando o ano {date}")
         df = read_from_db(path, sheet_name="perfil", dtype=object)
+        
+        if date == 2024:
+            print("Padronizando os dados para o ano de 2024")
+            df = stand_2024(df)
+        
         df.opcao1 = df.opcao1.astype(float).astype("Int32")
         progresslog("perfil", date)
 

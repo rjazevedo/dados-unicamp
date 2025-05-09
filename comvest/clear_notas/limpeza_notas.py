@@ -20,6 +20,7 @@ Implemente e execute as funções para ler, limpar e extrair notas dos dados.
 
 
 import pandas as pd
+from pandas import DataFrame
 import logging
 from comvest.utilities.io import files, read_from_db, write_result
 from comvest.utilities.logging import progresslog, resultlog
@@ -190,7 +191,7 @@ def tratar_notas_f2(notas_f2, date):
     DataFrame
         O DataFrame com as notas da segunda fase tratadas.
     """
-    if date == 2023:
+    if date in (2023, 2024):
         notas_f2.rename(
         {
             "sit_he": "papt",
@@ -742,6 +743,42 @@ def tratar_notas_he(notas_he, date):
     return notas_he
 
 
+def stand_2024(notas_f2: DataFrame) -> DataFrame:
+    """
+    Padroniza as colunas da segunda fase para o ano de 2024.
+    
+    Parâmetros
+    ----------
+    notas_f2 : DataFrame
+        O DataFrame contendo as notas da segunda fase.
+        
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as colunas padronizadas.
+    """
+    notas_f2 = notas_f2.rename(
+        {
+            "notpad1": "notpad_por",
+            "notpad2": "notpad_mat",
+            "notpad3": "notpad_geo",
+            "notpad4": "notpad_his",
+            "notpad5": "notpad_fis",
+            "notpad6": "notpad_bio",
+            "notpad7": "notpad_qui",
+            "notpad8": "notpad_inter",
+            "notpad9": "notpad_he",
+            "notpad10": "notpad_math",
+            "notpad11": "notpad_matb",
+        },
+        axis=1
+    )
+    
+    notas_f2 = notas_f2.drop(columns=["notpad_matb", "sit_matb", "cotista"], errors="ignore")
+    
+    return notas_f2
+
+
 def extraction():
     """
     Executa a extração e limpeza das notas.
@@ -770,6 +807,10 @@ def extraction():
 
         notas_f1 = tratar_notas_f1(notas_f1, date)
         print(f"Notas da primeira fase tratadas para o ano {date}")
+        
+        if date == 2024:
+            print("Padronizando as colunas da segunda fase")
+            notas_f2 = stand_2024(notas_f2)
         
         notas_f2 = tratar_notas_f2(notas_f2, date)
         print(f"Notas da segunda fase tratadas para o ano {date}")

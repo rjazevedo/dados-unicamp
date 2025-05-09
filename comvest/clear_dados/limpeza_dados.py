@@ -45,6 +45,55 @@ CURSOS = "cursos.csv"
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
+def stand_2024(df):
+    """
+    Renomeia colunas específicas para o ano de 2024 para que seus dados possam ser processados corretamente.
+    
+    Parâmetros
+    ----------
+    df : DataFrame
+        O DataFrame contendo os dados a serem tratados.
+        
+    Retorna
+    -------
+    DataFrame
+        O DataFrame com as colunas renomeadas.  
+    """
+    df = df.rename(
+        columns={
+            "ano" : "ANO",
+            "ano_conclusao" : "ANO_CONCLU",
+            "cep" : "CEP",
+            "cpf" : "CPF",
+            "dia" : "DIA",
+            "doc" : "DOC",
+            "escola" : "ESCOLAEM",
+            "escola_ef" : "ESCOLAEF",
+            "est_nasc" : "EST_NASC",
+            "estado" : "ESTADO",
+            "estado_ecola" : "ESTADO_ESC",
+            "estado_escola_ef" : "EST_EF",
+            "insc_cand" : "INSC",
+            "mes" : "MES",
+            "municipio" : "MUNICIPIO",
+            "municipio_escola" : "MUN_ESCOLA",
+            "municipio_escola_ef" : "MU_EF",
+            "municipio_nasc" : "MUN_NASC",
+            "nacionalidade" : "NACIONALID",
+            "nome_cand" : "NOMEOFIC",
+            "nome_mae" : "NOME_MAE",
+            "nome_pai" : "NOME_PAI",
+            "nome_social" : "NOMESOC",
+            "opcao1" : "OPCAO1OR",
+            "opcao2" : "OPCAO2OR",
+            "pais_nasc" : "PAIS_NASC",
+            "tipo_escola" : "TIPO_ESCOL",
+            "tipo_escola_ef" : "TIPO_EF",
+            "tipodoc" : "TIPODOC"
+        })
+
+    return df
+
 
 def validacao_curso(df, col, date):
     """
@@ -801,6 +850,10 @@ def extraction():
         print(f"Lendo o arquivo para o ano {date}")
         df = read_from_db(path, sheet_name="dados", dtype=str)
         progresslog("dados", date)
+        
+        if date == 2024:
+            print("Padronizando os dados para o ano 2024")
+            df = stand_2024(df)
 
         df = tratar_dados(df, date, path)
 

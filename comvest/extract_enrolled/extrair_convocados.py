@@ -38,7 +38,7 @@ def extraction():
             continue
         
         try:
-            if date == 2023:
+            if date in (2023, 2024):
                 convocados = read_from_db(path, sheet_name="convocados_matriculados")
             else:
                 convocados = read_from_db(path, sheet_name="convocadosMatriculados")
