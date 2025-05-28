@@ -139,6 +139,7 @@ def padronize_colums(df):
     select_dta_v = np.vectorize(select_dta)
     df["dta_nasc"] = select_dta_v(df.dta_nasc_dac, df.dta_nasc_comvest)
     df.dta_nasc = df.dta_nasc.replace("00000nan", "-")
+    df.dta_nasc = df.dta_nasc.replace("00000000", "-")
     # Coloca a coluna 'dta' ao lado das outras 2 colunas de dta
     dta_nasc_column = df.pop("dta_nasc")
     df.insert(9, "dta_nasc", dta_nasc_column)

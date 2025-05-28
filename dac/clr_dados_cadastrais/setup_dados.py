@@ -13,8 +13,9 @@ DADOS_SHEET_NAME = 'Dados Cadastrais'
 def load_dados_cadastais():
     dados_cadastrais_pre_99 = read_input(PRE_99_BASE_NAME, base=Bases.DAC, sheet_name=DADOS_SHEET_NAME, names=dados_cadastrais_cols)
     dados_cadastrais_pos_99 = read_input(POS_99_BASE_NAME, base=Bases.DAC, names=dados_cadastrais_cols)
+    dados_cadastrais_pre_99 = clear_dados_cadastrais_pre_99(dados_cadastrais_pre_99)
+    dados_cadastrais_pos_99 = clear_dados_cadastrais_pre_99(dados_cadastrais_pos_99)
     dados_cadastrais = pd.concat([dados_cadastrais_pre_99, dados_cadastrais_pos_99])
-    dados_cadastrais = clear_dados_cadastrais_pre_99(dados_cadastrais)
     write_result(dados_cadastrais, "dados_cadastrais_intermediario.csv")
 
 
