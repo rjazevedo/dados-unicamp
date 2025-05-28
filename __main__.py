@@ -77,7 +77,7 @@ logger = logging.getLogger("main")
 logger.setLevel("INFO") 
 
 # Configurando o logger para escrever em um arquivo
-fh = logging.FileHandler("main2.log")
+fh = logging.FileHandler("main.log")
 
 # Adicionando o handler ao logger
 logger.addHandler(fh)
@@ -96,64 +96,64 @@ def main():
             tipo_extracao_socios = d[socios_in]
             break
 
-    # # Pre-processamento COMVEST
-    # logger.info("Iniciando o pré-processamento de dados da COMVEST")
-    # extrair_cidades.extraction()
-    # extrair_cursos.extraction()
-    # dict_cursos.get()
-    # extrair_matriculados.extraction()
-    # extrair_convocados.extraction()
-    # limpeza_dados_comvest.extraction()
+    # Pre-processamento COMVEST
+    logger.info("Iniciando o pré-processamento de dados da COMVEST")
+    extrair_cidades.extraction()
+    extrair_cursos.extraction()
+    dict_cursos.get()
+    extrair_matriculados.extraction()
+    extrair_convocados.extraction()
+    limpeza_dados_comvest.extraction()
 
 
-    # # Pre-processamento DAC
-    # logger.info("Iniciando o pré-processamento de dados da DAC")
-    # setup_dados.load_dados_cadastais()
-    # ufs_codes.generate_clean_data()
-    # create_ids.create_ids()
-    # limpeza_dados_dac.generate_clean_data()
-    # uf_codes.generate_uf_code()
+    # Pre-processamento DAC
+    logger.info("Iniciando o pré-processamento de dados da DAC")
+    setup_dados.load_dados_cadastais()
+    ufs_codes.generate_clean_data()
+    create_ids.create_ids()
+    limpeza_dados_dac.generate_clean_data()
+    uf_codes.generate_uf_code()
 
-    # print("pre processamento enem")
-    # # Pre processamento enem
-    # logger.info("Iniciando o pré-processamento de dados do ENEM")
-    # clear_comvest.clean_all()
-    # divide_comvest.split_all()
+    print("pre processamento enem")
+    # Pre processamento enem
+    logger.info("Iniciando o pré-processamento de dados do ENEM")
+    clear_comvest.clean_all()
+    divide_comvest.split_all()
 
 
-    # # Base da COMVEST
-    # logger.info("Iniciando a geração de bases da COMVEST")
-    # cod_ibge.merge()
-    # validacao_esc.validation()
-    # # Gera códigos das escolas na DAC
-    # school_codes.generate_school_codes()
-    # logger.info("Iniciando o merge de códigos INEP")
-    # cod_inep.merge()
-    # ids_nomes.merge()
-    # logger.info("Iniciando a limpeza de perfil e notas")
-    # limpeza_perfil.extraction()
-    # limpeza_notas.extraction()
-    # presenca.get()
+    # Base da COMVEST
+    logger.info("Iniciando a geração de bases da COMVEST")
+    cod_ibge.merge()
+    validacao_esc.validation()
+    # Gera códigos das escolas na DAC
+    school_codes.generate_school_codes()
+    logger.info("Iniciando o merge de códigos INEP")
+    cod_inep.merge()
+    ids_nomes.merge()
+    logger.info("Iniciando a limpeza de perfil e notas")
+    limpeza_perfil.extraction()
+    limpeza_notas.extraction()
+    presenca.get()
 
-    # print("merge enem")
-    # # Merge Enem Data
-    # logger.info("Iniciando o merge de dados do ENEM")
-    # comvest_enem.merge()
+    print("merge enem")
+    # Merge Enem Data
+    logger.info("Iniciando o merge de dados do ENEM")
+    comvest_enem.merge()
 
-    # # Base da DAC
-    # logger.info("Iniciando a geração de bases da DAC")
-    # historico_escolar.generate_clean_data()
-    # resumo_por_periodo.generate_clean_data()
-    # resumo_periodo_cr.generate_cr()
-    # vida_academica.generate_clean_data()
-    # dados_ingressantes.generate()
-    # habilitacao.generate()
-    # uniao_dac_comvest.generate()
+    # Base da DAC
+    logger.info("Iniciando a geração de bases da DAC")
+    historico_escolar.generate_clean_data()
+    resumo_por_periodo.generate_clean_data()
+    resumo_periodo_cr.generate_cr()
+    vida_academica.generate_clean_data()
+    dados_ingressantes.generate()
+    habilitacao.generate()
+    uniao_dac_comvest.generate()
 
     
-    # # Pre processamento rais
-    # logger.info("Iniciando o pré-processamento de dados da RAIS")
-    # pre_process_rais()
+    # Pre processamento rais
+    logger.info("Iniciando o pré-processamento de dados da RAIS")
+    pre_process_rais()
 
     # # Geracao ids
     # logger.info("Iniciando a geração de ids")
