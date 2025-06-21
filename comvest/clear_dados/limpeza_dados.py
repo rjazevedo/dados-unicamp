@@ -304,10 +304,10 @@ def tratar_nome_pai(df):
     if "PAI" in df.columns:
         df.rename({"PAI": "NOME_PAI"}, axis=1, inplace=True)
     # Transforma o nome do pai para maiúsculas
-    df["NOME_PAI"] = df["NOME_PAI"].map(
-        lambda nome: str(nome).upper()
-    )
-
+    if "NOME_PAI" in df.columns:
+        df["NOME_PAI"] = df["NOME_PAI"].map(
+            lambda nome: str(nome).upper()
+        )
     return df
 
 
@@ -327,9 +327,11 @@ def tratar_nome_mae(df):
     """
     if "MAE" in df.columns:
         df.rename({"MAE": "NOME_MAE"}, axis=1, inplace=True)
-    df["NOME_MAE"] = df["NOME_MAE"].map(
-        lambda nome: str(nome).upper()
-    )
+    if "NOME_MAE" in df.columns:
+        # Transforma o nome da mãe para maiúsculas
+        df["NOME_MAE"] = df["NOME_MAE"].map(
+            lambda nome: str(nome).upper()
+        )
 
     return df
 
