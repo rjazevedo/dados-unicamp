@@ -204,6 +204,9 @@ def extraction():
         
         print(f"Processando o ano {date}")
         df = read_from_db(path, sheet_name="perfil", dtype=object)
+        if 2011 <= date <= 2022:
+            perfil_profis = pd.read_excel(f"/home/output/intermediario/ProfisDivided/perfil/perfil_profis{date}.xlsx", dtype=object)
+            df = pd.concat([df, perfil_profis], ignore_index=True)
         
         if date == 2024:
             print("Padronizando os dados para o ano de 2024")
@@ -271,7 +274,7 @@ def extraction():
                 "renda_sm",
                 "renda_sm_a",
                 "renda_sm_b",
-                "renda_sm_c",
+                "renda_sm_profis",
                 "renda_sm_d",
                 "renda_qtas",
                 "renda_contrib_qtas",

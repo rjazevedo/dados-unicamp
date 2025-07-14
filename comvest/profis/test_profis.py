@@ -2,9 +2,9 @@ import pandas as pd
 import os
 from pandas import DataFrame
 from openpyxl import load_workbook
+import glob
 
-
-def compare_columns(equal_sheets: list[str], sheets_1: dict, sheets_2: dict) -> dict:
+def compare_columns(comvest: dict, profis: dict) -> dict:
     """
     Compara as colunas das planilhas que estão presentes em ambos os arquivos.
 
@@ -23,27 +23,29 @@ def compare_columns(equal_sheets: list[str], sheets_1: dict, sheets_2: dict) -> 
         Dicionário onde as chaves são os nomes das planilhas e os valores são dicionários contendo listas de colunas.
     """
     comparison = {}
-    for sheet in equal_sheets:
-        columns_1 = set(sheets_1[sheet].columns)
-        columns_2 = set(sheets_2[sheet].columns)
-        
-        missing_columns = columns_1 - columns_2
-        extra_columns = columns_2 - columns_1
-        common_columns = columns_1 & columns_2
-        
-        altered_columns = [col for col in common_columns if list(sheets_1[sheet].columns).index(col) != list(sheets_2[sheet].columns).index(col)]
-        
-        comparison[sheet] = {
-            "common_columns": list(common_columns),
-            "missing_columns": list(missing_columns),
-            "extra_columns": list(extra_columns),
-            "altered_columns": altered_columns
-        }
+    # Transforma todos os nomes das colunas em minúsculas
+    comvest = comvest.rename(columns=lambda x: x.lower() if isinstance(x, str) else x)
+    profis = profis.rename(columns=lambda x: x.lower() if isinstance(x, str) else x)
+    columns_perfil_comvest = set(comvest.columns)
+    columns_profis = set(profis.columns)
+    
+    missing_columns = columns_perfil_comvest - columns_profis
+    extra_columns = columns_profis - columns_perfil_comvest
+    common_columns = columns_perfil_comvest & columns_profis
+    
+    altered_columns = [col for col in common_columns if list(columns_perfil_comvest).index(col) != list(columns_profis).index(col)]
+    
+    comparison["profis_em_comvest"] = {
+        "common_columns": list(common_columns),
+        "missing_columns": list(missing_columns),
+        "extra_columns": list(extra_columns),
+        "altered_columns": altered_columns
+    }
         
     return comparison
 
 
-def print_columns_discrepancies(year: int, equal_sheets: list[str], sheets_1: dict, sheets_2: dict) -> None:
+def print_columns_discrepancies(year: int, comvest, profis) -> None:
     """
     Salva em arquivos Excel as diferenças entre as colunas existentes para cada uma das chaves no dicionário comparison para o ano indicado.
 
@@ -58,7 +60,7 @@ def print_columns_discrepancies(year: int, equal_sheets: list[str], sheets_1: di
     sheets_2 : dict
         Dicionário onde as chaves são os nomes das planilhas e os valores são os DataFrames.
     """
-    comparison = compare_columns(equal_sheets, sheets_1, sheets_2)
+    comparison = compare_columns(comvest, profis)
     
     for sheet_name, columns in comparison.items():
         common_columns = columns["common_columns"]
@@ -81,8 +83,11 @@ def print_columns_discrepancies(year: int, equal_sheets: list[str], sheets_1: di
         # Criar o DataFrame a partir das linhas
         df = pd.DataFrame(rows)
         
+        # Ordenar as colunas alfabeticamente
+        df = df[sorted(df.columns)]
+        
         # Diretório para salvar os arquivos
-        output_dir = f"/home/giovani/testes/Comvest/{year}"
+        output_dir = f"/home/giovani/testes/PerfilComvest_Profis/{year}"
         os.makedirs(output_dir, exist_ok=True)
         
         # Salvar o DataFrame em um arquivo Excel
@@ -215,25 +220,71 @@ def get_question_columns(df: pd.DataFrame) -> set[str]:
     return {col for col in df.columns if isinstance(col, str) and col.lower().startswith('q')}
 
 
+def match_profis_in_comvest_2022(comvest_file_path: str, output_excel: str) -> None:
+    """
+    função que procure as pessoas que estão nas planilhas dos profis nas demais planilhas do arquivo de ingresso da comvest para o ano de 2022.
+    No caso, as informações do profis que estão na comvest são retiradas da planilha profis_dados (INSC_CAND, NOME_CAND, CPF). 
+    Em seguida, preciso saber quantas pessoas há no total nessa parte do profis. 
+    Também preciso saber quem está lá e também está nas seguintes planilhas, utilizando as seguintes colunas (entre parênteses) para verificar tal correspondência: 
+    ve_dados (INSC, NOME_CAND, CPF), dados (INSC, NOMEOFICM CPF), pefil (insc_cand). 
+    Além disso, preciso saber quantas pessoas estão em cada uma dessas planilhas e também quantas pessoas estão em todas elas.
+    """
+    # Carregar o arquivo Excel
+    comvest = pd.read_excel(comvest_file_path, sheet_name=None)
+    
+    print("Lendo os dados de cada planilha de interesse da comvest")
+    # Extrair as planilhas relevantes
+    profis_dados = comvest["profis_dados"]
+    ve_dados = comvest["ve_dados"]
+    dados = comvest["dados"]
+    perfil = comvest["perfil"]
+    
+    print("Número de pessoas na planilha profis_dados")
+    print(f"{len(profis_dados)}")
+    
+    print("Encontrando as pessoas que estão na planilha profis_dados e na planilha ve_dados")
+    ve_dados_cpfs = set(ve_dados["CPF"])
+    profis_dados_cpfs = set(profis_dados["CPF"])
+    profis_dados_cpfs_in_ve_dados = profis_dados_cpfs.intersection(ve_dados_cpfs)
+    print(f"Número de pessoas que estão na planilha profis_dados e na planilha ve_dados: {len(profis_dados_cpfs_in_ve_dados)}")
+    print("Número de pessoas que estão na planilha profis_dados mas não aparecem na planilha ve_dados")
+    print(f"{len(profis_dados_cpfs - ve_dados_cpfs)}")
+    
+    print("Encontrando as pessoas que estão na planilha profis_dados e na planilha dados")
+    dados_cpfs = set(dados["CPF"])
+    profis_dados_cpfs_in_dados = profis_dados_cpfs.intersection(dados_cpfs)
+    print(f"Número de pessoas que estão na planilha profis_dados e na planilha dados: {len(profis_dados_cpfs_in_dados)}")
+    print("Número de pessoas que estão na planilha profis_dados mas não aparecem na planilha dados")
+    print(f"{len(profis_dados_cpfs - dados_cpfs)}")
+    
+    print("Encontrando as pessoas que estão na planilha profis_dados e na planilha perfil")
+    perfil_inscs = set(perfil["insc_cand"])
+    profis_inscs = set(profis_dados["INSC_CAND"])
+    profis_dados_inscs_in_perfil = profis_inscs.intersection(perfil_inscs)
+    print(f"Número de pessoas que estão na planilha profis_dados e na planilha perfil: {len(profis_dados_inscs_in_perfil)}")
+    print("Número de pessoas que estão na planilha profis_dados mas não aparecem na planilha perfil")
+    print(f"{len(profis_inscs - perfil_inscs)}")
+
+
 def main() -> None:
-    for year in range(2011, 2023):
-        print(f"Lendo o perfil da comvest para o ano {year}")
-        if year in range(2011, 2019):
-            comvest = pd.read_excel(f"/home/input/COMVEST/vest{year}.xlsx", sheet_name="perfil")  
-        else:
-            comvest = pd.read_excel(f"/home/input/COMVEST/ingresso{year}.xlsx", sheet_name="perfil")
- 
-        print(f"Lendo o perfil do Profis para o ano {year}")
-        profis = pd.read_excel(f"/home/input/COMVEST/Profis11a22.xlsx", sheet_name=f"{year}")
-        
-        print(f"Pegando as colunas de perguntas do Comvest e do Profis")
-        comvest_questions = get_question_columns(comvest)
-        profis_questions = get_question_columns(profis)
-        
-        print(f"Organizando as discrepâncias entre as colunas de questões da Comvest e do Profis")
-        organize_comparison_questions(comvest_questions, profis_questions, year)
-        print()
- 
+    # Lê todos os arquivos que estão em /home/giovani/testes/ProfisEnem e os concatena em um único arquivo csv
+    # 1) Defina o path da pasta onde estão os CSVs
+    pasta = "/home/giovani/testes/ProfisEnem"
+
+    # 2) Use glob para listar todos os arquivos .csv
+    padrao = os.path.join(pasta, "*.csv")
+    lista_arquivos = glob.glob(padrao)
+
+    # 3) Leia cada arquivo com pandas e guarde em uma lista
+    dfs = [pd.read_csv(arquivo) for arquivo in lista_arquivos]
+
+    # 4) Retira todos os DataFrames vazios da lista
+    dfs = [df for df in dfs if not df.empty]
+
+    # 5) Concatena todos os DataFrames em um único DataFrame
+    df_total = pd.concat(dfs, ignore_index=True)
+
+    df_total.to_csv("/home/giovani/testes/ProfisEnem/total_profis.csv", index=False)    
  
 if __name__ == "__main__":
     main()

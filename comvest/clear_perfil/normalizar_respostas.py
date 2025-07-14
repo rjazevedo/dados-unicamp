@@ -66,7 +66,7 @@ Como usar:
 Implemente e execute as funções para normalizar os valores das questões do questionário dos candidatos.
 """
 
-
+import numpy as np
 import pandas as pd
 
 
@@ -918,6 +918,48 @@ def contribui_renda_fam(df, ano):
     return df
 
 
+def stand_renda_profis(renda: object) -> int:
+    """
+    Padroniza a renda familiar do ProFIS para o ano de 2011 considerando o salário mínimo de 540 reais.
+    
+    Parâmetros
+    ----------
+    renda : object
+        A renda familiar a ser padronizada, que pode ser uma string "N" ou um valor numérico.
+        
+    Retorna
+    -------
+    int
+        A renda familiar padronizada em salários mínimos, onde:
+        - 0 representa "N" (ProFIS)
+        - 1 representa até 3 salários mínimos   
+        - 2 representa de 3 a 5 salários mínimos
+        - 3 representa de 5 a 10 salários mínimos
+        - 4 representa de 10 a 15 salários mínimos
+        - 5 representa mais de 15 salários mínimos
+        - pd.NA se a renda não puder ser convertida para float.
+    """
+    # Se for string "N" (indica ProFIS), retorna 0
+    if isinstance(renda, str) and renda.lower() == 'n':
+        return 0
+    try:
+        val = float(renda)
+    except Exception:
+        return pd.NA
+    # Converte para quantidade de salários mínimos
+    in_min = val / 540
+    if in_min <= 3:
+        return 1
+    elif in_min <= 5:
+        return 2
+    elif in_min <= 10:
+        return 3
+    elif in_min <= 15:
+        return 4
+    else:
+        return 5
+
+
 def renda_sm(df, ano):
     """
     Normaliza a questão sobre a renda em salários mínimos.
@@ -940,12 +982,33 @@ def renda_sm(df, ano):
             {0: 0, 1: 1, 2: 1, 3: 1, 4: 2, 5: 3, 6: 3, 7: 4, 8: 5, 9: 5}
         )
     elif ano <= 2012 and ano not in [1994, 1995, 2011]:
+        # Converte os valores na coluna "renda_sm" para inteiros para os anos de 2005 e 2006
+        if ano in (2005, 2006):
+            df["renda_sm"] = df["renda_sm"].astype(int)
+        
         df["renda_sm_b"] = df["renda_sm"].copy()
         df["renda_sm"] = df["renda_sm"].map(
             {0: 0, 1: 1, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 5, 8: 5, 9: 5}
         )
     elif ano == 2011:
-        df["renda_sm_c"] = df["renda_sm"].copy()
+        # Cria a nova coluna iniciando com NaN
+        df["renda_sm_profis"] = np.nan  
+        
+        # Filtra apenas as linhas em que o valor é uma string 'N' (ignorando maiúscula/minúscula)
+        # ou é numérico e maior ou igual a 100
+        cond = df["renda_sm"].apply(
+            lambda x: (isinstance(x, str) and x.lower() == 'n') or 
+            (pd.to_numeric(x, errors='coerce') is not None and pd.to_numeric(x, errors='coerce') >= 100))
+        
+        # Preenche a coluna novo com os valores originais somente onde a condição é verdadeira
+        df.loc[cond, "renda_sm_profis"] = df.loc[cond, "renda_sm"]
+        
+        # Volta os valores 'N' para 0, como no arquivo original
+        df["renda_sm_profis"] = df["renda_sm_profis"].replace("N", 0)
+        
+        # Aplica a função somente para as linhas filtradas (candidatos do ProFIS)
+        df.loc[cond, "renda_sm"] = df.loc[cond, "renda_sm"].apply(stand_renda_profis)
+        
     elif ano == 1994 or ano == 1995:
         df["renda_sm_d"] = df["renda_sm"].copy()
         df["renda_sm"] = ""
@@ -970,8 +1033,12 @@ def renda_contrib_qtas(df, ano):
         O DataFrame com a questão sobre a quantidade de contribuintes para a renda normalizada.
     """
     if 2004 <= ano <= 2012:
+        # Converte os valores na coluna "renda_sm" para inteiros para os anos de 2005 e 2006
+        if ano in (2005, 2006):
+            df["renda_contrib_qtas"] = df["renda_contrib_qtas"].astype(int)
+            
         df["renda_contrib_qtas"] = df["renda_contrib_qtas"].map(
-            {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 4, 6: 4}
+            {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 4, 6: 4, 7: 4, 8: 4, 9: 4, 10: 4}
         )
 
     return df

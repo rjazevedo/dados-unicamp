@@ -244,6 +244,9 @@ def tratar_notas_f2(notas_f2, date):
             "sit_mat": "pmat",
             "mat": "not_mat",
             "nmat": "not_mat",
+            "sit_matb" : "pmatb",
+            "matb": "not_matb",
+            "notpad_matb": "notpad_matb",
             "cha": "not_cha",
             "cn": "not_cn",
             "plin": "pest",
@@ -411,6 +414,9 @@ def tratar_notas_f2(notas_f2, date):
             "pmat",
             "not_mat",
             "notpad_mat",
+            "pmatb",
+            "not_matb",
+            "notpad_matb",
             "phis",
             "not_his",
             "notpad_his",
@@ -774,7 +780,7 @@ def stand_2024(notas_f2: DataFrame) -> DataFrame:
         axis=1
     )
     
-    notas_f2 = notas_f2.drop(columns=["notpad_matb", "sit_matb", "cotista"], errors="ignore")
+    notas_f2 = notas_f2.drop(columns=["cotista"], errors="ignore")
     
     return notas_f2
 

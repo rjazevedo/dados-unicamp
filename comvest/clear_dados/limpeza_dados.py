@@ -879,14 +879,18 @@ def extraction():
 
                 df = pd.concat([df, ve_dados])
 
-            try:
+        if date >= 2011:
+            if date <= 2022:
+                profis_dados = pd.read_excel(f"/home/output/intermediario/ProfisDivided/profis_dados/profis_dados{date}.xlsx",
+                                   dtype={"PAIS_NASC": str, "DOC": str})
+            else:
                 profis_dados = read_from_db(path, sheet_name="profis_dados")
-                profis_dados = tratar_dados(
-                    profis_dados, date, path, ingresso=5
-                )  # 5 - ProFis
-                df = pd.concat([df, profis_dados])
-            except:
-                pass
+
+            profis_dados = tratar_dados(
+                profis_dados, date, path, ingresso=5
+            )  # 5 - ProFis
+            
+            df = pd.concat([df, profis_dados])
 
         dados_comvest.append(df)
 

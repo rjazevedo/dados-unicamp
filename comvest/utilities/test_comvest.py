@@ -320,6 +320,8 @@ def verify_cpfs_Profis(profis_sheets: dict, sheets_2022: dict) -> None:
 
 
 def main() -> None:
+    print("Lendo arquivo ingresso2024.xlsx")
+    #sheets_24 = read_excel_tables("/home/input/COMVEST/ingresso2024.xlsx")
     """
     print("Lendo arquivo ingresso2021.xlsx")
     # Usado para comparação com os anos seguintes
@@ -331,8 +333,7 @@ def main() -> None:
     print("Lendo arquivo ingresso2023.xlsx")
     sheets_23 = read_excel_tables("/home/input/COMVEST/ingresso2023.xlsx")
         
-    print("Lendo arquivo ingresso2024.xlsx")
-    sheets_24 = read_excel_tables("/home/input/COMVEST/ingresso2024.xlsx")
+    
 
     print("Comparando os arquivos de ingresso para os anos de 2021 e 2024")
     equal_sheets_21_24 = compare_sheets(2124, sheets_21, sheets_24)
@@ -352,12 +353,25 @@ def main() -> None:
     print("Comparando as colunas dos arquivos de ingresso para os anos de 2023 e 2024")
     print_columns_discrepancies(2324, equal_sheets_23_24, sheets_23, sheets_24)
     """
-
+    """
     #Lê apenas a planilha "dados" do arquivo de 2023
     dados_2023 = pd.read_excel("/home/input/COMVEST/ingresso2023.xlsx", sheet_name="perfil")
     #Lê apenas a planilha "dados" do arquivo de 2024
     dados_2024 = pd.read_excel("/home/input/COMVEST/ingresso2024.xlsx", sheet_name="perfil")
     organize_comparison_dados(dados_2023, dados_2024, 2324)
+    """ 
+    # Imprime todas as colunas que contém "mat" no nome na planilhas "notasf2"
+    for year in range(2011, 2025):
+        print(f"Analisando o ano {year}")
+        if year < 2019:
+            notasf2 = pd.read_excel(f"/home/input/COMVEST/vest{year}.xlsx", sheet_name="notasf2")
+        else:    
+            notasf2 = pd.read_excel(f"/home/input/COMVEST/ingresso{year}.xlsx", sheet_name="notasf2")
+            
+        # Filtra as colunas que contêm "mat" no nome
+        filtered_columns = [col for col in notasf2.columns if "mat" in col.lower()]
+        print(f"Colunas que contém 'mat' no ano {year}: {filtered_columns}")
+        print()
  
 if __name__ == "__main__":
     main()

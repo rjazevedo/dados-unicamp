@@ -35,9 +35,10 @@ def merge() -> None:
 
     print('Standardizing Enem grades')
     for year, grade in tqdm(grades.items()):
-        grade.drop(columns=['NOME', 'CPF'], inplace=True)
+        grade.drop(columns=['NOME'], inplace=True)
         grade = grade.rename(columns={
-                        f'comvest_{year}'  : 'insc_vest',
+                        'CPF'             : 'cpf',
+                        f'comvest_{year}' : 'insc_vest',
                         f'enem{year - 1}' : 'enem_1',
                         f'ncnt{year - 1}' : 'ncnt_enem_1',
                         f'ncht{year - 1}' : 'ncht_enem_1',
@@ -52,7 +53,9 @@ def merge() -> None:
                         f'nmt{year - 2}'  : 'nmt_enem_2'
                     })
         grade['ano_vest'] = year
-        grades[year] = grade.loc[:, ['insc_vest', 'ano_vest', 
+        # Força a coluna 'cpf' a ser do tipo string
+        grade['cpf'] = grade['cpf'].astype(str).str.zfill(11)
+        grades[year] = grade.loc[:, ['insc_vest', 'ano_vest', 'cpf',
                                       'enem_1', 'ncnt_enem_1', 'ncht_enem_1', 'nlct_enem_1', 'nmt_enem_1', 'nred_enem_1',
                                       'enem_2', 'ncnt_enem_2', 'ncht_enem_2', 'nlct_enem_2', 'nmt_enem_2', 'nred_enem_2']]
 
@@ -60,7 +63,8 @@ def merge() -> None:
     grades_comvest = pd.concat(grades)
 
     print("Merging with Comvest")
-    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest'])
+    comvest_enem_aggregated = comvest.merge(grades_comvest, how='left', on=['ano_vest', 'insc_vest', 'cpf'])
+    grades_comvest = grades_comvest.drop(columns=['cpf'])
     write_result(comvest_enem_aggregated, COMVEST_FILE)
     write_result(grades_comvest, GRADES_FILE)
 
