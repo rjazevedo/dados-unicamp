@@ -90,3 +90,5 @@ def parse_rais_file(file, year, output_path):
             engine="fastparquet",
             append=append
         )
+
+        append = True

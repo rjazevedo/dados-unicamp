@@ -29,6 +29,7 @@ def remove_invalid_cpf():
     df_dac_comvest = clean_names(df_dac_comvest)
     df_dac_comvest["merge_id"] = range(len(df_dac_comvest))
     df_dac_comvest.dta_nasc = df_dac_comvest.dta_nasc.replace("00000nan", "-")
+    df_dac_comvest.dta_nasc = df_dac_comvest.dta_nasc.replace("00000000", "-")
     df_dac_comvest_merge = prepare_dac_comvest(df_dac_comvest)
     df_result = merge_by_cpf(df_dac_comvest_merge)
     df_result = get_invalid_cpf(df_result)

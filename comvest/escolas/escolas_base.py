@@ -46,7 +46,7 @@ def load_esc_bases():
     dac_esc = dac_esc[~filt]
 
     escs = pd.concat([comvest_esc, dac_esc])
-    escs = escs.drop_duplicates(subset=["escola", "codigo_municipio"])
+    escs = escs.drop_duplicates(subset=["escola", "codigo_municipio", "uf_original"])
 
     escs = escs[~escs["escola"].isin(["ENEM", "ENCCEJA", "EJA","NAN", "", "0", "1", "00", "000"])]
     escs = escs[~escs["codigo_municipio"].isin(["NAN", ""])]
