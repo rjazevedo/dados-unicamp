@@ -7,6 +7,7 @@ from rais.id_generation import random_index
 from rais.extract import merge
 from rais.extract import recover_cpf_rais
 from rais.extract import clear
+from rais.count_empreg import __main__ as count_empreg
 
 def generate_ids():
     cpf_verification.remove_invalid_cpf()
@@ -18,6 +19,7 @@ def clear_database():
     merge.merge_all_years()
     recover_cpf_rais.recover_cpf_years()
     clear.clear_all_years()
+    count_empreg.count_empreg()
 
 
 if __name__ == "__main__":
