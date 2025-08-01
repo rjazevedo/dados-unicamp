@@ -18,6 +18,7 @@ from comvest.clear_perfil import limpeza_perfil
 from comvest.clear_notas import limpeza_notas, presenca
 import comvest.extract.merge_sheets as merge_sheets
 import comvest.assign_ids.comvest_ids as comvest_ids
+from comvest.profis import format_profis
 
 # DAC -=-=-=-=-=-=-=-=-=-=-=-=-=-
 import dac.clr_dados_cadastrais.setup_dados as setup_dados
@@ -96,6 +97,10 @@ def main():
             tipo_extracao_socios = d[socios_in]
             break
 
+    # Gerando os arquicos intermediários do ProFIS
+    logger.info("Iniciando a geração dos arquivos intermediários do ProFIS") 
+    format_profis.main()       
+    
     # Pre-processamento COMVEST
     logger.info("Iniciando o pré-processamento de dados da COMVEST")
     extrair_cidades.extraction()

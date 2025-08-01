@@ -436,6 +436,8 @@ def main() -> None:
         else:
             notas_enem_profis.to_csv(f"/home/output/intermediario/ProfisDivided/notas_enem/notas_enem_profis{year}.csv", index=False)
 
-         
+    print("Geração dos arquivos intermediários do ProFIS concluída com sucesso!")    
+    
+    
 if __name__ == '__main__':
     main()
