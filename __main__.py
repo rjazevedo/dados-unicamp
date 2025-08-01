@@ -50,6 +50,7 @@ from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
 from rais.id_generation import random_index
 from rais.pre_processing.__main__ import pre_process_data as pre_process_rais
+from rais.count_empreg import __main__ as count_empreg
 from rais.extract import merge
 from rais.extract import recover_cpf_rais
 from rais.extract import clear
@@ -188,6 +189,7 @@ def main():
     merge.merge_all_years()
     recover_cpf_rais.recover_cpf_years()
     clear.clear_all_years()
+    count_empreg.count_empreg()
     
     logger.info("Iniciando a limpeza de dados da base sócios")
     clear_socio.clear_socio()
