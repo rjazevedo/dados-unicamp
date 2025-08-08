@@ -12,10 +12,8 @@ Implemente e execute a função para carregar e processar os dados das escolas d
 
 
 import pandas as pd
-from comvest.utilities.io import read_auxiliary
 from comvest.utilities.dtypes import DTYPES_DADOS
 from comvest.escolas.utility import standardize_str
-from comvest.escolas.utility import remove_countie_name_from_school
 from comvest.utilities.io import read_result, write_result
 
 
@@ -51,8 +49,5 @@ def load_esc_bases():
     escs = escs[~escs["escola"].isin(["ENEM", "ENCCEJA", "EJA","NAN", "", "0", "1", "00", "000"])]
     escs = escs[~escs["codigo_municipio"].isin(["NAN", ""])]
 
-    escs = remove_countie_name_from_school(escs, 'municipio_original')
-    escs["chave_seq"] = escs['chave_seq'].apply(lambda r: standardize_str(r))
-    escs["chave_seq_escs"] = escs['chave_seq']
-    
+    escs["chave_seq"] = escs['escola'].apply(lambda r: standardize_str(r))
     return escs

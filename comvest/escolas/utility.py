@@ -20,253 +20,97 @@ Implemente e execute as funções utilitárias para processar os dados das escol
 
 
 import pandas as pd
-import swifter
 import difflib as dff
-import textdistance
 import re
 from unidecode import unidecode
 
+from comvest.escolas.escolas_dict import STOPWORDS_GRAMATICAIS, TERMOS_QUALIFICADORES_NORMALIZACAO
 
-def standardize_str(s):
+def standardize_str(text):
     """
-    Padroniza uma string.
+    Normaliza uma string de texto (nome de escola ou município) removendo stopwords
+    e aplicando transformações específicas para uso em matching.
+
+    A ordem das operações é crucial:
+    1. Normalização básica (minúsculas, sem acentos).
+    2. Tokenização.
+    3. Remoção de stopwords gramaticais.
+    4. Aplicação das padronizações de termos qualificadores (priorizando termos mais longos).
+    5. Reconstrução da string.
 
     Parâmetros
     ----------
-    s : str
-        A string a ser padronizada.
+    text : str
+        A string de texto a ser limpa e padronizada.
 
     Retorna
     -------
     str
         A string padronizada.
     """
-    return (
-        re.sub(r"[^\w\s]", "", unidecode(str(s)).upper())
-        .replace('ADVENTISTA', "A")
-        .replace('ADV', "A")
-        .replace('AVANCADO', "A") 
-        .replace("PRIMEIRO E SEGUNDO GRAUS", "E")
-        .replace("PROFISSIONALIZANTE", "P")
-        .replace("ESCOLA DE 1 E 2 GRAUS", "E")
-        .replace("ESCOLA DE 1 E 2 GRAU", "E")
-        .replace("ESC DE 1 E 2GRAU", "E")
-        .replace("EE DE 1 E 2GRAU", "E")
-        .replace("EE 2 GRAU", "E")
-        .replace("EE 1 E 2GRAU", "E")
-        .replace("1 E 2 GRAUS", "E")
-        .replace("EDUCACAO INFANTIL", "EI")
-        .replace("ENSINO FUNDAMENTAL", "EF")
-        .replace("TEMPO INTEGRAL", "TI")
-        .replace("ESCOLA MUNICIPAL", "E")
-        .replace("CENTRO DE ENSINO", "E")
-        .replace("ENSINO MEDIO", "EM")
-        .replace("CENTRO EDUCACIONAL", "E")
-        .replace('EDUCACIONAL', 'E')
-        .replace("EDUCATIVA", "E")
-        .replace("EDUCAR", "E")
-        .replace("ESTUDANTE", "E")
-        .replace("EDUCANDARIO", "E")
-        .replace('ESCOLA', "E")
-        .replace('ESTUDOS', "E")
-        .replace('EDUCACAO', 'E')
-        .replace('ENSINO', 'E')
-        .replace("ESTADUAL", "E")
-        .replace('EDUC',"E")
-        #.replace('ETEC', 'E')
-        .replace("1 E 2 GRAU", "")
-        .replace("2GRAU", "")
-        .replace("2OGRAU", "")
-        .replace("MUNICIPAL", "M")
-        .replace('MEDIO', 'M') 
-        .replace('MODULO', "M") 
-        .replace('INSTITUTOS', 'I')
-        .replace('INST ', 'I')
-        .replace('INST. ', 'I')
-        .replace('INTEGRADA', "I")
-        .replace('INTEGRADO', "I")
-        .replace("INSTITUTO", "I")
-        .replace("INFANTIL", "I")
-        .replace("INTEGRAL", "I") 
-        .replace('IMACULADA', "I")
-        .replace("INTERESCOLAR", "I")
-        .replace("PERIODO INTEGRAL", "I")
-        .replace('PROFESSORA', 'P')
-        .replace('PROFESSOR', 'P') 
-        .replace('PROFA', 'P')
-        .replace('PROF', 'P')
-        .replace('COMENDADOR', "C")
-        .replace('COOPERATIVA', "C")
-        .replace('CURSOS', "")
-        .replace('CURSO', "C")
-        .replace('CAMPUS', 'C')
-        .replace("CENTRO", "C")
-        .replace('COLEGIO', "C")
-        .replace('CIENCIA', 'C') 
-        .replace('COMUNITARIA', "C")
-        .replace('CULTURA', "C")
-        .replace('CULTURAL', "C")
-        .replace("UNIVERSITARIO", "U")
-        .replace('UNIDADE', 'U')
-        .replace("TECNICO", "TEC")
-        .replace('TECNICA', "TEC")
-        .replace('TECNOLOGICA', "TEC")
-        .replace('TECNOLOGIA', 'TEC')
-        .replace('TEC', "TEC")
-        .replace("SISTEMA", "S")
-        #.replace('SESI', 'S')
-        .replace('SENHORA', 'S')
-        .replace('SANTO', 'S')
-        .replace('SABER', "S")
-        #.replace('MILITAR', 'M')
-        .replace("MAJOR", "M")
-        .replace('POLICIA', 'P')
-        .replace("DOUTOR", "DR")
-        .replace("DOUTORA", "DR")
-        .replace('DR.', "DR")
-        .replace('DOM.', "D")
-        .replace('DONA.', "D")
-        .replace('GENERAL', "G")
-        .replace('VEREADOR', "V")
-        .replace("PERIODO INTEGRAL", "PI")
-        .replace("CENTRO DE ENSINO EM", "CEEM")
-        .replace('FUNDACAO', "F") 
-        .replace("FEDERAL", "F")
-        .replace("FUND", "F")
-        .replace("FUN", "F")
-        .replace("FUNDAMENTAL", "F")
-        .replace('FEDERAL', 'F')
-        .replace("ORGANIZACAO", "O")
-        .replace("JARDIM", "J")
-        .replace('RENOVACAO', "R")
-        .replace('NOSSA', 'N')
-        .replace("UNED", "")
-        .replace('REDE', "")
-        #.replace("UNED", "")
-        .replace('CEFET-MG', "CEFET")
-        .replace('EEIFM', "")
-        .replace('EQUIPE', "")
-        #.replace('EEFMT', "")
-        .replace('SER', "")
-        .replace('E.E.', "")
-        .replace('EAG', "")
-        .replace('UNIAO', "")
-        .replace('FECAP', "") 
-        #.replace('EEIEFM', "")
-        #.replace('EEI', "")
-        .replace('EXTERNATO', "")
-        .replace('ZONA', "")
-        .replace('NHN', "")
-        #.replace('EF', "") 
-        #.replace("CEES", "")
-        #.replace("EEIEEF", "")
-        #.replace("EEEPSG", "")
-        #.replace("EEPGG", "")
-        #.replace("EEPG", "")
-        #.replace("EEIPSGES", "")
-        #.replace("EEIEFEM", "")
-        #.replace("EMPSGES", "")
-        #.replace("EPSGEI", "")
-        #.replace("EMEFMP", "")
-        #.replace("EIEFEM", "")
-        #.replace("EEIEFM", "")
-        #.replace("EEIPSG", "")
-        #.replace("EMEFEM", "")
-        #.replace("EPSGE", "")
-        #.replace("EEPSG", "")
-        #.replace("IIPSG", "")
-        #.replace("EEIPG", "")
-        #.replace("EMPSG", "")
-        #.replace("EEENS", "")
-        #.replace("EEPEM", "")
-        #.replace("ERPSG", "")
-        #.replace("EPSG", "")
-        #.replace("EEMF", "")
-        #.replace("EEBP", "")
-        #.replace("EEFM", "")
-        #.replace("EFMT", "")
-        #.replace("EMSG", "")
-        #.replace("EEPG", "")
-        #.replace("EIEF", "")
-        #.replace("EESG", "")
-        #.replace("EMEF", "")
-        #.replace("EIE", "")
-        #.replace("EEB", "")
-        #.replace("EFM", "")
-        #.replace("PSG", "")
-        #.replace("EEI", "")
-        #.replace("EPE", "")
-        #.replace("EME", "")
-        #.replace("ENS", "")
-        #.replace("ESG", "")
-        #.replace("IEE", "")
-        #.replace('ITB', "")
-        #.replace("LTDA", "")
-        #.replace('IFSP', "")
-        #.replace('EIFM', "")
-        .replace("COL.", "")
-        .replace("COL", "")
-        .replace("RONDONIA", "RO")
-        .replace("ACRE", "AC")
-        .replace("AMAZONAS", "AM")
-        .replace("RORAIMA", "RR")
-        .replace("PARA", "PA")
-        .replace("AMAPA", "AP")
-        .replace("TOCANTINS", "TO")
-        .replace("MARANHAO", "MA")	
-        .replace("PIAUI", "PI")
-        .replace("CEARA", "CE")
-        .replace("RIO GRANDE DO NORTE", "RN")
-        .replace("PARAIBA", "PB")
-        .replace("PERNAMBUCO", "PE")
-        .replace("ALAGOAS", "AL")
-        .replace("SERGIPE", "SE")	
-        .replace("BAHIA", "BA")
-        .replace("MINAS GERAIS", "MG")
-        .replace("ESPIRITO SANTO", "ES")
-        .replace("RIO DE JANEIRO", "RJ")
-        .replace("SAO PAULO", "SP")
-        .replace("PARANA", "PR")
-        .replace("SANTA CATARINA", "SC")
-        .replace("RIO GRANDE DO SUL", "RS")
-        .replace("MATO GROSSO DO SUL", "MS")
-        .replace("MATO GROSSO", " MT")
-        .replace("GOIAS", "GO")
-        .replace("DISTRITO FEDERAL", "DF")
-        .replace(' E ', "")
-        .replace(' DE ', "")
-        .replace(' DA ', "")
-        .replace(' DO ', "")
-        .replace(' DOS ', "")
-        .replace(' DAS ', "")
-        .replace(" ", "")
-        )
+    if pd.isna(text):
+        return text
 
+    # 1. Normaliza para maiúsculas e remove acentos para processamento consistente
+    text_processed = unidecode(str(text)).upper()
 
-def get_match(escola, escolas_series, cutoff):
-    """
-    Obtém a melhor correspondência para o nome de uma escola em uma série.
+    # 2. Tokeniza a string em palavras
+    tokens = re.findall(r'\b\w+\b', text_processed)
 
-    Parâmetros
-    ----------
-    escola : str
-        O nome da escola a ser correspondido.
-    escolas_series : Series
-        A série contendo os nomes das escolas para correspondência.
-    cutoff : float
-        O limite de similaridade para considerar uma correspondência.
+    # 3. Remove stopwords gramaticais (convertendo para maiúsculas para comparação consistente)
+    # Cria um set de stopwords em maiúsculas para busca eficiente
+    stopwords_upper = {s.upper() for s in STOPWORDS_GRAMATICAIS}
+    filtered_tokens = [token for token in tokens if token not in stopwords_upper]
 
-    Retorna
-    -------
-    str
-        O nome da escola mais próximo encontrado ou uma string vazia se nenhuma correspondência for encontrada.
-    """
-    values = dff.get_close_matches(escola, escolas_series, cutoff=cutoff)
+    # 4. Aplica transformações específicas (TERMOS_QUALIFICADORES_NORMALIZACAO)
+    # Ordena os termos por comprimento decrescente para lidar com termos multi-palavras primeiro
+    # Converte as chaves do dicionário para maiúsculas para corresponder aos tokens
+    sorted_qualifiers = sorted(
+        [(unidecode(k).upper(), v.upper()) for k, v in TERMOS_QUALIFICADORES_NORMALIZACAO.items()],
+        key=lambda item: len(item[0]),
+        reverse=True
+    )
+
+    # Junta os tokens filtrados para aplicar as substituições de termos qualificadores
+    # É importante fazer isso em uma string para termos multi-palavras
+    temp_text = " ".join(filtered_tokens)
+
+    for termo_original, termo_substituto in sorted_qualifiers:
+        # Usa regex para substituir palavras ou frases inteiras
+        # \b garante que apenas a palavra/frase completa seja substituída
+        # re.escape lida com caracteres especiais no termo_original
+        temp_text = re.sub(r'\b' + re.escape(termo_original) + r'\b', termo_substituto, temp_text)
     
-    if len(values) > 0:
-        return values[0]
-    else:
-        return ""
+    # 5. Re-tokeniza após as substituições para limpar quaisquer novos espaços ou palavras mescladas
+    final_tokens = re.findall(r'\b\w+\b', temp_text)
+
+    # 6. Junta os tokens finais e remove múltiplos espaços, trimando a string
+    final_string = " ".join(final_tokens)
+    final_string = re.sub(r'\s+', ' ', final_string).strip()
+
+    return final_string
+
+def get_tokens(s):
+    """
+    Obtém tokens de uma string para matching baseado em tokens.
+    Assume que a string de entrada 's' (chave_tok) já foi padronizada
+    por 'standardize_key' e 'clean_text_for_matching'.
+    """
+    if pd.isna(s) or len(s) == 0:
+        return []
+    
+    s_processed = re.sub(r'\s+', ' ', str(s)).strip()
+
+    # Se a string for muito curta, não há como gerar trigramas
+    if len(s_processed) < 3:
+        return [s_processed]
+
+    # Gera todos os trigramas sobrepostos da string
+    # Ex: "ABCDE" -> ["ABC", "BCD", "CDE"]
+    n = 3
+    tokens_list = [s_processed[i:i+n] for i in range(len(s_processed) - n + 1)]
+    
+    return tokens_list
 
 
 def merge_inep_ibge(escolas, uf_codes):

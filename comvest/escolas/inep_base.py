@@ -23,7 +23,6 @@ from comvest.utilities.io import read_auxiliary
 from comvest.escolas.utility import merge_inep_ibge
 from comvest.escolas.utility import concat_and_drop_duplicates
 from comvest.escolas.utility import standardize_str
-from comvest.escolas.utility import remove_countie_name_from_school
 from unidecode import unidecode
 
 
@@ -51,11 +50,7 @@ def load_inep_base():
     result.columns = ['escola', 'Código INEP', 'codigo_municipio', 'uf_novo', 'municipio_novo']
     result = result.sort_values(by=['codigo_municipio'], ascending=True)
 
-    result = remove_countie_name_from_school(result, 'municipio_novo')
-
-    result["chave_seq"] = result['chave_seq'].apply(lambda r: standardize_str(r))
-    result["chave_seq_inep"] = result['chave_seq']
-
+    result["chave_seq"] = result['escola'].apply(lambda r: standardize_str(r))
     result = get_smallest_INEP_code(result)
     
     return result
@@ -72,13 +67,12 @@ def load_schools():
     """
     open_schools = read_auxiliary("INEP data.csv", dtype=object, sep=";").loc[:,["Escola", "Código INEP", "UF", "Município", "Etapas e Modalidade de Ensino Oferecidas"]]
     closed_schools = read_auxiliary("cadescfechadassh19952021.csv", dtype=object, sep=";", encoding="latin1").loc[:, ["NU_ANO_CENSO", "NO_ENTIDADE", "CO_ENTIDADE", "SG_UF", "NO_MUNICIPIO"]]
-    closed_schools = keep_last_ocurrence_of_closed_school(closed_schools)
+    closed_schools = closed_schools.drop(columns=["NU_ANO_CENSO"])
     closed_schools.insert(loc=len(closed_schools.columns), column="Etapas e Modalidade de Ensino Oferecidas", value="Médio")
 
     closed_schools.columns = open_schools.columns
     
     base_escolas = pd.concat([closed_schools, open_schools])
-    base_escolas = base_escolas.drop_duplicates(subset=["Código INEP"], keep="last")
 
     base_escolas.columns = ["escola", "Código INEP", "uf", "municipio", "Etapas e Modalidade de Ensino Oferecidas"]
     base_escolas['municipio'] = base_escolas['municipio'].map(lambda x: unidecode(x).upper())
