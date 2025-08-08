@@ -5,11 +5,8 @@ Este módulo contém funções utilitárias para ler, limpar e processar os dado
 
 Funções:
 - standardize_str(s): Padroniza uma string.
-- remove_countie_name_from_school(df, column): Remove o nome do município do nome da escola.
 - merge_inep_ibge(df_inep, df_ibge): Mescla os dados do INEP com os dados do IBGE.
 - concat_and_drop_duplicates(df1, df2): Concatena dois DataFrames e remove duplicatas.
-- get_match(element, serie): Obtém a melhor correspondência para um elemento em uma série.
-- create_dictionary_ufs(df): Cria um dicionário de códigos de UF.
 - merge_by_uf(df1, df2): Mescla dois DataFrames por UF.
 - counties_merge(df1, df2): Mescla dois DataFrames por municípios.
 - get_the_closest_matche(element, serie): Obtém a correspondência mais próxima para um elemento em uma série.
@@ -93,7 +90,7 @@ def standardize_str(text):
 def get_tokens(s):
     """
     Obtém tokens de uma string para matching baseado em tokens.
-    Assume que a string de entrada 's' (chave_tok) já foi padronizada
+    Assume que a string de entrada 's' já foi padronizada
     por 'standardize_key' e 'clean_text_for_matching'.
     """
     if pd.isna(s) or len(s) == 0:
@@ -238,35 +235,6 @@ def get_the_closest_matche(element, serie):
         return values[0]
     else:
         return ''
-
-
-def remove_countie_name_from_school(df, column):
-    """
-    Remove o nome do município do nome da escola.
-
-    Parâmetros
-    ----------
-    df : DataFrame
-        O DataFrame contendo os dados das escolas.
-    column : str
-        O nome da coluna que contém os nomes dos municípios.
-
-    Retorna
-    -------
-    DataFrame
-        O DataFrame com os nomes dos municípios removidos dos nomes das escolas.
-    """
-    counties = df[column].unique()
-    correct = []
-    for countie in counties:
-        filt = (df[column] == countie)
-        df_countie = df[filt].copy()
-        df_dummy = df_countie['escola']
-        df_countie['chave_seq'] = df_dummy.map(lambda x: x.replace(countie, ""))
-        correct.append(df_countie)
-
-    result = pd.concat(correct)
-    return result
 
 
 def concat_and_drop_duplicates(dfs):
