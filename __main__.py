@@ -109,9 +109,6 @@ def main():
     # Pre processamento enem
     clear_comvest.clean_all()
     divide_comvest.split_all()
-
-
-   
     
     # Base da COMVEST
     cod_ibge.merge()

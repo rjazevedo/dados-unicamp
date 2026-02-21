@@ -59,8 +59,8 @@ def join_all_years(tipo_extracao):
         del result["mun_etbl"]
         del result["cnae95"]
         del result["cnpj"]
-        del result["mun_etbl"]
-        del result["mun_etbl"]
+        # del result["mun_etbl"]
+        # del result["mun_etbl"]
     final_cleaning(result)
     write_rais_sample(result)
 

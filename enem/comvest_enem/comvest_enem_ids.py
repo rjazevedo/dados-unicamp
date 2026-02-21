@@ -4,8 +4,8 @@ import numpy as np
 from enem.utilities.format import reading_parameters
 
 def retrieve_enem(YEAR, parameters):
-    COMVEST_PATH_1 = f'/home/gsiqueira/dados-unicamp/output/ids_comvest_enem/insc{YEAR}_comv{YEAR + 1}_ids.csv'
-    COMVEST_PATH_2 = f'/home/gsiqueira/dados-unicamp/output/ids_comvest_enem/insc{YEAR}_comv{YEAR + 2}_ids.csv'
+    COMVEST_PATH_1 = f'/home/output/enem/insc{YEAR}_comv{YEAR + 1}_ids.csv'
+    COMVEST_PATH_2 = f'/home/output/enem/insc{YEAR}_comv{YEAR + 2}_ids.csv'
 
     ENEM_PATH = f'/home/gsiqueira/dados-unicamp/input/enem/enem/MICRODADOS_ENEM_{YEAR}.csv'
     OUTPUT_FILE = f'/home/output/enem/comvest_enem{YEAR}.csv'
