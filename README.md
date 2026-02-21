@@ -33,10 +33,20 @@ Principais diretórios:
 
 ## Requisitos
 
+- `uv` instalado ([astral.sh/uv](https://astral.sh/uv))
 - Python 3.8+
-- Pacotes usados pelos módulos (principalmente `pandas`, `numpy` e dependências associadas)
 
-> Observação: o repositório não possui, na raiz, um arquivo único de dependências (`requirements.txt`/`pyproject.toml`).
+As dependências do projeto agora estão centralizadas em `pyproject.toml`.
+
+### Setup rápido
+
+Na raiz do projeto:
+
+```bash
+uv sync
+```
+
+Esse comando cria/atualiza o ambiente virtual e instala automaticamente as dependências.
 
 ## Como executar
 
@@ -45,7 +55,7 @@ Principais diretórios:
 Na raiz do projeto:
 
 ```bash
-python3 __main__.py
+uv run __main__.py
 ```
 
 Esse fluxo executa múltiplas bases em sequência e solicita entradas interativas para definir o tipo de extração em algumas etapas (por exemplo, Sócios e RAIS).
@@ -55,18 +65,18 @@ Esse fluxo executa múltiplas bases em sequência e solicita entradas interativa
 Na raiz do projeto, você também pode executar apenas partes específicas:
 
 ```bash
-python3 -m comvest.extract
-python3 -m dac.extract_database
-python3 -m rais
-python3 -m socio.cleaning
-python3 -m socio.extract
-python3 -m capes.cleaning
-python3 -m capes.extract
-python3 -m fuvest.extract
-python3 -m unesp.extract
-python3 -m empresa
-python3 -m estabelecimento
-python3 -m simples
+uv run -m comvest.extract
+uv run -m dac.extract_database
+uv run -m rais
+uv run -m socio.cleaning
+uv run -m socio.extract
+uv run -m capes.cleaning
+uv run -m capes.extract
+uv run -m fuvest.extract
+uv run -m unesp.extract
+uv run -m empresa
+uv run -m estabelecimento
+uv run -m simples
 ```
 
 ## Configuração de dados de entrada
