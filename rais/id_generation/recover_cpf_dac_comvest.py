@@ -315,31 +315,15 @@ def get_priority(mun, ano_base):
 def get_origem_cpf_column_exact_match(df):
     columns = ["merge_id"]
     df["duplicado"] = df.duplicated(subset=columns, keep=False)
-    df["origem_cpf"] = df.apply(
-        lambda x: get_origem_cpf_exact_match(x["duplicado"]), axis=1
-    )
+    df["origem_cpf"] = np.where(df["duplicado"], HOMONIMO, UNICO)
     del df["duplicado"]
 
 
 # Create origem_cpf column
 def get_origem_cpf_column_probabilistic_match(df):
-    df["origem_cpf"] = df.apply(
-        lambda x: get_origem_cpf_probabilistic_match(x["similaridade"]), axis=1
+    df["origem_cpf"] = np.where(
+        df["similaridade"] >= MIN_HIGH_SIMILARITY, HIGH_SIMILARITY, MEDIUM_SIMILARITY
     )
-
-
-# Get origem_cpf according to if the instance is duplicated
-def get_origem_cpf_exact_match(is_duplicated):
-    if is_duplicated:
-        return HOMONIMO
-    return UNICO
-
-
-# Get origem_cpf according to similarity
-def get_origem_cpf_probabilistic_match(similarity):
-    if similarity >= MIN_HIGH_SIMILARITY:
-        return HIGH_SIMILARITY
-    return MEDIUM_SIMILARITY
 
 
 # ------------------------------------------------------------------------------------------------
