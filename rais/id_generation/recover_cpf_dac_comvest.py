@@ -159,6 +159,7 @@ def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
         if year == 2011 or year == 2012 or year == 2013:
             df_rais = df_rais.astype({"dta_nasc_r": "object"})
         del df_rais["pispasep"]
+        df_rais = df_rais.drop_duplicates()
         if is_probabilistic:
             df_recovered = find_cpf_probabilistic_match(df_dac_comvest, df_rais)
         else:
@@ -171,9 +172,18 @@ def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
 
 
 # ------------------------------------------------------------------------------------------------
+# Drop rows from df_right whose join key doesn't occur at all in df_left, so the
+# actual merge doesn't have to hold/hash irrelevant rows in memory
+def filter_matching_keys(df_left, df_right, columns):
+    left_keys = pd.MultiIndex.from_frame(df_left[columns])
+    right_keys = pd.MultiIndex.from_frame(df_right[columns])
+    return df_right[right_keys.isin(left_keys)]
+
+
 # Merge dataframes in name and birthdate, and return all matches
 def find_cpf_exact_match(df_dac_comvest, df_rais):
     prepare_df_rais_exact_match(df_rais)
+    df_rais = filter_matching_keys(df_dac_comvest, df_rais, ["nome", "dta_nasc"])
     result = pd.merge(df_dac_comvest, df_rais, on=["nome", "dta_nasc"])
     if result.empty:
         return result
@@ -185,6 +195,9 @@ def find_cpf_exact_match(df_dac_comvest, df_rais):
 # Merge dataframes in first name and birthdate, and return matches with high similarity
 def find_cpf_probabilistic_match(df_dac_comvest, df_rais):
     prepare_df_rais_probabilistic_match(df_rais)
+    df_rais = filter_matching_keys(
+        df_dac_comvest, df_rais, ["primeiro_nome", "dta_nasc"]
+    )
     result = pd.merge(df_dac_comvest, df_rais, on=["primeiro_nome", "dta_nasc"])
     if result.empty:
         return result
@@ -381,14 +394,12 @@ def update_cpf_dac_comvest(df_cpf_recovered, df_uniao_dac_comvest):
     df_cpf_recovered["recovered"] = True
 
     result = df_uniao_dac_comvest.merge(df_cpf_recovered, on=["merge_id"], how="left")
-    result["cpf"] = result.apply(
-        lambda x: get_cpf(x["recovered"], x["cpf"], x["cpf_recovered"]), axis=1
-    )
-    result["origem_cpf"] = result.apply(
-        lambda x: int(
-            get_cpf(x["recovered"], x["origem_cpf"], x["origem_cpf_recovered"])
-        ),
-        axis=1,
+    was_recovered = result["recovered"] == True
+    result["cpf"] = result["cpf"].where(~was_recovered, result["cpf_recovered"])
+    result["origem_cpf"] = (
+        result["origem_cpf"]
+        .where(~was_recovered, result["origem_cpf_recovered"])
+        .astype(int)
     )
 
     del result["cpf_recovered"]
@@ -396,13 +407,6 @@ def update_cpf_dac_comvest(df_cpf_recovered, df_uniao_dac_comvest):
     del result["recovered"]
 
     return result
-
-
-# Return either original cpf or recovered cpf
-def get_cpf(was_recovered, value1, value2):
-    if was_recovered == True:
-        return value2
-    return value1
 
 
 def clean_name(name):
