@@ -187,7 +187,10 @@ def find_cpf_exact_match(df_dac_comvest, df_rais):
     if result.empty:
         return result
 
-    result = result[result.apply(lambda x: type(x["cpf"]) == str, axis=1)]
+    # cpf vem de df_rais.cpf_r, que é sempre dtype "str" (nunca outro tipo
+    # não-nulo) -- ver test_vectorize_equivalence.py / achado documentado no
+    # commit. type(x) == str linha a linha é portanto equivalente a notna().
+    result = result[result["cpf"].notna()]
     return result
 
 
@@ -201,15 +204,13 @@ def find_cpf_probabilistic_match(df_dac_comvest, df_rais):
     if result.empty:
         return result
 
-    result["similaridade"] = result.apply(
-        lambda x: get_similarity(x["nome_r"], x["nome"]), axis=1
-    )
+    # get_similarity usa SequenceMatcher, sem equivalente vetorizado direto;
+    # zip evita o boxing de linha inteira do DataFrame.apply(axis=1).
+    result["similaridade"] = [
+        get_similarity(a, b) for a, b in zip(result["nome_r"], result["nome"])
+    ]
     result = result[
-        result.apply(
-            lambda x: (type(x["cpf"]) == str)
-            and (x["similaridade"] >= MIN_MEDIUM_SIMILARITY),
-            axis=1,
-        )
+        result["cpf"].notna() & (result["similaridade"] >= MIN_MEDIUM_SIMILARITY)
     ]
     return result
 
