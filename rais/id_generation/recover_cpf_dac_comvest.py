@@ -112,7 +112,7 @@ def prepare_df_rais_exact_match(df):
 
 # Rename columns and get first name to use in merge
 def prepare_df_dac_comvest_probabilistic_match(df):
-    df["primeiro_nome"] = df.apply(lambda x: get_first_name(x["nome"]), axis=1)
+    df["primeiro_nome"] = get_first_name(df["nome"])
 
 
 # Rename columns and get first name to use in merge
@@ -120,17 +120,16 @@ def prepare_df_rais_probabilistic_match(df):
     df.rename(columns={"cpf_r": "cpf"}, inplace=True)
     df.rename(columns={"dta_nasc_r": "dta_nasc"}, inplace=True)
     df.nome_r = df.nome_r.apply(clean_name)
-    df["primeiro_nome"] = df.apply(lambda x: get_first_name(x["nome_r"]), axis=1)
+    df["primeiro_nome"] = get_first_name(df["nome_r"])
 
 
-# Returns only the first name of the person
-def get_first_name(name):
-    if type(name) != str:
-        return np.nan
-    if name == "":
-        return ""
-    list_names = name.split()
-    return list_names[0]
+# Returns only the first name of the person for the whole column (vectorized).
+# Non-string entries (incl. NaN) stay NaN; "" stays "" (matches the original
+# row-wise behavior exactly, incl. its edge cases -- see test_vectorize_equivalence.py)
+def get_first_name(names):
+    first = names.str.split().str[0]
+    is_empty = names == ""
+    return first.where(~is_empty.fillna(False), "")
 
 
 # ------------------------------------------------------------------------------------------------
