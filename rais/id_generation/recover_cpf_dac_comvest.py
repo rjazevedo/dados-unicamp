@@ -273,11 +273,19 @@ def fix_duplicated_rows_probabilistic_match(df):
 
 
 # ------------------------------------------------------------------------------------------------
+# Priority of a city, by state code (first 2 digits of mun_estbl)
+PRIORITY_BY_STATE_CODE = {
+    "35": 3,  # SP
+    "33": 2,  # RJ
+    "31": 2,  # MG
+    "32": 2,  # ES
+    "53": 1,  # DF
+}
+
+
 # Order dataframe by priority of the year and state
 def order_by_priority(df):
-    df["prioridade"] = df.apply(
-        lambda x: get_priority(x["mun_estbl"], x["ano_base"]), axis=1
-    )
+    df["prioridade"] = get_priority(df["mun_estbl"], df["ano_base"])
     df = df.sort_values(by="prioridade", ascending=False)
     del df["prioridade"]
     del df["mun_estbl"]
@@ -293,29 +301,13 @@ def order_by_similarity(df):
     return df
 
 
-# Get the value of priority based on state and year of the register
-def get_priority(mun, year):
-    if type(mun) == str:
-        mun_priority = get_priority_mun(mun)
-    else:
-        mun_priority = 0
-    return mun_priority * 10000 + year
-
-
-# Get the priority of a city
-def get_priority_mun(mun):
-    state_code = mun[0:2]
-    if state_code == "35":  # SP
-        return 3
-    elif state_code == "33":  # RJ
-        return 2
-    elif state_code == "31":  # MG
-        return 2
-    elif state_code == "32":  # ES
-        return 2
-    elif state_code == "53":  # DF
-        return 1
-    return 0
+# Get the value of priority based on state and year of the register (vectorized)
+def get_priority(mun, ano_base):
+    is_str = mun.map(lambda x: type(x) == str)
+    state_code = mun.where(is_str, other="").astype(str).str.slice(0, 2)
+    mun_priority = state_code.map(PRIORITY_BY_STATE_CODE).fillna(0)
+    mun_priority = mun_priority.where(is_str, 0)
+    return mun_priority * 10000 + ano_base
 
 
 # ------------------------------------------------------------------------------------------------
