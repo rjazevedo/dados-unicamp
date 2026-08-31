@@ -33,13 +33,9 @@ def recover_cpf_dac_comvest():
     df_cpf_missing = get_cpf_missing_dac_comvest(df_dac_comvest)
 
     log_recover_cpf_exact_match()
-    df_cpf_recovered_exact_match = recover_cpf_exact_match(df_cpf_missing)
-
-    df_cpf_missing = update_cpf_missing(df_cpf_missing, df_cpf_recovered_exact_match)
-
     log_recover_cpf_probabilistic_match()
-    df_cpf_recovered_probabilistic_match = recover_cpf_probabilistic_match(
-        df_cpf_missing
+    df_cpf_recovered_exact_match, df_cpf_recovered_probabilistic_match = (
+        recover_cpf_matches(df_cpf_missing)
     )
 
     df_final = join_cpf_recovered(
@@ -58,31 +54,56 @@ def get_cpf_missing_dac_comvest(df):
     return cpf_missing
 
 
-# Return df with matches made with name and birthdate equal
-def recover_cpf_exact_match(df):
-    prepare_df_dac_comvest_exact_match(df)
-    df_recovered = merge_with_rais(df, False)
+# Computes exact match and probabilistic match together, reading and
+# preparing (clean_name/primeiro_nome) each RAIS file only ONCE for both --
+# previously each ran as a fully separate pass over all 17 anos x ~500
+# arquivos (merge_with_rais chamado 2x), lendo+descomprimindo+limpando o
+# mesmo dado duas vezes (~68% do tempo total, ver achado de profiling no
+# commit). Diferenca de comportamento: a busca probabilistica aqui roda
+# sobre a populacao COMPLETA de faltantes (nao exclui previamente quem ja
+# foi recuperado pelo exact match, como a versao anterior fazia antes do
+# merge) e so exclui esses casos DEPOIS, no resultado -- equivalente,
+# porque o merge eh independente por linha (o resultado calculado pra um
+# candidato nao muda dependendo de quais OUTROS candidatos estao no lote) e
+# a deduplicacao por merge_id em fix_duplicated_rows_probabilistic_match
+# tambem age por grupo de merge_id, sem interacao entre candidatos
+# diferentes. Validado por teste de equivalencia (ver commit) comparando
+# contra a versao anterior em dado real.
+def recover_cpf_matches(df_cpf_missing):
+    df_dac_comvest_exact = df_cpf_missing.copy(deep=True)
+    df_dac_comvest_exact.nome = clean_name_column(df_dac_comvest_exact.nome)
+    del df_dac_comvest_exact["cpf"]
+
+    df_dac_comvest_prob = df_cpf_missing.copy(deep=True)
+    df_dac_comvest_prob.nome = clean_name_column(df_dac_comvest_prob.nome)
+    del df_dac_comvest_prob["cpf"]
+    df_dac_comvest_prob["primeiro_nome"] = get_first_name(df_dac_comvest_prob["nome"])
+
+    df_merged_exact, df_merged_prob = merge_with_rais(
+        df_dac_comvest_exact, df_dac_comvest_prob
+    )
+
     log_filter_results()
-    df_recovered = remove_invalid_cpf(df_recovered)
-    df_recovered = fix_duplicated_rows_exact_match(df_recovered)
-    return df_recovered
+    df_recovered_exact = remove_invalid_cpf(df_merged_exact)
+    df_recovered_exact = fix_duplicated_rows_exact_match(df_recovered_exact)
+
+    df_recovered_prob_all = remove_invalid_cpf(df_merged_prob)
+    df_recovered_prob_all = fix_duplicated_rows_probabilistic_match(
+        df_recovered_prob_all
+    )
+    df_recovered_prob = update_cpf_missing(df_recovered_prob_all, df_recovered_exact)
+
+    return df_recovered_exact, df_recovered_prob
 
 
-# Return df with missing cpfs after first recover
+# Return df with rows from df1 whose merge_id doesn't appear in df2 -- usado
+# tanto pra excluir do resultado probabilistico quem ja foi recuperado pelo
+# exact match (ver recover_cpf_matches) quanto, no fluxo geral do pipeline,
+# pra achar quem ainda ficou sem CPF depois de tudo.
 def update_cpf_missing(df_cpf_missing, df_cpf_recovered):
     columns = ["merge_id"]
     updated_cpf_missing = subtract(df_cpf_missing, df_cpf_recovered, columns)
     return updated_cpf_missing
-
-
-# Return df with matches made with first name, birthdate equal and high similarity between names
-def recover_cpf_probabilistic_match(df):
-    prepare_df_dac_comvest_probabilistic_match(df)
-    df_merged = merge_with_rais(df, True)
-    log_filter_results()
-    df_recovered = remove_invalid_cpf(df_merged)
-    df_recovered = fix_duplicated_rows_probabilistic_match(df_recovered)
-    return df_recovered
 
 
 # Return df with initial dataframe replaced with all cpfs recovered
@@ -96,31 +117,17 @@ def join_cpf_recovered(
 
 
 # ------------------------------------------------------------------------------------------------
-# Rename columns to use in merge
-def prepare_df_dac_comvest_exact_match(df):
-    df.nome = clean_name_column(df.nome)
-    del df["cpf"]
-
-
-# Rename columns to use in merge
-def prepare_df_rais_exact_match(df):
+# Renomeia colunas e limpa o nome UMA vez (nome_r), derivando tanto "nome"
+# (chave do exact match) quanto "primeiro_nome" (chave do probabilistic
+# match) do mesmo valor limpo -- antes, cada modo de busca limpava o
+# mesmo nome_r de novo, do zero, numa passada separada pelo arquivo.
+def prepare_df_rais(df):
     df.rename(columns={"cpf_r": "cpf"}, inplace=True)
     df.rename(columns={"dta_nasc_r": "dta_nasc"}, inplace=True)
-    df.rename(columns={"nome_r": "nome"}, inplace=True)
-    df.nome = clean_name_column(df.nome)
-
-
-# Rename columns and get first name to use in merge
-def prepare_df_dac_comvest_probabilistic_match(df):
-    df["primeiro_nome"] = get_first_name(df["nome"])
-
-
-# Rename columns and get first name to use in merge
-def prepare_df_rais_probabilistic_match(df):
-    df.rename(columns={"cpf_r": "cpf"}, inplace=True)
-    df.rename(columns={"dta_nasc_r": "dta_nasc"}, inplace=True)
-    df.nome_r = clean_name_column(df.nome_r)
+    df["nome_r"] = clean_name_column(df["nome_r"])
+    df["nome"] = df["nome_r"]
     df["primeiro_nome"] = get_first_name(df["nome_r"])
+    return df
 
 
 # Returns only the first name of the person for the whole column (vectorized).
@@ -133,24 +140,30 @@ def get_first_name(names):
 
 
 # ------------------------------------------------------------------------------------------------
-# Merge dataframe with all files from rais to recover missing cpfs
-def merge_with_rais(df_dac_comvest, is_probabilistic):
-    dfs = []
+# Merge dataframes with all files from rais to recover missing cpfs -- exact
+# match e probabilistic match juntos, ver recover_cpf_matches.
+def merge_with_rais(df_dac_comvest_exact, df_dac_comvest_prob):
+    dfs_exact = []
+    dfs_prob = []
     for year in range(2002, 2019):
         log_recover_from_year(year)
-        df_recovered = merge_with_rais_year(df_dac_comvest, year, is_probabilistic)
-        dfs.append(df_recovered)
+        df_exact_year, df_prob_year = merge_with_rais_year(
+            df_dac_comvest_exact, df_dac_comvest_prob, year
+        )
+        dfs_exact.append(df_exact_year)
+        dfs_prob.append(df_prob_year)
 
-    df = pd.concat(dfs, sort=True)
-    df = df.drop_duplicates()
-    return df
+    df_exact = pd.concat(dfs_exact, sort=True).drop_duplicates()
+    df_prob = pd.concat(dfs_prob, sort=True).drop_duplicates()
+    return df_exact, df_prob
 
 
-# Merge dataframe with all files from some year to recover missing cpfs
-def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
+# Merge dataframes with all files from some year to recover missing cpfs
+def merge_with_rais_year(df_dac_comvest_exact, df_dac_comvest_prob, year):
     files_rais = get_all_tmp_files(year, "identification_data", "pkl")
 
-    dfs = []
+    dfs_exact = []
+    dfs_prob = []
     for file in files_rais:
         df_rais = read_rais_identification(file)
         # Data from year 2011-2013 has the wrong dtype on column 'dta_nasc_r',
@@ -159,15 +172,14 @@ def merge_with_rais_year(df_dac_comvest, year, is_probabilistic):
             df_rais = df_rais.astype({"dta_nasc_r": "object"})
         del df_rais["pispasep"]
         df_rais = df_rais.drop_duplicates()
-        if is_probabilistic:
-            df_recovered = find_cpf_probabilistic_match(df_dac_comvest, df_rais)
-        else:
-            df_recovered = find_cpf_exact_match(df_dac_comvest, df_rais)
-        dfs.append(df_recovered)
+        df_rais = prepare_df_rais(df_rais)
 
-    df = pd.concat(dfs)
-    df = df.drop_duplicates()
-    return df
+        dfs_exact.append(find_cpf_exact_match(df_dac_comvest_exact, df_rais))
+        dfs_prob.append(find_cpf_probabilistic_match(df_dac_comvest_prob, df_rais))
+
+    df_exact = pd.concat(dfs_exact).drop_duplicates()
+    df_prob = pd.concat(dfs_prob).drop_duplicates()
+    return df_exact, df_prob
 
 
 # ------------------------------------------------------------------------------------------------
@@ -179,11 +191,16 @@ def filter_matching_keys(df_left, df_right, columns):
     return df_right[right_keys.isin(left_keys)]
 
 
-# Merge dataframes in name and birthdate, and return all matches
+# Merge dataframes in name and birthdate, and return all matches. Seleciona
+# de df_rais (ja preparado por prepare_df_rais) so as colunas que o exact
+# match original usava, pra nao levar adiante nome_r/primeiro_nome (que
+# so interessam ao probabilistic match) sem necessidade.
 def find_cpf_exact_match(df_dac_comvest, df_rais):
-    prepare_df_rais_exact_match(df_rais)
-    df_rais = filter_matching_keys(df_dac_comvest, df_rais, ["nome", "dta_nasc"])
-    result = pd.merge(df_dac_comvest, df_rais, on=["nome", "dta_nasc"])
+    df_rais_exact = df_rais[["ano_base", "nome", "cpf", "dta_nasc", "mun_estbl"]]
+    df_rais_exact = filter_matching_keys(
+        df_dac_comvest, df_rais_exact, ["nome", "dta_nasc"]
+    )
+    result = pd.merge(df_dac_comvest, df_rais_exact, on=["nome", "dta_nasc"])
     if result.empty:
         return result
 
@@ -194,13 +211,17 @@ def find_cpf_exact_match(df_dac_comvest, df_rais):
     return result
 
 
-# Merge dataframes in first name and birthdate, and return matches with high similarity
+# Merge dataframes in first name and birthdate, and return matches with high
+# similarity. Mesma ideia de find_cpf_exact_match: seleciona so as colunas
+# que o probabilistic match original usava.
 def find_cpf_probabilistic_match(df_dac_comvest, df_rais):
-    prepare_df_rais_probabilistic_match(df_rais)
-    df_rais = filter_matching_keys(
-        df_dac_comvest, df_rais, ["primeiro_nome", "dta_nasc"]
+    df_rais_prob = df_rais[
+        ["ano_base", "nome_r", "cpf", "dta_nasc", "mun_estbl", "primeiro_nome"]
+    ]
+    df_rais_prob = filter_matching_keys(
+        df_dac_comvest, df_rais_prob, ["primeiro_nome", "dta_nasc"]
     )
-    result = pd.merge(df_dac_comvest, df_rais, on=["primeiro_nome", "dta_nasc"])
+    result = pd.merge(df_dac_comvest, df_rais_prob, on=["primeiro_nome", "dta_nasc"])
     if result.empty:
         return result
 
