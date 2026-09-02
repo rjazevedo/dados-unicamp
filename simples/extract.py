@@ -6,10 +6,20 @@ from simples.utils import (
 import pandas as pd
 
 
+def most_recent_non_empty_folder(folders):
+    for folder in sorted(folders, reverse=True):
+        if any(f.is_file() for f in folder.iterdir()):
+            return folder
+        print(f"AVISO: pasta '{folder}' esta vazia, pulando para a proxima mais recente")
+    raise FileNotFoundError(
+        f"Nenhuma pasta com arquivos encontrada entre: {sorted(folders, reverse=True)}"
+    )
+
+
 def extract_simples_amostra():
     simples_folders = list_dirs_simples_input()
-    # A extração é feita sempre com os dados mais recentes
-    folder = sorted(simples_folders)[-1]
+    # A extração é feita sempre com os dados mais recentes (pula pastas vazias)
+    folder = most_recent_non_empty_folder(simples_folders)
 
     simples_merges = []
     for f in [f for f in folder.iterdir() if f.is_file()]:

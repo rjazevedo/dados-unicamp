@@ -7,9 +7,20 @@ from estabelecimento.utils import (
 import pandas as pd
 
 
+def most_recent_non_empty_folder(folders):
+    for folder in sorted(folders, reverse=True):
+        if any(f.is_file() for f in folder.iterdir()):
+            return folder
+        print(f"AVISO: pasta '{folder}' esta vazia, pulando para a proxima mais recente")
+    raise FileNotFoundError(
+        f"Nenhuma pasta com arquivos encontrada entre: {sorted(folders, reverse=True)}"
+    )
+
+
 def extract_estabelecimento_amostra():
     estabelecimentos_folders = list_dirs_estabelecimento_input()
-    folder = sorted(estabelecimentos_folders)[-1]
+    # A extração é feita sempre com os dados mais recentes (pula pastas vazias)
+    folder = most_recent_non_empty_folder(estabelecimentos_folders)
 
     socio_amostra = read_socio_amostra()
     socio_amostra["cnpj_basico"] = socio_amostra.cnpj.str[0:8]
