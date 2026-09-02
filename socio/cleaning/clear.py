@@ -67,7 +67,10 @@ def filter_columns_socio(df):
         }
     )
     columns_info = get_columns_info_socio()
-    valid_cols = set(columns_info.keys()).intersection(set(df.columns))
+    # pandas novo nao aceita mais set como indexador de colunas (ordem
+    # indefinida) -- sorted() da uma lista deterministica com as mesmas
+    # colunas, mesma classe do bug de "wrong" em random_index.py.
+    valid_cols = sorted(set(columns_info.keys()).intersection(set(df.columns)))
 
     if "codigo_tipo_socio" in valid_cols:
         df = df.loc[df.codigo_tipo_socio == 2, valid_cols]
