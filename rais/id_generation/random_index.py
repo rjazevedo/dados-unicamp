@@ -93,6 +93,14 @@ def generate_index():
         wrong_matches, on=["merge_id"], how="left", suffixes=[None, "_y"]
     )
     result = result.fillna({"wrong": False})
+    # O merge left (poucas linhas em wrong_matches contra ~2M em result)
+    # introduz NaN na coluna "wrong", o que faz o dtype virar "object" em vez
+    # de voltar a bool mesmo depois do fillna -- pandas novo (2.x) exige
+    # dtype bool de verdade em .where(), senao ~result.wrong aplica o ~
+    # bitwise do Python em int (bool eh subclasse de int: ~True == -2),
+    # gerando int64 e quebrando a linha abaixo. Cast explicito corrige sem
+    # mudar nenhum valor logico (True/False continuam os mesmos).
+    result["wrong"] = result["wrong"].astype(bool)
 
     result.id = result.id.where(~result.wrong, result.id_y)
     result.id = result.id.astype("int64")
