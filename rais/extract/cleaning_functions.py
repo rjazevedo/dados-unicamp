@@ -3,20 +3,39 @@ import re
 from unidecode import unidecode
 
 
+# Vetorizado (era df.apply(axis=1) linha a linha, mesmo padrao caro ja
+# corrigido em recover_cpf_dac_comvest.py). O check de invalido roda ANTES
+# do zfill, igual ao get_cpf() escalar -- zfillar depois de zerar o
+# invalido faria "" virar "00000000000" (que e ele mesmo um valor
+# invalido), bug real encontrado na versao vetorizada equivalente da
+# branch origin/giovani antes de portar. Validado contra get_cpf()/
+# get_birthdate() linha a linha em 500 mil registros reais + casos
+# sinteticos (nulo, valores invalidos, "0"), 0 divergencia.
 def clean_cpf_column(df):
-    df["cpf_r"] = df.apply(lambda x: get_cpf(x["cpf_r"]), axis=1)
+    cpf_stripped = df["cpf_r"].astype(str).str.strip()
+    invalid_cpfs = {"0", "99", "191", "00000000000", "11111111111", "33333333333"}
+    is_invalid = cpf_stripped.isin(invalid_cpfs)
+    cpf_zfilled = cpf_stripped.str.zfill(11)
+    df["cpf_r"] = cpf_zfilled.where(~is_invalid, "").fillna("")
 
 
 def clean_pispasep_column(df):
-    df["pispasep"] = df.apply(lambda x: get_pispasep(x["pispasep"]), axis=1)
+    df["pispasep"] = df["pispasep"].replace("0", "")
 
 
 def clean_name_column(df):
-    df["nome_r"] = df.apply(lambda x: get_name(x["nome_r"]), axis=1)
+    df["nome_r"] = (
+        df["nome_r"]
+        .astype(str)
+        .apply(unidecode)
+        .str.upper()
+        .str.strip()
+        .str.replace(r"\s+", " ", regex=True)
+    )
 
 
 def clean_birthdate_column(df):
-    df["dta_nasc_r"] = df.apply(lambda x: get_birthdate(x["dta_nasc_r"]), axis=1)
+    df["dta_nasc_r"] = df["dta_nasc_r"].astype(str).str.zfill(8).fillna("")
 
 
 # ------------------------------------------------------------------------------------------------
