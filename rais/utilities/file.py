@@ -35,6 +35,12 @@ def get_all_tmp_files(year, directory, extension):
     return files
 
 
+def get_all_pre_processed_files(year, extension):
+    path = config["path_pre_processed"] + str(year) + "/"
+    files = get_all_files(path, extension)
+    return files
+
+
 def get_file_name(file):
     file = file.split("/")[-1]
     return file.split(".")[0]
@@ -42,7 +48,9 @@ def get_file_name(file):
 
 # ------------------------------------------------------------------------------------------------
 def create_folder(path, folder_name):
-    command = "mkdir " + path + folder_name
+    # -p: precisa criar subpastas aninhadas (ex. pre_processed/<ano>/) e nao
+    # deve falhar se a pasta ja existir (reexecucao apos falha parcial).
+    command = "mkdir -p " + path + folder_name
     subprocess.run(command, shell=True)
 
 
@@ -66,7 +74,16 @@ def get_year_path(year, path):
 
 
 def get_all_files(path, extension):
-    files = glob.glob(path + "*." + extension)
+    # sorted(): glob.glob() nao garante nenhuma ordem (depende do filesystem/SO),
+    # e recover_cpf_dac_comvest.py usa sort_values() nao-estavel (default quicksort)
+    # pra desempatar match probabilistico por similaridade -- com empate de score,
+    # o resultado do desempate depende da ordem de entrada. Achado real: comparando
+    # o mesmo dado via pkl (producao) vs parquet (cache novo, diretorio diferente),
+    # a ordem do glob era diferente entre os dois diretorios e 2 de ~2M linhas
+    # escolhiam um CPF homonimo diferente. sorted() torna a ordem deterministica
+    # e reproduzivel entre diretorios/execucoes (nao elimina a arbitrariedade do
+    # desempate em si, so a torna estavel).
+    files = sorted(glob.glob(path + "*." + extension))
     return files
 
 

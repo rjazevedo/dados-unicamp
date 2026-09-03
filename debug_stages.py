@@ -82,6 +82,7 @@ from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest
 from rais.id_generation import random_index
 from rais.pre_processing import identification
+from rais.pre_processing import parquet_parsing
 from rais.extract import merge
 from rais.extract import recover_cpf_rais
 from rais.extract import clear
@@ -144,6 +145,12 @@ STAGES = {
     "uniao_dac_comvest": ("dac_base", lambda a: uniao_dac_comvest.generate()),
 
     # --- RAIS pre-processamento + geracao do pivo (dac_comvest_ids.csv) ---
+    # pre_process_parquet: cache novo em parquet (rais/pre_processing/parquet_parsing.py),
+    # consumido so por recover_cpf_dac_comvest.py via read_rais_identification_parquet().
+    # Roda em paralelo/independente de "identification" (pkl) -- os dois cachês coexistem
+    # ate a reconciliacao completa (merge.py/cpf_verification.py/recover_cpf_rais.py
+    # continuam no pkl por ora, ver plan.md item 5).
+    "pre_process_parquet": ("rais_ids_pivot", lambda a: parquet_parsing.parse_rais()),
     "identification": ("rais_ids_pivot", lambda a: identification.get_identification_from_all_years()),
     "cpf_verification": ("rais_ids_pivot", lambda a: cpf_verification.remove_invalid_cpf()),
     "recover_cpf_dac_comvest": ("rais_ids_pivot", lambda a: recover_cpf_dac_comvest.recover_cpf_dac_comvest()),

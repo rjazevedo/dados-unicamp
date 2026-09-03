@@ -21,6 +21,22 @@ def read_rais_identification(file):
     return df
 
 
+# Le so as colunas de identificacao do cache parquet pre-processado (colunas
+# podadas na leitura, parquet e colunar), usado por recover_cpf_dac_comvest.py
+# (Tier A) em vez do cache pkl+bz2 acima -- ver rais/pre_processing/parquet_parsing.py.
+# Os outros consumidores de read_rais_identification (merge.py, cpf_verification.py,
+# recover_cpf_rais.py) continuam no pkl por ora, troca isolada de proposito.
+# Sem dtype_backend="pyarrow" (usado no codigo de origem/giovani) de proposito:
+# strings Arrow-backed quebram is_valid_cpf() -- .str.extract() com grupos
+# posicionais (sem nome) nao e suportado nesse backend, so com nomeados
+# (achado real rodando o teste de integracao 2002+2013, nao teorico). O
+# ganho de poda de colunas (33,7x medido) independe do dtype_backend.
+def read_rais_identification_parquet(file):
+    columns = ["nome_r", "cpf_r", "dta_nasc_r", "pispasep", "mun_estbl", "ano_base"]
+    df = pd.read_parquet(file, columns=columns)
+    return df
+
+
 def read_rais_merge(file):
     dtype = get_dtype_rais_clean()
     df = pd.read_csv(file, sep=";", dtype=dtype, index_col="index")
@@ -90,7 +106,7 @@ def read_ids():
 
 # ------------------------------------------------------------------------------------------------
 def read_database(file, dtype, index=None, squeeze=False):
-    df = pd.read_csv(
-        file, sep=";", encoding="latin", dtype=dtype, index_col=index, squeeze=squeeze
-    )
+    df = pd.read_csv(file, sep=";", encoding="latin", dtype=dtype, index_col=index)
+    if squeeze:
+        df = df.squeeze("columns")
     return df

@@ -2,4 +2,9 @@
 path_input_data:    /home/input/rais/
 path_output_data:   /home/output/rais/
 path_intermediario: /home/output/intermediario/
+path_pre_processed: /home/output/rais/pre_processed/
 uniao_dac_comvest:  /home/output/intermediario/uniao_dac_comvest.csv
+# Faixa de anos coberta hoje pelo pre-processamento parquet (parquet_parsing.py).
+# Igual ao range(2002, 2019) hardcoded no restante do pipeline -- ainda NAO
+# estende pra 2019-2022 (rais-novo), passo separado e posterior.
+intervalo_rais:     [2002, 2018]

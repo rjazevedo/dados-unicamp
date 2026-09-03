@@ -5,9 +5,9 @@ from difflib import SequenceMatcher
 from rais.utilities.df_operations import subtract
 from rais.utilities.df_operations import remove_duplicated_rows
 from rais.utilities.read import read_dac_comvest_valid
-from rais.utilities.read import read_rais_identification
+from rais.utilities.read import read_rais_identification_parquet
 from rais.utilities.write import write_dac_comvest_recovered
-from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_pre_processed_files
 
 from rais.utilities.logging import log_recover_cpf_exact_match
 from rais.utilities.logging import log_recover_cpf_probabilistic_match
@@ -160,12 +160,12 @@ def merge_with_rais(df_dac_comvest_exact, df_dac_comvest_prob):
 
 # Merge dataframes with all files from some year to recover missing cpfs
 def merge_with_rais_year(df_dac_comvest_exact, df_dac_comvest_prob, year):
-    files_rais = get_all_tmp_files(year, "identification_data", "pkl")
+    files_rais = get_all_pre_processed_files(year, "parquet")
 
     dfs_exact = []
     dfs_prob = []
     for file in files_rais:
-        df_rais = read_rais_identification(file)
+        df_rais = read_rais_identification_parquet(file)
         # Data from year 2011-2013 has the wrong dtype on column 'dta_nasc_r',
         # it's float64 when it should be object
         if year == 2011 or year == 2012 or year == 2013:
