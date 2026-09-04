@@ -1,12 +1,16 @@
 from difflib import SequenceMatcher
+import yaml
 
 from rais.utilities.read import read_ids
-from rais.utilities.read import read_rais_identification
+from rais.utilities.read import read_rais_identification_parquet
 from rais.utilities.write import write_rais_merge
 from rais.utilities.file import create_folder_inside_year
-from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_pre_processed_files
 
 from rais.utilities.logging import log_merge_rais_dac_comvest
+
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
 
 
 # Merge all the years from rais with uniao_dac_comvest and save in file rais.csv
@@ -14,7 +18,8 @@ def merge_all_years():
     df_dac_comvest = read_ids()
     df_dac_comvest = prepare_dac_comvest(df_dac_comvest)
 
-    for year in range(2002, 2019):
+    intervalo = config["intervalo_rais"]
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_merge_rais_dac_comvest(year)
         create_folder_inside_year(year, "rais_dac_comvest")
         merge_year(df_dac_comvest, year)
@@ -22,11 +27,11 @@ def merge_all_years():
 
 # Merge rais from year with df_dac_comvest and save in files in rais_dac_comvest directory
 def merge_year(df_dac_comvest, year):
-    files = get_all_tmp_files(year, "identification_data", "pkl")
+    files = get_all_pre_processed_files(year, "parquet")
 
     for file_rais in files:
         print(f"File: {file_rais}")
-        df_rais = read_rais_identification(file_rais)
+        df_rais = read_rais_identification_parquet(file_rais)
         df = merge_dfs(df_rais, df_dac_comvest)
         write_rais_merge(df, year, file_rais)
 

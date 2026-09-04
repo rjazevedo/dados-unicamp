@@ -1,18 +1,24 @@
 import pandas as pd
+import yaml
 
 from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_pre_processed_files
 from rais.utilities.read import read_rais_merge
 from rais.utilities.read import read_rais_merge_by_identification
-from rais.utilities.read import read_rais_identification
+from rais.utilities.read import read_rais_identification_parquet
 from rais.utilities.write import write_rais_merge
 from rais.utilities.logging import log_recover_cpf_rais
+
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
 
 
 def recover_cpf_all_years():
     df = join_all_years()
     df_pis_cpf = get_pis_cpf(df)
 
-    for year in range(2002, 2019):
+    intervalo = config["intervalo_rais"]
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_recover_cpf_rais(year)
         recover_cpf_year(df_pis_cpf, year)
 
@@ -21,7 +27,8 @@ def recover_cpf_all_years():
 # Join rais people that is dac comvest union and save in file "rais.csv"
 def join_all_years():
     dfs = []
-    for year in range(2002, 2019):
+    intervalo = config["intervalo_rais"]
+    for year in range(intervalo[0], intervalo[1] + 1):
         df = join_year(year)
         dfs.append(df)
     df = pd.concat(dfs, sort=True)
@@ -52,13 +59,13 @@ def get_pis_cpf(df):
 
 # ------------------------------------------------------------------------------------------------
 def recover_cpf_year(df_pis_cpf, year):
-    files = get_all_tmp_files(year, "identification_data", "pkl")
+    files = get_all_pre_processed_files(year, "parquet")
     for file in files:
         recover_cpf_file(df_pis_cpf, file, year)
 
 
 def recover_cpf_file(df_pis_cpf, file, year):
-    df_rais = read_rais_identification(file)
+    df_rais = read_rais_identification_parquet(file)
     df_cpf_recovered = recover_cpf(df_pis_cpf, df_rais)
     df_cpf_known = read_rais_merge_by_identification(file, year)
     df_concat = pd.concat([df_cpf_known, df_cpf_recovered], sort=True)

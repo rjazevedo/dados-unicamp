@@ -2,13 +2,17 @@ import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
 from unidecode import unidecode
+import yaml
 
 from rais.utilities.read import read_dac_comvest
-from rais.utilities.read import read_rais_identification
+from rais.utilities.read import read_rais_identification_parquet
 from rais.utilities.write import write_dac_comvest_valid
-from rais.utilities.file import get_all_tmp_files
+from rais.utilities.file import get_all_pre_processed_files
 
 from rais.utilities.logging import log_remove_invalid_cpf
+
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
 
 
 def remove_invalid_cpf():
@@ -34,7 +38,8 @@ def prepare_dac_comvest(df):
 
 def merge_by_cpf(df_dac_comvest):
     dfs = []
-    for year in range(2002, 2019):
+    intervalo = config["intervalo_rais"]
+    for year in range(intervalo[0], intervalo[1] + 1):
         print(f"Merging year {year}")
         df = merge_year(df_dac_comvest, year)
         dfs.append(df)
@@ -44,10 +49,10 @@ def merge_by_cpf(df_dac_comvest):
 
 # Merge rais from year with df_dac_comvest
 def merge_year(df_dac_comvest, year):
-    files = get_all_tmp_files(year, "identification_data", "pkl")
+    files = get_all_pre_processed_files(year, "parquet")
     dfs = []
     for file_rais in files:
-        df_rais = read_rais_identification(file_rais)
+        df_rais = read_rais_identification_parquet(file_rais)
         df = merge_dfs(df_rais, df_dac_comvest)
         dfs.append(df)
 
