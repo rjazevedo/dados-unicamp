@@ -71,17 +71,25 @@ def data_nasc(row, df):
 
 
 def tratar_inscricao(df):
-    # Checa Número de Inscrição de acordo com as diferentes variações no nome da coluna e retira o '\.0' da string
+    # Checa Número de Inscrição de acordo com as diferentes variações no nome da coluna e retira o '\.0' da string.
+    # Monta o resultado numa Series separada (nao escreve em df["INSC"] direto
+    # dentro do loop) -- se a coluna original ja se chamar literalmente
+    # "INSC", escrever em df["INSC"] antes de terminar de ler dela mesma
+    # apagaria o dado original antes do df[source_col] de baixo o ler de
+    # volta. Tambem cobre o caso de nenhum candidato existir (ex. planilha
+    # externa do ProFis usa "insc2" em alguns anos, nao reconhecido de
+    # proposito, ver limpeza_profis_externo.py) -- sem isso, df["INSC"]
+    # nunca era criado e o pd.to_numeric() abaixo quebrava com KeyError
+    # (achado real rodando teste sintetico, nao teorico).
     col_map = {c.upper(): c for c in df.columns}
+    insc = pd.Series(pd.NA, index=df.index, dtype="object")
     for candidate in ("INSC", "INSC_CAND", "INSCRICAO"):
         if candidate in col_map:
             source_col = col_map[candidate]
-            df["INSC"] = df[source_col].astype("string").replace(r"\.0", "", regex=True)
+            insc = df[source_col].astype("string").replace(r"\.0", "", regex=True)
             break
 
-    df["INSC"] = pd.to_numeric(df["INSC"], errors="coerce", downcast="integer").astype(
-        "Int64"
-    )
+    df["INSC"] = pd.to_numeric(insc, errors="coerce", downcast="integer").astype("Int64")
 
     return df
 
@@ -391,6 +399,11 @@ def tratar_dados(df, date, path, ingresso=1):
     df = tratar_ano_conclu(df, date)
 
     # Rearranja colunas e as renomeia apropriadamente
+    # SEXO/EMAIL/MATRICULADO: nao existem nos arquivos vestYYYY/ingressoYYYY
+    # padrao, so na planilha externa do ProFis (limpeza_profis_externo.py,
+    # ingresso=6) -- ficam NaN pra todo o resto, aditivo, nao quebra nada
+    # existente (todo consumidor de dados_comvest.csv seleciona coluna
+    # explicitamente, nunca por posicao).
     df = df.reindex(
         columns=[
             "ANO",
@@ -418,6 +431,9 @@ def tratar_dados(df, date, path, ingresso=1):
             "UF_ESCOLA_EM",
             "TIPO_ESCOLA_EM",
             "ANO_CONCLU_EM",
+            "SEXO",
+            "EMAIL",
+            "MATRICULADO",
         ]
     )
     df.columns = [
@@ -446,12 +462,19 @@ def tratar_dados(df, date, path, ingresso=1):
         "uf_esc_em",
         "nat_esc_em_c",
         "ano_conclu_em_c",
+        "sexo_c",
+        "email_c",
+        "matriculado_c",
     ]
 
     return df
 
 
 def extraction():
+    # Import tardio: limpeza_profis_externo importa tratar_dados() daqui,
+    # importar no topo do arquivo criaria import circular.
+    from comvest.clear_dados import limpeza_profis_externo
+
     if check_if_need_result_file(CURSOS):
         extrair_cursos.main()
 
@@ -496,8 +519,14 @@ def extraction():
 
         dados_comvest.append(df)
 
+    # ProFis via planilha externa (Profis11a22.xlsx, candidatos 2011-2021,
+    # nunca teve aba propria em nenhum ingressoYYYY.xlsx antes de 2022) --
+    # ver comvest/clear_dados/limpeza_profis_externo.py
+    dados_comvest.append(limpeza_profis_externo.extraction_profis_externo())
+
     # Exportar CSV
     dados_comvest = pd.concat(dados_comvest)
+    dados_comvest = limpeza_profis_externo.enrich_2022_sexo_email(dados_comvest)
     dados_comvest.sort_values(by="ano_vest", ascending=False, inplace=True)
 
     FILE_NAME = "dados_comvest.csv"

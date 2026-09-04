@@ -3,14 +3,16 @@ from dac.utilities.io import write_result
 from dac.uniao_dac_comvest.utilities import create_colums_for_concat
 from dac.uniao_dac_comvest.utilities import setup_comvest
 from dac.uniao_dac_comvest.utilities import setup_dac
+from dac.uniao_dac_comvest.profis_externo_match import setup_profis_pool
+from dac.uniao_dac_comvest.profis_externo_match import match_unmatched_profis
 
 
-def deal_special_students(df, correct_merge_list):
+def deal_special_students(df, correct_merge_list, dados_comvest):
     correct_special_list = []
 
     unknow = tecnology_students(df, correct_special_list)
     pedagogy = pedagogy_students(unknow, correct_special_list)
-    profis = profis_students(pedagogy, correct_special_list)
+    profis = profis_students(pedagogy, correct_special_list, dados_comvest)
     rest = adm_students(profis, correct_special_list)
 
     correct_df = pd.concat(correct_special_list)
@@ -45,7 +47,7 @@ def pedagogy_students(df, correct_special_list):
     return normal_students
 
 
-def profis_students(df, correct_special_list):
+def profis_students(df, correct_special_list, dados_comvest):
     pos_filt = df["origem"] == "pos"
     ingresso_filt = df["tipo_ingresso"] == "INGRESSO POR CONCLUSAO NO PROFIS"
     profis_filt = df["curso"] == "200"
@@ -55,8 +57,20 @@ def profis_students(df, correct_special_list):
     normal_students = df[~courses_filt]
 
     # testar_profis(profis_students)
-    profis_students = create_colums_for_concat(profis_students, False)
-    correct_special_list.append(profis_students)
+    # Tenta recuperar cpf/enriquecimento via nome fuzzy contra o ProFis vindo
+    # da planilha externa (Profis11a22.xlsx, tipo_ingresso_comvest==6) --
+    # antes disso, todo aluno do ProFis passava direto sem tentar casar com
+    # a COMVEST. Quem nao casa segue com o comportamento de sempre (sem
+    # enriquecimento). Ver dac/uniao_dac_comvest/profis_externo_match.py.
+    profis_pool = setup_profis_pool(dados_comvest)
+    matched, unmatched = match_unmatched_profis(profis_students, profis_pool)
+
+    if not matched.empty:
+        matched = create_colums_for_concat(matched, after_merge=True)
+        correct_special_list.append(matched)
+    if not unmatched.empty:
+        unmatched = create_colums_for_concat(unmatched, after_merge=False)
+        correct_special_list.append(unmatched)
     return normal_students
 
 

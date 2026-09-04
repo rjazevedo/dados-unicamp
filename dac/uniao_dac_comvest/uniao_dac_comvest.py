@@ -64,7 +64,7 @@ def generate():
     )
     wrong_and_right = get_wrong_and_right(uniao_dac_comvest, correct_merge_list)
 
-    wrong = deal_special_students(wrong_and_right[1], correct_merge_list)
+    wrong = deal_special_students(wrong_and_right[1], correct_merge_list, dados_comvest)
     wrong = merge_by_doc_part(wrong, dados_comvest, correct_merge_list)
     get_closest_name(wrong, dados_comvest, correct_merge_list)
 
@@ -100,6 +100,8 @@ def generate_planilha_paulo(merge_list):
             "2": "Vestibular Indígena",
             "3": "Vagas Olímpicas",
             "4": "Enem-Unicamp",
+            "5": "ProFis",
+            "6": "ProFis (planilha externa)",
         }
     )
     write_result(df_paulo, "planilha_paulo.csv")
@@ -144,10 +146,22 @@ def padronize_colums(df):
     df.insert(9, "dta_nasc", dta_nasc_column)
 
     df.insc_vest_comvest = df.insc_vest_comvest.replace(r"", np.nan)
+    # Desfaz o sentinel negativo usado em setup_comvest() (ver utilities.py)
+    # pra evitar produto cartesiano no merge por insc_vest -- na saida final,
+    # ProFis via planilha externa deve aparecer sem insc_vest (nunca teve
+    # um real), nao com um numero negativo artificial.
+    df.loc[df["insc_vest_comvest"] < 0, "insc_vest_comvest"] = np.nan
     select_insc_vest_v = np.vectorize(select_insc_vest)
     df["insc_vest"] = select_insc_vest_v(df.insc_vest_dac, df.insc_vest_comvest)
 
     origem_cpf = np.vectorize(set_origemCPF)
     df["origem_cpf"] = origem_cpf(df["cpf_dac"], df["cpf_comvest"])
+
+    # sexo/email/matriculado so existem do lado comvest (planilha externa do
+    # ProFis) -- sem equivalente na DAC pra combinar, so preenche NaN com "-"
+    # pra manter o mesmo padrao do resto das colunas.
+    df["sexo_comvest"] = df["sexo_comvest"].fillna("-")
+    df["email_comvest"] = df["email_comvest"].fillna("-")
+    df["matriculado_comvest"] = df["matriculado_comvest"].fillna("-")
 
     return df

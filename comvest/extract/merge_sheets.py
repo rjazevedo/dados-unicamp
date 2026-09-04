@@ -17,6 +17,10 @@ def merge(
         "dta_nasc_c",
         "nome_pai_c",
         "nome_mae_c",
+        # email_c: novo (planilha externa do ProFis, limpeza_profis_externo.py)
+        # -- PII clara, sem precedente de sair na base publica (diferente de
+        # sexo_c, que ja sai hoje via perfil_comvest.csv->sexo, entao fica).
+        "email_c",
     ]
 ):
     dados = read_result("dados_comvest.csv", dtype=DTYPES_DADOS)
