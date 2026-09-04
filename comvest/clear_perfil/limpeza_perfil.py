@@ -40,8 +40,10 @@ def cleandata(df, questoes, date):
             "sexo": "sexo_c",
             "est_civil": "est_civil_c",
             "insc_cand": "insc_vest",
+            "insc": "insc_vest",
             "aprovf2": "aprov_f1",
             "local_residencia": "local_resid",
+            "localresid": "local_resid",
         },
         axis=1,
     )
@@ -107,6 +109,7 @@ def extraction():
 
     for path, date in files.items():
         df = read_from_db(path, sheet_name="perfil", dtype=object)
+        df.columns = df.columns.str.lower()
         df.opcao1 = df.opcao1.astype(float).astype("Int32")
         progresslog("perfil", date)
 

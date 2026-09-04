@@ -21,7 +21,12 @@ class DfType(Enum):
 
 # Gets all the file names and makes a dictionary with
 # file path as key and the respective date of the file as its value
-files_path = glob.glob(Bases.COMVEST.value + "*.xlsx")
+# Restricted to vestYYYY.xlsx / ingressoYYYY.xlsx: other files placed in this
+# folder (e.g. Profis11a22.xlsx) have a different sheet layout and aren't
+# meant to be picked up by this pipeline.
+files_path = glob.glob(Bases.COMVEST.value + "vest*.xlsx") + glob.glob(
+    Bases.COMVEST.value + "ingresso*.xlsx"
+)
 files = {path: int(re.sub("[^0-9]", "", path)) for path in files_path}
 
 

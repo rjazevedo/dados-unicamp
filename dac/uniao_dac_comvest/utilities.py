@@ -114,6 +114,9 @@ def setup_comvest():
             "insc_vest",
             "ano_vest",
             "tipo_ingresso_comvest",
+            "sexo_c",
+            "email_c",
+            "matriculado_c",
         ],
     ]
     comvest.columns = [
@@ -124,12 +127,26 @@ def setup_comvest():
         "insc_vest",
         "ano_ingresso_curso",
         "tipo_ingresso_comvest",
+        "sexo",
+        "email",
+        "matriculado",
     ]
 
     df = pd.merge(comvest, curso, how="left", on=["ano_ingresso_curso", "insc_vest"])
 
     df.dta_nasc = df.dta_nasc.astype(str).str.replace(".0", "", regex=False)
     df.insc_vest = df.insc_vest.astype("float64")
+    # ProFis via planilha externa (tipo_ingresso_comvest==6) nao tem
+    # insc_vest real -- se deixado como NaN, o primeiro estagio de merge em
+    # uniao_dac_comvest.py (on=["insc_vest","ano_ingresso_curso"]) explode em
+    # produto cartesiano, porque o pandas trata NaN==NaN como chave igual em
+    # merge (ao contrario de SQL). Sentinela negativo, unico por linha, nunca
+    # colide com insc_vest real (sempre positivo) nem entre linhas -- limpo
+    # de volta pra NaN em padronize_colums() antes da saida final.
+    missing_insc = df["insc_vest"].isna()
+    n_missing = int(missing_insc.sum())
+    if n_missing:
+        df.loc[missing_insc, "insc_vest"] = -np.arange(1, n_missing + 1, dtype="float64")
     df.doc = df.doc.astype(str)
     df.doc = fill_doc(df.doc, 15)
     df.doc = df.doc.replace("0" * 15, "-")
@@ -155,7 +172,7 @@ def setup_dac():
             "tipo_ingresso",
         ],
     ]
-    df.insc_vest.replace("", np.nan, inplace=True)
+    df.insc_vest = df.insc_vest.replace("", np.nan)
     df.insc_vest = df.insc_vest.astype("float64")
     df.doc = fill_doc(df.doc, 15)
     df.dta_nasc = df.dta_nasc.astype(str).str.zfill(8)
@@ -196,6 +213,18 @@ def create_colums_for_concat(df, after_merge=True):
             new_df["doc_comvest"] = df["doc"]
         if "nome_comvest" not in df.columns:
             new_df["nome_comvest"] = df["nome"]
+        # sexo/email/matriculado so existem do lado comvest (planilha
+        # externa do ProFis) -- nao ha coluna DAC de mesmo nome, entao o
+        # merge (suffixes=("", "_comvest")) nunca sufixa essas 3: chegam
+        # com o nome plano quando presentes. Sem esse rename explicito, o
+        # reindex abaixo procuraria "sexo_comvest"/etc, nao acharia, e
+        # perderia silenciosamente o dado (viraria NaN em vez do valor real).
+        if "sexo" in df.columns and "sexo_comvest" not in df.columns:
+            new_df["sexo_comvest"] = df["sexo"]
+        if "email" in df.columns and "email_comvest" not in df.columns:
+            new_df["email_comvest"] = df["email"]
+        if "matriculado" in df.columns and "matriculado_comvest" not in df.columns:
+            new_df["matriculado_comvest"] = df["matriculado"]
 
     new_df = new_df.reindex(
         columns=[
@@ -217,6 +246,12 @@ def create_colums_for_concat(df, after_merge=True):
             "merge_id",
             "tipo_ingresso",
             "tipo_ingresso_comvest",
+            # sexo/email/matriculado: so existem do lado comvest (planilha
+            # externa do ProFis, ver limpeza_profis_externo.py) -- DAC nao
+            # tem esses campos, entao nao ha combinacao "_dac" pra fazer.
+            "sexo_comvest",
+            "email_comvest",
+            "matriculado_comvest",
         ]
     )
 
@@ -286,6 +321,9 @@ def create_columns_comvest_for_concat(comvest):
             "merge_id",
             "tipo_ingresso",
             "tipo_ingresso_comvest",
+            "sexo_comvest",
+            "email_comvest",
+            "matriculado_comvest",
         ]
     )
     return comvest

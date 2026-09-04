@@ -2,9 +2,9 @@ import pandas as pd
 
 
 def read_database(file, dtype, index=None, squeeze=False):
-    df = pd.read_csv(
-        file, sep=";", encoding="latin", dtype=dtype, index_col=index, squeeze=squeeze
-    )
+    df = pd.read_csv(file, sep=";", encoding="latin", dtype=dtype, index_col=index)
+    if squeeze:
+        df = df.squeeze("columns")
     return df
 
 

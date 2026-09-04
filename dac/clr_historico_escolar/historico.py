@@ -19,8 +19,8 @@ def generate_clean_data():
 
     # Corrige registros que possuem datas ao invés de anos  
     historico_escolar.ano = historico_escolar.ano.astype(str)
-    historico_escolar.loc[~historico_escolar.ano.str.isnumeric(), 'ano'] = np.NaN
-    historico_escolar.ano.fillna(historico_escolar.dt_inicio.str[-4:], inplace=True)
+    historico_escolar.loc[~historico_escolar.ano.str.isnumeric(), 'ano'] = np.nan
+    historico_escolar.ano = historico_escolar.ano.fillna(historico_escolar.dt_inicio.str[-4:])
 
 
     # Eliminando disciplinas canceladas ou não ofertadas em um respectivo semestre (código 15 e 9)

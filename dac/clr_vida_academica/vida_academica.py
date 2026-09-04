@@ -57,14 +57,14 @@ def load_vida_academica():
 # Limpa erros na tabela pré 99 vistos empiricamente
 def clear_columns(df):
     df['insc_vest'] = df['insc_vest'].fillna(0)
-    df['insc_vest'].replace(0, '<null>', inplace=True)
+    df['insc_vest'] = df['insc_vest'].replace(0, '<null>')
     df['insc_vest'] = df['insc_vest'].astype(str)
     padronize_string_miss(df, ['chamada_vest'], '<null>')
     padronize_string_miss(df, ['insc_vest'], '<null>')
-    
-    df['insc_vest'].replace("", np.nan, inplace=True)
+
+    df['insc_vest'] = df['insc_vest'].replace("", np.nan)
     df['insc_vest'] = df['insc_vest'].astype('float64')
-    df['insc_vest'].replace(np.nan, "", inplace=True)
+    df['insc_vest'] = df['insc_vest'].replace(np.nan, "")
 
 
 def tecnology_courses(df):

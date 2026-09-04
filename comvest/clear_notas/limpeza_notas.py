@@ -232,9 +232,9 @@ def tratar_notas_f2(notas_f2, date):
 
     # No caso em que a pagina de notas final (notas da fase 2) tem o número de inscrição dada por uma string
     # sem a possibilidade de ser convertida para número pelo próprio método read_excel, deve-se fazer a conversão
-    if notas_f2["insc"].dtype == object:
+    if not pd.api.types.is_numeric_dtype(notas_f2["insc"]):
         notas_f2["insc"] = (
-            notas_f2["insc"].str.replace(r"\D", "", regex=True).astype(int)
+            notas_f2["insc"].astype(str).str.replace(r"\D", "", regex=True).astype(int)
         )
 
     notas_f2 = notas_f2.reindex(
