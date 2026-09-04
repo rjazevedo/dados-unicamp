@@ -155,7 +155,7 @@ def setup_dac():
             "tipo_ingresso",
         ],
     ]
-    df.insc_vest.replace("", np.nan, inplace=True)
+    df.insc_vest = df.insc_vest.replace("", np.nan)
     df.insc_vest = df.insc_vest.astype("float64")
     df.doc = fill_doc(df.doc, 15)
     df.dta_nasc = df.dta_nasc.astype(str).str.zfill(8)

@@ -31,7 +31,7 @@ def get_wrong_and_right(df):
 
 
 def padronize_string(element):
-    string_to_lower = element.lower()
+    string_to_lower = str(element).lower()
     no_space_string = string_to_lower.replace(" ", "")
     no_accent_string = unidecode(no_space_string)
     return no_accent_string

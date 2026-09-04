@@ -29,7 +29,7 @@ def isento(df, ano):
 
 
 def reg_campinas(df, ano):
-    if ano >= 2004:
+    if ano >= 2004 and "local_resid" in df.columns:
         df["reg_campinas"] = df["local_resid"].map(lambda row: 1 if row == 2 else "")
         df["reg_campinas"] = pd.to_numeric(df["reg_campinas"], errors="coerce").astype(
             "Int64"
@@ -52,7 +52,9 @@ def em_exterior(df, ano):
 
 
 def local_resid(df, ano):
-    if 2004 <= ano:
+    if "local_resid" not in df.columns:
+        pass
+    elif 2004 <= ano:
         df["local_resid"] = df["local_resid"].map({0: 0, 1: 1, 2: 2, 3: 3, 4: 2, 5: 4})
     elif 1999 <= ano <= 2003:
         df["local_resid"] = df["local_resid"].map(

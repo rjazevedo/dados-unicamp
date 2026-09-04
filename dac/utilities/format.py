@@ -3,11 +3,14 @@ import numpy as np
 import unicodedata
 import re
 
+def series_to_str_array(s):
+    return s.astype(object).where(s.notna(), '').astype(str).values
+
 def str_to_upper_ascii(df, unicode_columns):
-    clear_unicode = lambda s : str(unicodedata.normalize(u'NFKD', s).encode('ascii', 'ignore').decode('utf8')).strip().upper() if s != 'nan' else ''
+    clear_unicode = lambda s : str(unicodedata.normalize(u'NFKD', s).encode('ascii', 'ignore').decode('utf8')).strip().upper() if s != '' else ''
     normalizar = np.vectorize(clear_unicode)
     for c in unicode_columns:
-        df[c] = normalizar(df[c].values.astype(str))
+        df[c] = normalizar(series_to_str_array(df[c]))
 
 def padronize_sex(df, name_column):
     df[name_column] = df[name_column].map ({
@@ -45,7 +48,7 @@ def format_doc(doc, len):
 def fill_doc(docs, len):
     empty_doc = lambda doc : doc == '' or doc == 'nan' or doc == '0' or doc == '0.0'
     normalizar = np.vectorize(lambda s : '-' if empty_doc(s) else format_doc(s, len))
-    return normalizar(docs.values.astype(str))
+    return normalizar(series_to_str_array(docs))
 
 def padronize_dates(df, date_columns):
     for c in date_columns:

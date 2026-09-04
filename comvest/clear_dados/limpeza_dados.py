@@ -15,7 +15,7 @@ def validacao_curso(df, col, date):
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
     # Codigos que nao constam na lista de cursos serao remapeados para missing
-    df[col].fillna(-1, inplace=True)
+    df[col] = df[col].astype("object").fillna(-1)
     df[col] = df[col].map(lambda cod: int(cod) if int(cod) in cursos else "")
     df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
 
@@ -72,14 +72,12 @@ def data_nasc(row, df):
 
 def tratar_inscricao(df):
     # Checa Número de Inscrição de acordo com as diferentes variações no nome da coluna e retira o '\.0' da string
-    if "INSC" in df.columns:
-        df["INSC"] = df["INSC"].astype("string").replace("\.0", "", regex=True)
-    elif "INSC_CAND" in df.columns:
-        df["INSC"] = df["INSC_CAND"].astype("string").replace("\.0", "", regex=True)
-    elif "INSC_cand" in df.columns:
-        df["INSC"] = df["INSC_cand"].astype("string").replace("\.0", "", regex=True)
-    elif "INSCRICAO" in df.columns:
-        df["INSC"] = df["INSCRICAO"].astype("string").replace("\.0", "", regex=True)
+    col_map = {c.upper(): c for c in df.columns}
+    for candidate in ("INSC", "INSC_CAND", "INSCRICAO"):
+        if candidate in col_map:
+            source_col = col_map[candidate]
+            df["INSC"] = df[source_col].astype("string").replace(r"\.0", "", regex=True)
+            break
 
     df["INSC"] = pd.to_numeric(df["INSC"], errors="coerce", downcast="integer").astype(
         "Int64"
@@ -140,7 +138,7 @@ def tratar_nacionalidade(df):
             df["NACIONALIDADE"] = pd.to_numeric(
                 df["NACIONALIDADE"], errors="coerce", downcast="integer"
             ).astype("Int64")
-            df["NACIONALIDADE"].replace(0, pd.NA, inplace=True)
+            df["NACIONALIDADE"] = df["NACIONALIDADE"].replace(0, pd.NA)
 
             return df
 
@@ -179,12 +177,12 @@ def tratar_cep(df):
             df.rename({col: "CEP_RESID"}, axis=1, inplace=True)
 
             fill = (
-                df["CEP_RESID"].map(lambda cep: len(re.sub("\D", "", str(cep)))).max()
+                df["CEP_RESID"].map(lambda cep: len(re.sub(r"\D", "", str(cep)))).max()
             )
             fill = 8 if fill > 8 else fill
 
             df["CEP_RESID"] = df["CEP_RESID"].map(
-                lambda cep: re.sub("\D", "", str(cep)).zfill(fill)
+                lambda cep: re.sub(r"\D", "", str(cep)).zfill(fill)
             )
 
             return df
@@ -355,6 +353,10 @@ def tratar_ano_conclu(df, date):
 
 def tratar_dados(df, date, path, ingresso=1):
 
+    # Normaliza nomes de colunas para maiúsculas (a partir de 2024 a planilha
+    # da COMVEST passou a usar cabeçalhos em minúsculas)
+    df.columns = [str(c).upper() for c in df.columns]
+
     # Junção da data de nascimento em 1 única coluna
     df["DATA_NASC"] = df.apply(data_nasc, axis=1, args=(df,))
     df["ANO_NASC"] = df["DATA_NASC"].map(lambda data: data[-4:] if data != "" else data)
@@ -364,10 +366,10 @@ def tratar_dados(df, date, path, ingresso=1):
     df["ANO_NASC"] = df["ANO_NASC"].apply(validar_ano, args=(date,))
 
     # Inserir ano da base no dataframe final
-    df.loc[:, "ANO"] = date
+    df["ANO"] = date
 
     # Inserir tipo de ingresso na Comvest
-    df.loc[:, "TIPO_INGRESSO_COMVEST"] = ingresso
+    df["TIPO_INGRESSO_COMVEST"] = ingresso
 
     df = tratar_inscricao(df)
     df = tratar_CPF(df)

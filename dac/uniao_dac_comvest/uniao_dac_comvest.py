@@ -106,8 +106,8 @@ def generate_planilha_paulo(merge_list):
 
 
 def padronize_colums(df):
-    df["cpf_dac"].fillna("-", inplace=True)
-    df["cpf_comvest"].fillna("-", inplace=True)
+    df["cpf_dac"] = df["cpf_dac"].fillna("-")
+    df["cpf_comvest"] = df["cpf_comvest"].fillna("-")
 
     valida_cpf = np.vectorize(validar_CPF)
     df["cpf_dac"] = valida_cpf(df["cpf_dac"])
@@ -118,24 +118,24 @@ def padronize_colums(df):
     cpf_column = df.pop("cpf")
     df.insert(1, "cpf", cpf_column)
 
-    df["nome_dac"].fillna("-", inplace=True)
-    df["nome_comvest"].fillna("-", inplace=True)
+    df["nome_dac"] = df["nome_dac"].fillna("-")
+    df["nome_comvest"] = df["nome_comvest"].fillna("-")
     select_name_v = np.vectorize(select_name)
     df["nome"] = select_name_v(df.nome_dac, df.nome_comvest)
     # Coloca a coluna 'nome' ao lado das outras 2 colunas de nome
     nome_column = df.pop("nome")
     df.insert(13, "nome", nome_column)
 
-    df["doc_dac"].fillna("-", inplace=True)
-    df["doc_comvest"].fillna("-", inplace=True)
+    df["doc_dac"] = df["doc_dac"].fillna("-")
+    df["doc_comvest"] = df["doc_comvest"].fillna("-")
     select_doc_v = np.vectorize(select_doc)
     df["doc"] = select_doc_v(df.doc_dac, df.doc_comvest)
     # Coloca a coluna 'doc' ao lado das outras 2 colunas de doc
     doc_column = df.pop("doc")
     df.insert(6, "doc", doc_column)
 
-    df["dta_nasc_dac"].fillna("-", inplace=True)
-    df["dta_nasc_comvest"].fillna("-", inplace=True)
+    df["dta_nasc_dac"] = df["dta_nasc_dac"].fillna("-")
+    df["dta_nasc_comvest"] = df["dta_nasc_comvest"].fillna("-")
     select_dta_v = np.vectorize(select_dta)
     df["dta_nasc"] = select_dta_v(df.dta_nasc_dac, df.dta_nasc_comvest)
     df.dta_nasc = df.dta_nasc.replace("00000nan", "-")

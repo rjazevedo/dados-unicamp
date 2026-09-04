@@ -6,7 +6,8 @@ from comvest.utilities.logging import progresslog, resultlog
 
 def cleandata(df, date):
     df.insert(loc=0, column="ano_vest", value=date)
-    df.drop("nome", axis=1, errors="ignore", inplace=True)
+    drop_cols = [c for c in df.columns if c.lower() in ("nome", "cpf")]
+    df.drop(columns=drop_cols, inplace=True)
     df = df.iloc[:, 0:3]
     df.columns = ["ano_vest", "insc_vest", "curso_matric"]
     df["insc_vest"] = pd.to_numeric(
@@ -22,7 +23,7 @@ def validacao_curso(df, date):
     cursos = df_cursos.loc[df_cursos["ano_vest"] == date]["cod_curso"].tolist()
 
     # Codigos que nao constam na lista de cursos serao remapeados para missing
-    df["curso_matric"].fillna(-1, inplace=True)
+    df["curso_matric"] = df["curso_matric"].fillna(-1)
     df["curso_matric"] = df["curso_matric"].map(
         lambda cod: int(cod) if int(cod) in cursos else pd.NA
     )
@@ -37,7 +38,11 @@ def extraction():
     matriculados_frames = []
 
     for path, date in files.items():
-        matriculados = read_from_db(path, sheet_name="matriculados")
+        try:
+            matriculados = read_from_db(path, sheet_name="matriculados")
+        except ValueError:
+            # A partir de 2023 a aba de matriculados passou a se chamar "matriculados_final"
+            matriculados = read_from_db(path, sheet_name="matriculados_final")
         progresslog("matriculados", date)
 
         matriculados = cleandata(matriculados, date)
