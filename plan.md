@@ -1,1 +1,0 @@
-/home/rodolfo/.claude/plans/pode-fazer-uma-an-lise-sequential-eagle.md
