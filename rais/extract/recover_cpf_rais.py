@@ -48,12 +48,10 @@ def join_year(year):
 
 # ------------------------------------------------------------------------------------------------
 def get_pis_cpf(df):
-    df_cpf_pis = df.loc[:, ["cpf_r", "pispasep", "id"]]
+    df_cpf_pis = df.loc[:, ["cpf_r", "pispasep", "id", "id_blake2s"]]
     df_cpf_pis = df_cpf_pis.drop_duplicates()
-    df_cpf_pis = df_cpf_pis[df_cpf_pis.apply(lambda x: pd.notna(x["pispasep"]), axis=1)]
-    df_cpf_pis = df_cpf_pis[
-        df_cpf_pis.duplicated(subset=["pispasep"], keep=False).apply(lambda x: not x)
-    ]
+    df_cpf_pis = df_cpf_pis[df_cpf_pis["pispasep"].notna()]
+    df_cpf_pis = df_cpf_pis[~df_cpf_pis.duplicated(subset=["pispasep"], keep=False)]
     return df_cpf_pis
 
 
@@ -72,11 +70,55 @@ def recover_cpf_file(df_pis_cpf, file, year):
     write_rais_merge(df_concat, year, file)
 
 
+# ------------------------------------------------------------------------------------------------
+# Paralelizacao (run_pipeline.sh): join_all_years()+get_pis_cpf() precisa ler
+# TODOS os anos antes de gerar a tabela pis->cpf->id (nao da pra paralelizar
+# esse passo por ano) -- roda 1x, sequencial, e persiste o resultado em disco.
+# Cada worker de ano so entao le esse arquivo de volta em vez de recalcular.
+PIS_CPF_LOOKUP_FILE = config["path_output_data"] + "tmp/pis_cpf_lookup.csv"
+
+
+def build_and_save_pis_cpf_lookup():
+    df = join_all_years()
+    df_pis_cpf = get_pis_cpf(df)
+    df_pis_cpf.to_csv(PIS_CPF_LOOKUP_FILE, index=False)
+
+
+def load_pis_cpf_lookup():
+    return pd.read_csv(PIS_CPF_LOOKUP_FILE, dtype=str)
+
+
 def recover_cpf(df_pis_cpf, df_rais):
-    df_cpf_missing = df_rais[df_rais.apply(lambda x: pd.isna(x["cpf_r"]), axis=1)]
+    df_cpf_missing = df_rais[df_rais["cpf_r"].isna()]
     del df_cpf_missing["cpf_r"]
     del df_cpf_missing["mun_estbl"]
     df_cpf_missing = df_cpf_missing.reset_index()
     cpf_recovered = pd.merge(df_cpf_missing, df_pis_cpf, on="pispasep")
     cpf_recovered = cpf_recovered.set_index("index")
     return cpf_recovered
+
+
+# Worker de 1 ano so -- usado pelo orquestrador paralelo (run_pipeline.sh).
+# Requer que build_and_save_pis_cpf_lookup() ja tenha rodado (1x, sequencial)
+# antes de qualquer worker de ano comecar.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--build-lookup", action="store_true")
+    group.add_argument("--year", type=int)
+    args = parser.parse_args()
+
+    if args.build_lookup:
+        build_and_save_pis_cpf_lookup()
+    else:
+        df_pis_cpf = load_pis_cpf_lookup()
+        log_recover_cpf_rais(args.year)
+        recover_cpf_year(df_pis_cpf, args.year)
+
+
+if __name__ == "__main__":
+    main()

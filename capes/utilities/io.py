@@ -41,6 +41,7 @@ def read_ids():
         "cpf": str,
         "origem_cpf": "Int32",
         "id": "Int64",
+        "id_blake2s": str,
         "dta_nasc": str,
         "doc": str,
     }
@@ -50,7 +51,7 @@ def read_ids():
         dtype=dtype,
         sep=",",
         low_memory=False,
-        usecols=["nome", "cpf", "origem_cpf", "id", "dta_nasc", "doc"],
+        usecols=["nome", "cpf", "origem_cpf", "id", "id_blake2s", "dta_nasc", "doc"],
     )
     return df
 

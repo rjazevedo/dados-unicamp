@@ -19,12 +19,13 @@ def assign_ids():
         "dac_comvest_ids.csv",
         dtype={
             "id": "Int64",
+            "id_blake2s": str,
             "insc_vest_comvest": "Int64",
             "ano_ingresso_curso": "Int64",
         },
         na_values="n",
-    ).loc[:, ["id", "insc_vest_comvest", "ano_ingresso_curso"]]
-    ids.columns = ["id", "insc_vest", "ano_vest"]
+    ).loc[:, ["id", "id_blake2s", "insc_vest_comvest", "ano_ingresso_curso"]]
+    ids.columns = ["id", "id_blake2s", "insc_vest", "ano_vest"]
 
     comvest_with_ids = pd.merge(comvest, ids, on=["insc_vest", "ano_vest"], how="left")
     comvest_without_ids = comvest_with_ids[comvest_with_ids["id"].isna()]

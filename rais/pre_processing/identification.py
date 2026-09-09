@@ -1,3 +1,6 @@
+import argparse
+import yaml
+
 from rais.extract.clear import rename_columns
 
 from rais.extract.cleaning_functions import clean_cpf_column
@@ -21,9 +24,14 @@ from rais.utilities.logging import (
 )
 
 
+stream = open("rais/configuration.yaml")
+config = yaml.safe_load(stream)
+
+
 def get_identification_from_all_years():
+    intervalo = config["intervalo_rais"]
     create_folder_tmp()
-    for year in range(2002, 2019):
+    for year in range(intervalo[0], intervalo[1] + 1):
         log_pre_process(year)
         create_folder_year(year)
         get_identification_from_year(year)
@@ -60,3 +68,24 @@ def clean_identification(df):
     clean_name_column(df)
     clean_birthdate_column(df)
     return df
+
+
+# Worker de 1 ano so -- usado pelo orquestrador paralelo (run_pipeline.sh),
+# que enfileira 1 job por ano na fila do tsp em vez de rodar o range inteiro
+# num unico processo sequencial.
+def main():
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--year", type=int, required=True)
+    args = parser.parse_args()
+
+    create_folder_tmp()
+    log_pre_process(args.year)
+    create_folder_year(args.year)
+    get_identification_from_year(args.year)
+
+
+if __name__ == "__main__":
+    main()

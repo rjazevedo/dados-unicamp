@@ -69,3 +69,23 @@ def clean_columns(df, columns=None):
 
 def bug_pandas(old_type, new_type):
     return old_type == "object" and new_type[0:3] == "Int"
+
+
+# Worker de 1 pasta (ano) so -- usado pelo orquestrador paralelo
+# (run_pipeline.sh), que enfileira 1 job por pasta na fila do tsp.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--folder", required=True, help="caminho completo da pasta de input")
+    args = parser.parse_args()
+
+    create_folder_capes_tmp()
+    log_cleaning_database("Capes")
+    clean_date_capes(args.folder)
+
+
+if __name__ == "__main__":
+    main()

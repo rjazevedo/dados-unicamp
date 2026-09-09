@@ -93,7 +93,7 @@ def extract_date_capes_pre2013(path_folder, dac_comvest_ids):
             "origem_capes"
         ] = 0  # Vai ser utilizado para identificar qual o método usado no merge
 
-        merge_cols = list(df_clean.columns) + ["id", "origem_cpf"]
+        merge_cols = list(df_clean.columns) + ["id", "id_blake2s", "origem_cpf"]
 
         merged = df_clean.merge(
             dac_comvest_ids,
@@ -191,7 +191,7 @@ def extract_date_capes_post2013(path_folder, dac_comvest_ids):
             "origem_capes"
         ] = 0  # Vai ser utilizado para identificar qual o método usado no merge
 
-        merge_cols = list(df_clean.columns) + ["id", "origem_cpf"]
+        merge_cols = list(df_clean.columns) + ["id", "id_blake2s", "origem_cpf"]
 
         merged = df_clean.merge(
             dac_comvest_ids,

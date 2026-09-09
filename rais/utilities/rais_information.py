@@ -42,6 +42,17 @@ def get_columns_info_rais():
             'clean_function': {},
             'check_function': verification_functions.dummy
         },
+        'id_blake2s': {
+            # Mesmo padrao do "id" acima -- nao vem de nenhum campo bruto do
+            # RAIS, so passa junto no merge com dac_comvest_ids (ver
+            # rais/id_generation/random_index.py). String, nao numero (
+            # formato "{versao}-{digest_base32}", ver blake_id.py).
+            'tipo': 'object',
+            'tipo_limpo': 'object',
+            'campo': {},
+            'clean_function': {},
+            'check_function': verification_functions.dummy
+        },
         'ano_base': {
             'tipo': 'int64',
             'tipo_limpo': 'Int64',

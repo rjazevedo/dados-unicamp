@@ -90,3 +90,23 @@ def clear_column(df, column, columns_info):
     if function is not None and column in df.columns:
         df[column] = df[column].map(function)
         df[column] = df[column].astype(columns_info[column]["type"])
+
+
+# Worker de 1 pasta (data de coleta) so -- usado pelo orquestrador paralelo
+# (run_pipeline.sh), que enfileira 1 job por pasta na fila do tsp.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--folder", required=True, help="caminho completo da pasta de input")
+    args = parser.parse_args()
+
+    create_folder_socio_tmp()
+    log_cleaning_database("Socio")
+    clear_date_socio(args.folder)
+
+
+if __name__ == "__main__":
+    main()

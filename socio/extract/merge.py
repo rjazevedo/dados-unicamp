@@ -27,7 +27,7 @@ from socio.utilities.logging import (
 )
 
 
-def merge_socio_dac_comvest(tipo_extracao):
+def merge_socio_dac_comvest():
 
     log_extracting_ids()
     df_dac_comvest = read_ids()
@@ -72,6 +72,7 @@ def merge_socio_dac_comvest(tipo_extracao):
             :,
             [
                 "id",
+                "id_blake2s",
                 "origem_cpf",
                 "cnpj",
                 "cnpj_raiz",
@@ -87,25 +88,23 @@ def merge_socio_dac_comvest(tipo_extracao):
     )
     sample["ano_entrada_sociedade"] = sample.data_entrada_sociedade.astype("str").str[0:4]
 
-    if tipo_extracao == "limitada":
-        sample.loc[:, ["id", "origem_cpf", "ano_entrada_sociedade", "data_coleta"]]
-    elif tipo_extracao == "completa":
-        sample.loc[
-            :,
-            [
-                "id",
-                "origem_cpf",
-                "cnpj",
-                "cnpj_raiz",
-                "data_coleta",
-                "data_entrada_sociedade",
-                "razao_social",
-                "qualificacao_socio",
-                "codigo_qualificacao_socio",
-                "faixa_etaria",
-                "pais",
-            ],
-        ]
+    sample = sample.loc[
+        :,
+        [
+            "id",
+            "id_blake2s",
+            "origem_cpf",
+            "cnpj",
+            "cnpj_raiz",
+            "data_coleta",
+            "data_entrada_sociedade",
+            "razao_social",
+            "qualificacao_socio",
+            "codigo_qualificacao_socio",
+            "faixa_etaria",
+            "pais",
+        ],
+    ]
 
     write_socio_sample(sample)
 
@@ -139,7 +138,7 @@ def prepare_socio(df, year):
 
 
 def prepare_dac_comvest(df):
-    df = df.loc[:, ["cpf", "nome", "id", "origem_cpf"]].drop_duplicates()
+    df = df.loc[:, ["cpf", "nome", "id", "id_blake2s", "origem_cpf"]].drop_duplicates()
     df["cnpj_cpf_do_socio"] = df["cpf"].map(get_reduced_cpf)
     df["primeiro_nome"] = df["nome"].map(get_first_name)
     df = df.drop(columns="cpf")
@@ -160,7 +159,7 @@ def merge(df, df_dac_comvest):
 
     merges = []
     socios_cols = list(df.columns)
-    merge_cols = list(df.columns) + ["id", "origem_cpf"]
+    merge_cols = list(df.columns) + ["id", "id_blake2s", "origem_cpf"]
 
     merged = df.merge(
         df_dac_comvest,

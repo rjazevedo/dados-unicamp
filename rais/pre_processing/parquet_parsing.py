@@ -62,6 +62,16 @@ def parse_rais_file(file, year, output_path):
     columns = ["nome_r", "cpf_r", "dta_nasc_r", "pispasep", "mun_estbl"]
 
     append = False
+    # na_values=["{ñ"] EH necessario aqui -- varias colunas numericas (dtype
+    # int/float via get_dtype_rais_original) usam "{ñ" como sentinela de
+    # "nao aplicavel" no bruto; sem converter pra NaN na leitura, o proprio
+    # pandas quebra tentando parsear "{ñ" como numero (achado real: job de
+    # regeneracao do parquet falhou com "Unable to parse string '{ñ}' at
+    # position 508" depois de eu ter tirado esse na_values numa tentativa
+    # anterior de corrigir get_deslig_dia -- errado, quebrava outra coluna).
+    # O fix certo fica no CONSUMIDOR (get_deslig_dia, cleaning_functions.py),
+    # tratando NaN como equivalente a "{ñ" (mesmo significado semantico,
+    # "nao desligado"), nao aqui na leitura.
     for df in pd.read_csv(
         file,
         sep=";",
@@ -84,3 +94,23 @@ def parse_rais_file(file, year, output_path):
         )
 
         append = True
+
+
+# Worker de 1 ano so -- usado pelo orquestrador paralelo (run_pipeline.sh),
+# que enfileira 1 job por ano na fila do tsp em vez de rodar o range inteiro
+# num unico processo sequencial.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--year", type=int, required=True)
+    args = parser.parse_args()
+
+    create_folder(path=config["path_output_data"], folder_name=pre_processed_folder)
+    parse_rais_year(args.year)
+
+
+if __name__ == "__main__":
+    main()

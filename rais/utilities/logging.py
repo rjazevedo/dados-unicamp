@@ -39,6 +39,32 @@ def log_filter_results():
     logging.info("Filtering recovery results\nThis might take a while\n")
 
 
+def log_recover_batch(batch_num, n_batches, batch_size):
+    logging.info(
+        f"Recovering CPF batch {batch_num}/{n_batches} (batch_size={batch_size})\n"
+    )
+
+
+def log_recover_file(year, file_num, n_files, file, n_rais_rows, n_exact, n_prob):
+    logging.info(
+        f"[{year}] arquivo {file_num}/{n_files} ({file}): "
+        f"{n_rais_rows} linhas RAIS, {n_exact} match exato, {n_prob} match probabilistico"
+    )
+
+
+def log_excluded_no_birthdate(n_excluded, n_total):
+    logging.info(
+        f"Excluidos {n_excluded}/{n_total} candidatos sem data de nascimento valida "
+        f"(sentinela/ausente) -- busca por nome sozinho e pouco confiavel e cara em memoria\n"
+    )
+
+
+def log_recover_active_batches(year, n_active, n_total_batches):
+    logging.info(
+        f"[{year}] {n_active}/{n_total_batches} coortes elegiveis pra este ano\n"
+    )
+
+
 def log_create_index():
     logging.info("Generating index to individuals from DAC Comvest Union\n")
 

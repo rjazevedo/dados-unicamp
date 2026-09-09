@@ -311,7 +311,13 @@ def get_idade(value):
 
 
 def get_deslig_dia(value):
-    if value == "{ñ":
+    # O cache parquet (parquet_parsing.py) le com na_values=["{ñ"], entao o
+    # sentinela bruto "nao desligado" chega aqui como NaN, nao mais como a
+    # string literal "{ñ" -- mesmo significado, tratar igual. Achado real
+    # (nao teorico): sem isso, int(NaN) quebra com "cannot convert float NaN
+    # to integer" rodando rais_clear em producao (ano 2014). "value != value"
+    # e True so pra NaN (nunca pra string, mesmo sem pandas importado aqui).
+    if value == "{ñ" or value != value:
         return 0
     if value == "NAO DESL ANO":
         return 0

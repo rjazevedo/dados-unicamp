@@ -20,7 +20,12 @@ DAC_COMVEST_IDS_AMOSTRA = 'dac_comvest_ids_amostra.csv'
 
 
 def create_ids():
-    ids = read_result(DAC_COMVEST_IDS, dtype=str).loc[:, ["id", "identif"]]    
+    # id_blake2s: mesma decisao de manter os dois IDs lado a lado durante a
+    # migracao (ver random_index.py) -- incluido aqui pra propagar junto do
+    # "id" sequencial pras 5 tabelas finais abaixo, nao so ficar no pivo.
+    # Nenhum dos .drop([...]) mais abaixo remove "id_blake2s" -- sobrevive
+    # a todos os merges por on=["identif"] automaticamente.
+    ids = read_result(DAC_COMVEST_IDS, dtype=str).loc[:, ["id", "id_blake2s", "identif"]]
     ids = ids.drop_duplicates(subset=["id", "identif"])
 
     dados_cadastrais = read_result(DADOS_CADASTRAIS)

@@ -15,7 +15,7 @@ def extract_unesp():
 
     ids = read_ids()
     ids = ids.loc[
-        :, ["ano_ingresso_curso", "nome", "id", "origem_cpf"]
+        :, ["ano_ingresso_curso", "nome", "id", "id_blake2s", "origem_cpf"]
     ].drop_duplicates()
     ids.nome = ids.nome.apply(clean_name)
     merged_list = []

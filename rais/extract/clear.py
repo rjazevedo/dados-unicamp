@@ -100,6 +100,7 @@ def get_columns(df_clean, df_original, year, file):
 def rename_all_columns(df, year):
     columns = get_all_columns_rais()
     columns.remove("id")
+    columns.remove("id_blake2s")
     columns.remove("nome_r")
     columns.remove("dta_nasc_r")
     columns.remove("cpf_r")
@@ -166,11 +167,20 @@ def clean_columns(df, year):
     if df.empty:
         return df
     columns_info = get_columns_info_rais()
+    # df.apply(..., axis=1) reconstroi a LINHA INTEIRA (todas as ~80 colunas)
+    # a cada chamada, mesmo a funcao so usando 1 coluna (x[column]) -- com 54
+    # das 80 colunas tendo clean_function registrada, isso reconstruia a linha
+    # inteira 54x por arquivo. Achado real: causou OOM (25,6GB RSS num worker
+    # so, confirmado via journalctl -k) rodando varios anos em paralelo.
+    # df[column].apply(function) aplica na SERIE isolada -- mesmo resultado
+    # (todas as clean_function sao unarias, so usam o valor da propria
+    # coluna), sem reconstruir as outras ~79 colunas a cada linha. Validado
+    # por comparacao byte-a-byte do clean_data/2002 gerado antes/depois.
     for column in columns_info:
         periods = columns_info[column]["clean_function"]
         function = get_info_period(year, periods)
         if function is not None:
-            df[column] = df.apply(lambda x: function(x[column]), axis=1)
+            df[column] = df[column].apply(function)
     recover_cnpj_raiz(df)
     get_ano_nasc(df)
     fix_deslig_info(df, year)
@@ -178,9 +188,7 @@ def clean_columns(df, year):
 
 
 def get_ano_nasc(df):
-    df["ano_nasc_r"] = df.apply(
-        lambda x: cleaning_functions.get_ano_nasc(x["dta_nasc_r"]), axis=1
-    )
+    df["ano_nasc_r"] = df["dta_nasc_r"].apply(cleaning_functions.get_ano_nasc)
 
 
 def recover_cnpj_raiz(df):
@@ -233,3 +241,31 @@ def anonymize_data(df):
     del df["cpf_r"]
     del df["pispasep"]
     del df["ctps"]
+
+
+# ------------------------------------------------------------------------------------------------
+# Paralelizacao (run_pipeline.sh): clear_year() e independente por ano
+# (roda como worker), mas join_all_years() precisa ler TODOS os anos ja
+# limpos antes de concatenar/anonimizar/escrever a amostra final -- roda 1x,
+# sequencial, so depois que todo worker de ano tiver terminado.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--year", type=int)
+    group.add_argument("--finalize", action="store_true")
+    parser.add_argument("--tipo-extracao", choices=["limitada", "completa"], default="completa")
+    args = parser.parse_args()
+
+    if args.finalize:
+        join_all_years(args.tipo_extracao)
+    else:
+        log_cleaning_year(args.year)
+        clear_year(args.year)
+
+
+if __name__ == "__main__":
+    main()

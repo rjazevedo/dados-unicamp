@@ -1,13 +1,19 @@
-import os 
+import os
 import pandas as pd
 import numpy as np
 from enem.utilities.format import reading_parameters
+from enem.utilities.io import Bases
+
+IDS_COMVEST_ENEM_PATH = Bases.RESULT.value + 'Enem-Comvest/ids_comvest_enem/'
 
 def retrieve_enem(YEAR, parameters):
-    COMVEST_PATH_1 = f'/home/output/enem/insc{YEAR}_comv{YEAR + 1}_ids.csv'
-    COMVEST_PATH_2 = f'/home/output/enem/insc{YEAR}_comv{YEAR + 2}_ids.csv'
+    COMVEST_PATH_1 = f'{IDS_COMVEST_ENEM_PATH}insc{YEAR}_comv{YEAR + 1}_ids.csv'
+    COMVEST_PATH_2 = f'{IDS_COMVEST_ENEM_PATH}insc{YEAR}_comv{YEAR + 2}_ids.csv'
 
-    ENEM_PATH = f'/home/gsiqueira/dados-unicamp/input/enem/enem/MICRODADOS_ENEM_{YEAR}.csv'
+    # 2012 e uma excecao real na nomenclatura da fonte (DADOS_ENEM_2012.csv em
+    # vez de MICRODADOS_ENEM_2012.csv) -- nao tratado aqui pois o loop em
+    # merge() so processa 2020 hoje; ajustar se o range for ampliado.
+    ENEM_PATH = f'/home/dados/Enem/microdados_enem{YEAR}/DADOS/MICRODADOS_ENEM_{YEAR}.csv'
     OUTPUT_FILE = f'/home/output/enem/comvest_enem{YEAR}.csv'
 
     COLUMNS_ENEM = parameters["columns"]

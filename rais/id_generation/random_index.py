@@ -5,6 +5,11 @@ import logging
 from rais.utilities.read import read_dac_comvest_recovered
 from rais.utilities.write import write_dac_comvest_ids
 from rais.utilities.logging import log_create_index
+from rais.id_generation.blake_id import (
+    generate_blake_id_column,
+    load_secret_key,
+    SECRET_KEY_PATH,
+)
 
 
 def generate_index():
@@ -19,7 +24,7 @@ def generate_index():
     # Remove o CPF dos casos em que foram encontrado homonimos na RAIS
     df.loc[df.origem_cpf == 4, "cpf"] = "-"
 
-    df["doc"] = df.apply(lambda x: clear_document(x["doc"]), axis=1)
+    df["doc"] = df["doc"].apply(clear_document)
     df_cpf_present = get_index_by_cpf(df)
     df_cpf_present.id = df_cpf_present.id + 1
 
@@ -112,10 +117,20 @@ def generate_index():
     del result["id_y"]
     del result["origem_cpf_y"]
 
+    # ID estavel por CPF (BLAKE2s), coluna adicional ao lado do "id"
+    # sequencial de sempre -- decisao deliberada do usuario (2026-09-08) de
+    # manter os dois durante o periodo de migracao, nao substituir de uma
+    # vez. Linhas sem CPF real ficam com id_blake2s vazio (ver
+    # generate_blake_id_column) -- o "id" sequencial continua sendo a unica
+    # cobertura pra esses casos, como sempre foi.
+    blake_key = load_secret_key(str(SECRET_KEY_PATH))
+    result["id_blake2s"] = generate_blake_id_column(result["cpf"], blake_key)
+
     result = result.loc[
         :,
         [
             "id",
+            "id_blake2s",
             "ano_ingresso_curso",
             "insc_vest_dac",
             "insc_vest_comvest",

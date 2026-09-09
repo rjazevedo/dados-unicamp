@@ -2,9 +2,11 @@ import pandas as pd
 import os
 from tqdm import tqdm
 
-COMVEST_IDS_PATH = '/home/gsiqueira/dados-unicamp/input/ids/dac_comvest_ids.csv'
-COMVEST_ENEM_PATH = '/home/gsiqueira/dados-unicamp/output/insc_comvest_enem/'
-RESULT_PATH = '/home/gsiqueira/dados-unicamp/output/ids_comvest_enem/'
+from enem.utilities.io import Bases
+
+COMVEST_IDS_PATH = Bases.RESULT.value + 'dac_comvest_ids.csv'
+COMVEST_ENEM_PATH = Bases.RESULT.value + 'Enem_Comvest/split/'
+RESULT_PATH = Bases.RESULT.value + 'Enem-Comvest/ids_comvest_enem/'
 
 def merge_ids_per_year(comvest_enem, comvest_ids, year):
     comvest_enem_ids_year = comvest_ids.merge(comvest_enem, left_on='insc_vest_comvest', right_on=f'comvest_{year}')
@@ -26,7 +28,7 @@ def retrieve_ids(comvest_ids_year, year):
 
 def retrieve():
     comvest_ids = pd.read_csv(COMVEST_IDS_PATH)
-    comvest_ids = comvest_ids.loc[:, ['id', 'insc_vest_comvest', 'ano_ingresso_curso']]
+    comvest_ids = comvest_ids.loc[:, ['id', 'id_blake2s', 'insc_vest_comvest', 'ano_ingresso_curso']]
 
     for year in tqdm(range(2012, 2023)):
         print(f"retrieving ids from year {year} from DAC_COMVEST_IDS to COMVEST_ENEM_{year}")

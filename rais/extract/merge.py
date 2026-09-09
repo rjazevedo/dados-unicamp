@@ -56,7 +56,7 @@ def prepare_dac_comvest(df):
 
 # Rename columns after merge
 def filter_columns_rais_dac_comvest(df):
-    columns = ["ano_base", "nome_r", "cpf_r", "dta_nasc_r", "pispasep", "index", "id"]
+    columns = ["ano_base", "nome_r", "cpf_r", "dta_nasc_r", "pispasep", "index", "id", "id_blake2s"]
     df = df.loc[:, columns]
     return df
 
@@ -76,3 +76,28 @@ def is_same_person(name_a, name_b):
     first_name_b = name_b.split()[0]
     similar_rate = SequenceMatcher(None, first_name_a, first_name_b).ratio()
     return similar_rate > 0.7
+
+
+# Worker de 1 ano so -- usado pelo orquestrador paralelo (run_pipeline.sh),
+# que enfileira 1 job por ano na fila do tsp em vez de rodar o range inteiro
+# num unico processo sequencial. Recarrega o pivo (df_dac_comvest) por conta
+# propria -- leitura barata, evita coordenacao entre workers.
+def main():
+    import argparse
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--year", type=int, required=True)
+    args = parser.parse_args()
+
+    df_dac_comvest = read_ids()
+    df_dac_comvest = prepare_dac_comvest(df_dac_comvest)
+
+    log_merge_rais_dac_comvest(args.year)
+    create_folder_inside_year(args.year, "rais_dac_comvest")
+    merge_year(df_dac_comvest, args.year)
+
+
+if __name__ == "__main__":
+    main()

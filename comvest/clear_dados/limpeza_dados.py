@@ -527,6 +527,20 @@ def extraction():
     # Exportar CSV
     dados_comvest = pd.concat(dados_comvest)
     dados_comvest = limpeza_profis_externo.enrich_2022_sexo_email(dados_comvest)
+
+    # Re-zfill defensivo: achado real (nao teorico) rodando o pipeline com o
+    # ProFis externo integrado -- 93 linhas (0,8% do ProFis, anos 2018-2021)
+    # perderam o zero a esquerda do CPF em algum ponto do concat de decadas
+    # de planilhas da COMVEST (causa raiz nao isolada -- confirmado que NEM
+    # tratar_profis_externo() nem extraction_profis_externo() sozinhas
+    # produzem o problema, so aparece dentro do extraction() completo).
+    # tratar_CPF() ja garante 11 digitos logo apos a limpeza de cada
+    # planilha; isso so reforca a mesma garantia depois do concat final,
+    # antes de escrever -- no-op pra quem ja esta certo, "-" fica "-".
+    dados_comvest["cpf"] = dados_comvest["cpf"].map(
+        lambda c: c if c == "-" else str(c).zfill(11)
+    )
+
     dados_comvest.sort_values(by="ano_vest", ascending=False, inplace=True)
 
     FILE_NAME = "dados_comvest.csv"

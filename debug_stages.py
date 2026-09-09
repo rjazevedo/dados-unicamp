@@ -39,6 +39,7 @@ real de dependencia por arquivo, apesar de parecerem passos separados).
 """
 import argparse
 import importlib
+import logging
 import subprocess
 import sys
 import time
@@ -165,7 +166,7 @@ STAGES = {
     "rais_recover_cpf": ("fanout", lambda a: recover_cpf_rais.recover_cpf_all_years()),
     "rais_clear": ("fanout", lambda a: clear.clear_all_years(a.tipo_extracao_rais)),
     "socio_clear": ("fanout", lambda a: clear_socio.clear_socio()),
-    "socio_merge": ("fanout", lambda a: merge_socio.merge_socio_dac_comvest(a.tipo_extracao_socios)),
+    "socio_merge": ("fanout", lambda a: merge_socio.merge_socio_dac_comvest()),
     "capes_clean": ("fanout", lambda a: clean_capes.clean_capes()),
     "capes_merge": ("fanout", lambda a: merge_capes.extract_ids()),
     "unesp": ("fanout", lambda a: extract_unesp()),
@@ -245,7 +246,6 @@ def _launch_stage_subprocess(key, args, log_dir):
         sys.executable, str(Path(__file__).resolve()),
         "--run-one", key,
         "--tipo-extracao-rais", args.tipo_extracao_rais,
-        "--tipo-extracao-socios", args.tipo_extracao_socios,
     ]
     log_f = open(log_path, "w")
     p = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT)
@@ -317,6 +317,16 @@ def run_parallel(keys, args, log_dir):
 
 
 def main():
+    # Sem isso, todo logging.info(...) espalhado pelo codebase (ex.
+    # log_recover_from_year/log_recover_batch em rais/utilities/logging.py)
+    # nao aparece em lugar nenhum -- o logger raiz do Python fica sem
+    # handler configurado (nivel default WARNING, .info() cai no vazio).
+    # __main__.py ja faz isso; debug_stages.py nunca fazia, entao rodar uma
+    # etapa isolada (--run-one, o que o tsp de producao usa) ficava sem
+    # visibilidade nenhuma de progresso por ano/lote/arquivo -- achado real
+    # rodando o Tier B do recover_cpf_dac_comvest em producao (job tsp 27),
+    # varias horas sem sinal nenhum alem de RSS por fora.
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", stream=sys.stdout)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--list", action="store_true", help="lista etapas e grupos")
     parser.add_argument("--stage", nargs="+", metavar="NOME", help="roda etapas em sequência, na ordem dada")
@@ -329,7 +339,6 @@ def main():
     parser.add_argument("--run-one", metavar="NOME",
                          help=argparse.SUPPRESS)  # uso interno: subprocesso de uma única etapa
     parser.add_argument("--tipo-extracao-rais", choices=["limitada", "completa"], default="completa")
-    parser.add_argument("--tipo-extracao-socios", choices=["limitada", "completa"], default="completa")
     parser.add_argument("--log-dir", default=None,
                          help="onde salvar os logs (default: ./.debug_stage_logs)")
     args = parser.parse_args()
