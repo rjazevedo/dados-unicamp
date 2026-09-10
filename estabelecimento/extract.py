@@ -50,7 +50,6 @@ def extract_estabelecimento_amostra():
         print(f"Reading file {f.name}")
         estab = read_estabelecimento(f)
         estab = estab.loc[:, cols]
-        estab_merge = estab.merge(socio_amostra, how="inner", on="cnpj_basico")
         print(f"Merging file {f.name} with socios.")
         estab_merge = estab.merge(socio_amostra, how="inner", on="cnpj_basico")
         estab_merge = estab_merge.loc[:, cols]
