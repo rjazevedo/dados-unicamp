@@ -33,7 +33,7 @@ class DfType(Enum):
 files_path = glob.glob(Bases.COMVEST.value + "vest*.xlsx") + glob.glob(
     Bases.COMVEST.value + "ingresso*.xlsx"
 )
-files = {path: int(re.sub("[^0-9]", "", path)) for path in files_path}
+files = {path: int(re.sub("[^0-9]", "", os.path.basename(path))) for path in files_path}
 
 
 def read_from_db(PATH, sheet_name=None, dtype=None):
