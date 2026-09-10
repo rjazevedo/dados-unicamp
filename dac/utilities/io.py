@@ -2,13 +2,20 @@ import pandas as pd
 from enum import Enum
 import os
 
-class Bases(Enum):
-    DAC = "/home/input/DAC/"
-    MUNICIPIOS = "/home/input/municipios/"
-    COMVEST = "/home/input/COMVEST/"
-    RESULT = "/home/output/intermediario/"
-    OUTPUT = "/home/output/dac/"
-    TESTE = "/home/fernando/dados-unicamp/output/"
+from config.settings import get_config
+
+_config = get_config("dac")
+
+Bases = Enum(
+    "Bases",
+    {
+        "DAC": _config["dac_input"],
+        "MUNICIPIOS": _config["municipios"],
+        "COMVEST": _config["comvest_input"],
+        "RESULT": _config["result"],
+        "OUTPUT": _config["output"],
+    },
+)
 
 class DfType(Enum):
     XLS = ".xls"
