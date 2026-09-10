@@ -1,9 +1,8 @@
-import yaml
 import pandas as pd
 from pathlib import Path
+from config.settings import get_config
 
-stream = open("simples/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("simples")
 
 
 def list_dirs_simples_input():

@@ -1,9 +1,8 @@
-import yaml
 import pandas as pd
 from pathlib import Path
+from config.settings import get_config
 
-stream = open("empresa/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("empresa")
 
 
 def read_socio_amostra():

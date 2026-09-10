@@ -1,15 +1,14 @@
 from pathlib import Path
 import pandas as pd
-import yaml
 import os
 import subprocess
 
 from socio.utilities.dtype import get_dtype
 
 from socio.database_information.socio import get_columns_info_socio
+from config.settings import get_config
 
-stream = open("socio/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("socio")
 
 
 def read_ids():

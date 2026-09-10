@@ -1,11 +1,10 @@
 import pandas as pd
-import yaml
 import os
 
 from capes.utilities.capes_information import get_capes_clean_dtypes
+from config.settings import get_config
 
-stream = open("capes/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("capes")
 
 
 def get_all_files(path):
