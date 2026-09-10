@@ -23,7 +23,7 @@ def merge(
         "email_c",
     ]
 ):
-    dados = read_result("dados_comvest.csv", dtype=DTYPES_DADOS)
+    dados = read_result("dados_comvest_enem.csv", dtype=DTYPES_DADOS)
     perfil = read_result("perfil_comvest.csv", dtype=DTYPES_PERFIL)
     notas = read_result("notas_comvest.csv", dtype=DTYPES_NOTAS)
     matriculados = read_result("matriculados_comvest.csv", dtype=DTYPES_MATRICULADOS)
