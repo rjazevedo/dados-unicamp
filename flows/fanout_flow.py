@@ -6,13 +6,21 @@ processos/threads do task runner default).
 Dentro de cada ramo a ordem e sequencial (real dependencia por arquivo):
   diplomas: scrapper -> merge
   enem:     comvest_vest_ids.retrieve() -> comvest_enem_ids.merge()
-  rais:     merge -> recover_cpf -> clear (parametrizado por tipo_extracao_rais)
+  rais:     merge (por ano) -> build_lookup -> recover_cpf (por ano) ->
+            clear (por ano) -> finalize (uniao dos anos)
   socio:    clear -> merge
   capes:    clean -> merge
   unesp, fuvest: cada um e uma unica task independente
 
-Mesmo agrupamento (grupo "fanout") e mesma ordem interna de
-debug_stages.py, ja validado em producao.
+RAIS decomposto por ano via .map() (reaproveitando os workers de 1 ano so
+ja validados em producao via tsp, ver run_pipeline.sh e
+flows/tasks/rais_tasks.py) -- as fases (merge/build_lookup/recover_cpf/
+clear) continuam gated em bloco (TODOS os anos de uma fase terminam antes
+da proxima comecar), mesmo desenho coarse-grained que ja rodava via tsp em
+producao, so trocando o orquestrador de concorrencia.
+
+Mesmo agrupamento e mesma ordem interna de debug_stages.py, ja validado em
+producao.
 
 Executavel isoladamente: uv run -m flows.fanout_flow
 """
@@ -21,7 +29,14 @@ from prefect import flow
 
 from flows.tasks.diplomas_tasks import diplomas_scrapper_task, diplomas_merge_task
 from flows.tasks.enem_tasks import comvest_vest_ids_task, comvest_enem_ids_task
-from flows.tasks.rais_tasks import rais_merge_task, rais_recover_cpf_task, rais_clear_task
+from flows.tasks.rais_tasks import (
+    rais_years,
+    rais_merge_year_task,
+    rais_recover_cpf_build_lookup_task,
+    rais_recover_cpf_year_task,
+    rais_clear_year_task,
+    rais_clear_finalize_task,
+)
 from flows.tasks.socio_tasks import socio_clear_task, socio_merge_task
 from flows.tasks.capes_tasks import capes_clean_task, capes_merge_task
 from flows.tasks.unesp_tasks import unesp_task
@@ -29,16 +44,23 @@ from flows.tasks.fuvest_tasks import fuvest_task
 
 
 @flow(name="fanout")
-def fanout_flow(tipo_extracao_rais: str = "completa"):
+def fanout_flow():
     diplomas_1 = diplomas_scrapper_task.submit()
     diplomas_2 = diplomas_merge_task.submit(wait_for=[diplomas_1])
 
     enem_1 = comvest_vest_ids_task.submit()
     enem_2 = comvest_enem_ids_task.submit(wait_for=[enem_1])
 
-    rais_1 = rais_merge_task.submit()
-    rais_2 = rais_recover_cpf_task.submit(wait_for=[rais_1])
-    rais_3 = rais_clear_task.submit(tipo_extracao_rais, wait_for=[rais_2])
+    years = rais_years()
+    rais_merge_futures = rais_merge_year_task.map(years)
+    rais_build_lookup_fut = rais_recover_cpf_build_lookup_task.submit(
+        wait_for=rais_merge_futures
+    )
+    rais_recover_futures = rais_recover_cpf_year_task.map(
+        years, wait_for=[rais_build_lookup_fut]
+    )
+    rais_clear_futures = rais_clear_year_task.map(years, wait_for=rais_recover_futures)
+    rais_finalize_fut = rais_clear_finalize_task.submit(wait_for=rais_clear_futures)
 
     socio_1 = socio_clear_task.submit()
     socio_2 = socio_merge_task.submit(wait_for=[socio_1])
@@ -49,7 +71,9 @@ def fanout_flow(tipo_extracao_rais: str = "completa"):
     unesp_fut = unesp_task.submit()
     fuvest_fut = fuvest_task.submit()
 
-    branch_futures = [diplomas_2, enem_2, rais_3, socio_2, capes_2, unesp_fut, fuvest_fut]
+    branch_futures = [
+        diplomas_2, enem_2, rais_finalize_fut, socio_2, capes_2, unesp_fut, fuvest_fut,
+    ]
     for fut in branch_futures:
         fut.result()
 
