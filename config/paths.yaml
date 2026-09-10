@@ -1,0 +1,76 @@
+# Configuracao unificada de caminhos, uma secao por pacote.
+#
+# {INPUT_ROOT} / {OUTPUT_ROOT} / {PROCESSADOS_ROOT} sao placeholders
+# resolvidos por config/settings.py: por padrao apontam pros mount points
+# de producao (/home/input, /home/output, /home/processados) -- os mesmos
+# valores hardcoded que o codigo ja usava antes desta config existir, entao
+# nao ha mudanca de comportamento sem a env var DADOS_UNICAMP_ROOT setada.
+# Com DADOS_UNICAMP_ROOT setada, os tres passam a apontar pra
+# $DADOS_UNICAMP_ROOT/{input,output,processados} -- usado pra testes
+# isolados, sem tocar nos dados de producao.
+
+comvest:
+  comvest_input: "{INPUT_ROOT}/COMVEST/"
+  auxiliary: "{INPUT_ROOT}/COMVEST/auxiliary/"
+  result: "{OUTPUT_ROOT}/intermediario/"
+  output: "{OUTPUT_ROOT}/comvest/"
+  dac_output: "{OUTPUT_ROOT}/dac/"
+
+dac:
+  dac_input: "{INPUT_ROOT}/DAC/"
+  municipios: "{INPUT_ROOT}/municipios/"
+  comvest_input: "{INPUT_ROOT}/COMVEST/"
+  result: "{OUTPUT_ROOT}/intermediario/"
+  output: "{OUTPUT_ROOT}/dac/"
+
+enem:
+  result: "{OUTPUT_ROOT}/intermediario/"
+  enem_comvest: "{OUTPUT_ROOT}/intermediario/Enem_Comvest/"
+
+diplomas:
+  usp_input: "{INPUT_ROOT}/diplomados/"
+  result: "{OUTPUT_ROOT}/intermediario/"
+  final: "{PROCESSADOS_ROOT}/diplomados/"
+
+rais:
+  path_input_data: "{INPUT_ROOT}/rais-novo/"
+  path_output_data: "{OUTPUT_ROOT}/rais/"
+  path_intermediario: "{OUTPUT_ROOT}/intermediario/"
+  path_pre_processed: "{OUTPUT_ROOT}/rais/pre_processed/"
+  uniao_dac_comvest: "{OUTPUT_ROOT}/intermediario/uniao_dac_comvest.csv"
+  intervalo_rais: [2002, 2022]
+
+socio:
+  path_socio: "{INPUT_ROOT}/socios/"
+  database_ids: "{OUTPUT_ROOT}/intermediario/dac_comvest_ids.csv"
+  path_output: "{OUTPUT_ROOT}/socios/"
+
+capes:
+  path_input: "{INPUT_ROOT}/capes/"
+  path_output: "{OUTPUT_ROOT}/capes/"
+  database_ids: "{OUTPUT_ROOT}/intermediario/dac_comvest_ids.csv"
+
+empresa:
+  path_input: "{INPUT_ROOT}/empresa/"
+  path_output: "{OUTPUT_ROOT}/empresa/"
+  path_socio: "{OUTPUT_ROOT}/socios/socio_amostra.csv"
+
+estabelecimento:
+  path_input: "{INPUT_ROOT}/estabelecimentos/"
+  path_output: "{OUTPUT_ROOT}/estabelecimentos/"
+  path_socio: "{OUTPUT_ROOT}/socios/socio_amostra.csv"
+
+simples:
+  path_input: "{INPUT_ROOT}/simples/"
+  path_output: "{OUTPUT_ROOT}/simples/"
+  path_socio: "{OUTPUT_ROOT}/socios/socio_amostra.csv"
+
+unesp:
+  path_input: "{INPUT_ROOT}/unesp/"
+  path_output: "{OUTPUT_ROOT}/unesp/"
+  database_ids: "{OUTPUT_ROOT}/intermediario/dac_comvest_ids.csv"
+
+fuvest:
+  path_input: "{INPUT_ROOT}/fuvest/"
+  path_output: "{OUTPUT_ROOT}/fuvest/"
+  database_ids: "{OUTPUT_ROOT}/intermediario/dac_comvest_ids.csv"
