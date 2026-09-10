@@ -287,7 +287,7 @@ chain_rais() {
         uv run python3 -m rais.extract.clear
 
     echo "=== [rais_clear] finalizacao (concat + anonimizacao + amostra final, sequencial) ==="
-    jid=$(tsp uv run python3 -m rais.extract.clear --finalize --tipo-extracao completa)
+    jid=$(tsp uv run python3 -m rais.extract.clear --finalize)
     while [ "$(tsp | awk -v id="$jid" '$1==id {print $2}')" != "finished" ]; do sleep 20; done
     elevel=$(tsp | awk -v id="$jid" '$1==id {print $4}')
     if [ "$elevel" != "0" ]; then

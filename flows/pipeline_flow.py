@@ -2,17 +2,14 @@
 
 academico_flow -> rais_ids_flow -> fanout_flow -> finalizacao_flow
 
-Nota: __main__.py hoje so tem UM prompt interativo (tipo_extracao_rais,
-"limitada"/"completa") -- nao existe mais um segundo prompt equivalente
-pra socios (o diagnostico original do plan.md mencionava 2 prompts, mas
-isso ja nao reflete o __main__.py atual; confirmado por busca no repo que
-nao ha nenhum uso de "tipo_extracao_socios"). Por isso pipeline_flow so
-expõe tipo_extracao_rais, pra nao introduzir um parametro sem efeito real.
+Nota: a extração da RAIS e sempre "completa" -- a distincao "limitada"/
+"completa" (e o prompt interativo que perguntava isso) foi removida do
+projeto inteiro por decisao do usuario (2026-09-10): so "completa" e usada,
+em __main__.py, rais/__main__.py, rais/extract/__main__.py,
+debug_stages.py, run_pipeline.sh e aqui.
 
 Executavel isoladamente: uv run -m flows.pipeline_flow
 """
-
-from typing import Literal
 
 from prefect import flow
 
@@ -23,10 +20,10 @@ from flows.finalizacao_flow import finalizacao_flow
 
 
 @flow(name="pipeline")
-def pipeline_flow(tipo_extracao_rais: Literal["limitada", "completa"] = "completa"):
+def pipeline_flow():
     academico_flow()
     rais_ids_flow()
-    fanout_flow(tipo_extracao_rais=tipo_extracao_rais)
+    fanout_flow()
     finalizacao_flow()
 
 

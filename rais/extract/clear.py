@@ -27,12 +27,12 @@ from config.settings import get_config
 config = get_config("rais")
 
 
-def clear_all_years(tipo_extracao):
+def clear_all_years():
     intervalo = config["intervalo_rais"]
     for year in range(intervalo[0], intervalo[1] + 1):
         log_cleaning_year(year)
         clear_year(year)
-    join_all_years(tipo_extracao)
+    join_all_years()
 
 
 def clear_year(year):
@@ -50,7 +50,7 @@ def clear_file(file, year):
     write_rais_clean(df_final, year, file)
 
 
-def join_all_years(tipo_extracao):
+def join_all_years():
     dfs = []
     intervalo = config["intervalo_rais"]
     for year in range(intervalo[0], intervalo[1] + 1):
@@ -60,12 +60,6 @@ def join_all_years(tipo_extracao):
             dfs.append(df)
     result = pd.concat(dfs)
     anonymize_data(result)
-    if tipo_extracao == "limitada":
-        del result["mun_etbl"]
-        del result["cnae95"]
-        del result["cnpj"]
-        # del result["mun_etbl"]
-        # del result["mun_etbl"]
     final_cleaning(result)
     write_rais_sample(result)
 
@@ -256,11 +250,10 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--year", type=int)
     group.add_argument("--finalize", action="store_true")
-    parser.add_argument("--tipo-extracao", choices=["limitada", "completa"], default="completa")
     args = parser.parse_args()
 
     if args.finalize:
-        join_all_years(args.tipo_extracao)
+        join_all_years()
     else:
         log_cleaning_year(args.year)
         clear_year(args.year)

@@ -164,7 +164,7 @@ STAGES = {
     "enem_ids_merge": ("fanout", lambda a: comvest_enem_ids.merge()),
     "rais_merge": ("fanout", lambda a: merge.merge_all_years()),
     "rais_recover_cpf": ("fanout", lambda a: recover_cpf_rais.recover_cpf_all_years()),
-    "rais_clear": ("fanout", lambda a: clear.clear_all_years(a.tipo_extracao_rais)),
+    "rais_clear": ("fanout", lambda a: clear.clear_all_years()),
     "socio_clear": ("fanout", lambda a: clear_socio.clear_socio()),
     "socio_merge": ("fanout", lambda a: merge_socio.merge_socio_dac_comvest()),
     "capes_clean": ("fanout", lambda a: clean_capes.clean_capes()),
@@ -245,7 +245,6 @@ def _launch_stage_subprocess(key, args, log_dir):
     cmd = [
         sys.executable, str(Path(__file__).resolve()),
         "--run-one", key,
-        "--tipo-extracao-rais", args.tipo_extracao_rais,
     ]
     log_f = open(log_path, "w")
     p = subprocess.Popen(cmd, stdout=log_f, stderr=subprocess.STDOUT)
@@ -338,7 +337,6 @@ def main():
     parser.add_argument("--parallel", nargs="+", metavar="NOME", help="roda etapas em paralelo (processos separados)")
     parser.add_argument("--run-one", metavar="NOME",
                          help=argparse.SUPPRESS)  # uso interno: subprocesso de uma única etapa
-    parser.add_argument("--tipo-extracao-rais", choices=["limitada", "completa"], default="completa")
     parser.add_argument("--log-dir", default=None,
                          help="onde salvar os logs (default: ./.debug_stage_logs)")
     args = parser.parse_args()
