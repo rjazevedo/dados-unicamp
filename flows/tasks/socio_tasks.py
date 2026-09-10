@@ -1,6 +1,6 @@
 """Tasks do Prefect para socios."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from socio.cleaning import clear as clear_socio
 from socio.extract import merge as merge_socio

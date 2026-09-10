@@ -1,6 +1,6 @@
 """Tasks do Prefect para o pre-processamento e merge do ENEM."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from enem.comvest_enem import clear_comvest
 from enem.comvest_enem import divide_comvest

@@ -1,6 +1,6 @@
 """Task do Prefect para simples (independente, roda a qualquer momento)."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from simples.extract import extract_simples_amostra
 

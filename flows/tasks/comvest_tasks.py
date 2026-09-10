@@ -5,7 +5,7 @@ debug_stages.py usa no grupo comvest_preproc/comvest_base/finalizacao) --
 nenhuma logica de negocio foi reescrita aqui, so decorada com @task.
 """
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from comvest.extract_cities import extrair_cidades
 from comvest.extract_courses import extrair_cursos, dict_cursos

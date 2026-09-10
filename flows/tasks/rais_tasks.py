@@ -7,7 +7,7 @@ NAO decompor em tasks parciais por ano (ver restricao de cache tudo-ou-nada
 no plan.md).
 """
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from rais.id_generation import cpf_verification
 from rais.id_generation import recover_cpf_dac_comvest

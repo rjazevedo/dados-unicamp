@@ -1,6 +1,6 @@
 """Tasks do Prefect para CAPES."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from capes.cleaning import clean as clean_capes
 from capes.extract import merge as merge_capes

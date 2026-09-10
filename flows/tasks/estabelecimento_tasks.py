@@ -1,6 +1,6 @@
 """Task do Prefect para estabelecimento (depende de socio_amostra.csv)."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from estabelecimento.extract import extract_estabelecimento_amostra
 

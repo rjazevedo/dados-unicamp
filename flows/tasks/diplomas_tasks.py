@@ -1,6 +1,6 @@
 """Tasks do Prefect para o processamento de diplomados (USP)."""
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 from diplomas.extract_usp import scrapper
 from diplomas.extract_usp import comvest_diplomasUSP

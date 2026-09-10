@@ -4,7 +4,7 @@ Mapeamento ~1:1 com as funcoes existentes (mesmo grupo dac_preproc/dac_base/
 finalizacao de debug_stages.py) -- sem reescrever logica de negocio.
 """
 
-from prefect import task
+from flows.memory_log import task_with_memory_log as task
 
 import dac.clr_dados_cadastrais.setup_dados as setup_dados
 from dac.create_ufs_codes import ufs_codes
