@@ -1,5 +1,5 @@
 from comvest.clear_dados import limpeza_dados, cod_ibge, cod_inep, ids_nomes
-from comvest.extract_courses.__main__ as extrair_cursos
+import comvest.extract_courses.__main__ as extrair_cursos
 
 import dac.create_names_ids.__main__ as create_names_ids
 from dac.clr_dados_cadastrais import school_codes
