@@ -4,14 +4,20 @@ import glob
 import re
 import os
 
+from config.settings import get_config
 
-class Bases(Enum):
-    COMVEST = "/home/input/COMVEST/"
-    RESULT = "/home/output/intermediario/"
-    OUTPUT = "/home/output/comvest/"
-    DAC_OUTPUT = "/home/output/dac/"
-    AUXILIARY = "/home/input/COMVEST/auxiliary/"
-    TESTE = "/home/fernando/dados-unicamp/output/"
+_config = get_config("comvest")
+
+Bases = Enum(
+    "Bases",
+    {
+        "COMVEST": _config["comvest_input"],
+        "RESULT": _config["result"],
+        "OUTPUT": _config["output"],
+        "DAC_OUTPUT": _config["dac_output"],
+        "AUXILIARY": _config["auxiliary"],
+    },
+)
 
 
 class DfType(Enum):
