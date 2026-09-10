@@ -2,10 +2,18 @@ import pandas as pd
 import glob
 from enum import Enum
 
-class Bases(Enum):
-    USP = "/home/input/diplomados/"
-    RESULT = "/home/output/intermediario/"
-    FINAL = "/home/processados/diplomados/"
+from config.settings import get_config
+
+_config = get_config("diplomas")
+
+Bases = Enum(
+    "Bases",
+    {
+        "USP": _config["usp_input"],
+        "RESULT": _config["result"],
+        "FINAL": _config["final"],
+    },
+)
 
 def read_result(FILENAME):
     return pd.read_csv(Bases.RESULT.value + FILENAME)

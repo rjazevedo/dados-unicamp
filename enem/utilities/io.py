@@ -4,10 +4,17 @@ import glob
 import re
 import os
 
+from config.settings import get_config
 
-class Bases(Enum):
-    RESULT = "/home/output/intermediario/"
-    ENEM_COMVEST = "/home/output/intermediario/Enem_Comvest/"
+_config = get_config("enem")
+
+Bases = Enum(
+    "Bases",
+    {
+        "RESULT": _config["result"],
+        "ENEM_COMVEST": _config["enem_comvest"],
+    },
+)
 
 def read_result(FILENAME):
     return pd.read_csv(Bases.RESULT.value + FILENAME)
