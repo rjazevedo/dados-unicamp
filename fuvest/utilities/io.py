@@ -1,11 +1,11 @@
 import pandas as pd
-import yaml
 from pathlib import Path
 from fuvest.utilities.dtype import DTYPES_DADOS
 
+from config.settings import get_config
 
-stream = open("fuvest/configuration.yaml")
-config = yaml.safe_load(stream)
+
+config = get_config("fuvest")
 path_input = Path(config["path_input"])
 
 

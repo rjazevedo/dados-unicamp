@@ -1,10 +1,10 @@
 import pandas as pd
-import yaml
 from pathlib import Path
 
+from config.settings import get_config
 
-stream = open("unesp/configuration.yaml")
-config = yaml.safe_load(stream)
+
+config = get_config("unesp")
 path_input = Path(config["path_input"])
 
 
