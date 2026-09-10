@@ -1,9 +1,7 @@
-import yaml
-
 from rais.utilities.file import get_file_name
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def write_rais_identification(df, year, file):

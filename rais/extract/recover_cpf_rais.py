@@ -1,5 +1,4 @@
 import pandas as pd
-import yaml
 
 from rais.utilities.file import get_all_tmp_files
 from rais.utilities.file import get_all_pre_processed_files
@@ -8,9 +7,9 @@ from rais.utilities.read import read_rais_merge_by_identification
 from rais.utilities.read import read_rais_identification_parquet
 from rais.utilities.write import write_rais_merge
 from rais.utilities.logging import log_recover_cpf_rais
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def recover_cpf_all_years():

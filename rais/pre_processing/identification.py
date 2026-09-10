@@ -1,5 +1,4 @@
 import argparse
-import yaml
 
 from rais.extract.clear import rename_columns
 
@@ -22,10 +21,9 @@ from rais.utilities.logging import (
     log_reading_file,
     log_writing_file,
 )
+from config.settings import get_config
 
-
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def get_identification_from_all_years():

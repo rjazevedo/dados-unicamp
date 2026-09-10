@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from difflib import SequenceMatcher
 from unidecode import unidecode
-import yaml
 
 from rais.utilities.read import read_dac_comvest
 from rais.utilities.read import read_rais_identification_parquet
@@ -10,9 +9,9 @@ from rais.utilities.write import write_dac_comvest_valid
 from rais.utilities.file import get_all_pre_processed_files
 
 from rais.utilities.logging import log_remove_invalid_cpf
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def remove_invalid_cpf():

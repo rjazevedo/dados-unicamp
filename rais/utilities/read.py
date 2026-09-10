@@ -1,14 +1,13 @@
 import pandas as pd
-import yaml
 
 from rais.utilities.dtypes import get_dtype_rais_original
 from rais.utilities.dtypes import get_dtype_dac_comvest
 from rais.utilities.dtypes import get_dtype_rais_clean
 from rais.utilities.file import get_file_name
 from rais.utilities.file import get_extension
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def read_rais_original(file, year):

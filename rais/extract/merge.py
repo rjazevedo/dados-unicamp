@@ -1,5 +1,4 @@
 from difflib import SequenceMatcher
-import yaml
 
 from rais.utilities.read import read_ids
 from rais.utilities.read import read_rais_identification_parquet
@@ -8,9 +7,9 @@ from rais.utilities.file import create_folder_inside_year
 from rais.utilities.file import get_all_pre_processed_files
 
 from rais.utilities.logging import log_merge_rais_dac_comvest
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 # Merge all the years from rais with uniao_dac_comvest and save in file rais.csv

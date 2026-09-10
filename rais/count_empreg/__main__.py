@@ -1,16 +1,10 @@
 import pandas as pd
-import yaml
-import os
 
-# Obtém o caminho absoluto do diretório onde o script está localizado
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "../configuration.yaml")
 from rais.utilities.file import get_all_files
 from rais.utilities.rais_information import get_column
+from config.settings import get_config
 
-# Abre o arquivo de configuração
-stream = open(config_path)
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 # Merge rais from year with df_dac_comvest

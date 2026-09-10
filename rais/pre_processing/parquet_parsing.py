@@ -1,5 +1,4 @@
 from tqdm import tqdm
-import yaml
 
 from rais.extract.clear import rename_columns
 
@@ -14,9 +13,9 @@ from rais.extract.cleaning_functions import (
 )
 
 import pandas as pd
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 pre_processed_folder = "pre_processed"
 

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import yaml
 
 from rais.extract import cleaning_functions
 
@@ -23,9 +22,9 @@ from rais.utilities.write import write_rais_sample
 
 from rais.utilities.logging import log_cleaning_year
 from rais.utilities.logging import log_cleaning_file
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def clear_all_years(tipo_extracao):

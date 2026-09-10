@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import yaml
 import os
 import math
 import gc
@@ -22,9 +21,9 @@ from rais.utilities.logging import log_recover_file
 from rais.utilities.logging import log_excluded_no_birthdate
 from rais.utilities.logging import log_recover_active_batches
 from unidecode import unidecode
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 # ------------------------------------------------------------------------------------------------
 

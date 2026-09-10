@@ -1,10 +1,9 @@
-import yaml
 import subprocess
 import glob
 
+from config.settings import get_config
 
-stream = open("rais/configuration.yaml")
-config = yaml.safe_load(stream)
+config = get_config("rais")
 
 
 def create_folder_tmp():
