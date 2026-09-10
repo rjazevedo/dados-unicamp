@@ -1,5 +1,5 @@
-from extract_usp import scrapper 
-from extract_usp import comvest_diplomasUSP
+from diplomas.extract_usp import scrapper
+from diplomas.extract_usp import comvest_diplomasUSP
 
 def main():
     scrapper.proccess_usp()
